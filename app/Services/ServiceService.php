@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use App\Dto\QueryParamsDto;
 use App\Models\Service;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
@@ -8,48 +9,28 @@ use Illuminate\Database\Eloquent\Collection;
 
 class ServiceService
 {
-    public function getAll(
-        int $limit,
-        ?string $search = null,
-        string $sort_by = 'created_at',
-        string $sort_order = 'desc'
-    ) {
-        $query = Service::query()->whereNull('deleted_at');
+    public function get(QueryParamsDto $params) {
+        try {
+            $query = Service::query()->whereNull('deleted_at');
 
-        // search insensitive-case
-        if ($search) {
-            $query->where(function ($query) use ($search) {
-                $query->where('name', 'ilike', "%{$search}%")
-                    ->orWhere('provider', 'ilike', "%{$search}%");
+            $query->where(function ($query) use ($params) {
+                $query->where('name', 'ilike', "%{$params->getSearch()}%")
+                    ->orWhere('provider', 'ilike', "%{$params->getSearch()}%");
             });
+
+            $query->orderBy($params->getSortBy(), $params->getSortOrder());
+
+            return $query->paginate($params->getLimit());
+        } catch (\Throwable $e) {
+            \Log::error("Fail to get service: " . $e->getMessage());
+            throw new \Exception("Failed to get service: " . $e->getMessage());
         }
-
-        // validate sort column
-        $allowedSorts = ['created_at', 'updated_at'];
-        if (!in_array($sort_by, $allowedSorts)) {
-            $sort_by = 'created_at';
-        }
-
-        // validate sort order
-        $sort_order = strtolower($sort_order) === 'asc' ? 'asc' : 'desc';
-
-        $query->orderBy($sort_by, $sort_order);
-
-        return $query->paginate($limit);
     }
 
 
     public function findById(int $id)
     {
-        try {
-            return Service::findOrFail($id);
-        } catch (\Throwable $e) {
-            \Log::error("Service not found: " . $e->getMessage());
-            return [
-                "message" => "Service not found",
-                'error' => $e->getMessage()
-            ];
-        }
+        return Service::findOrFail($id);
     }
 
     public function create(array $data)
@@ -61,10 +42,7 @@ class ServiceService
             });
         } catch (\Throwable $e) {
             \Log::error("Failed to create service: " . $e->getMessage());
-            return [
-                'message' => 'Failed to create service',
-                'error' => $e->getMessage()
-            ];
+            throw new \Exception("Failed to create service. " . $e->getMessage());
         }
 
     }
@@ -77,25 +55,18 @@ class ServiceService
             return $service;
         } catch (\Throwable $e) {
             \Log::error("Failed to update service: " . $e->getMessage());
-            return [
-                'message' => 'Failed to update service',
-                'error' => $e->getMessage()
-            ];
+            throw new \Exception("Failed to update service. " . $e->getMessage());
         }
     }
 
     public function delete(int $id)
     {
         try {
-            $service = $this->findById($id);
-            $service->delete();
-            return $service;
+            $this->delete($id);
+            return ['message' => 'Service successfully deleted'];
         } catch (\Throwable $e) {
             \Log::error("Failed to delete service: " . $e->getMessage());
-            return [
-                'message' => 'Failed to delete service',
-                'error' => $e->getMessage()
-            ];
+            throw new \Exception("Failed to delete service. " . $e->getMessage());
         }
     }
 }
