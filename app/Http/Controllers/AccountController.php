@@ -8,9 +8,12 @@ use App\Traits\ApiResponseTrait;
 class AccountController extends Controller
 {
     use ApiResponseTrait;
-    
+
     public function me(Request $request)
     {
-        return $this->responseSuccess($request->user());
+        return $this->responseSuccess(
+            $request->user(),
+            "Successfully authenticated!"
+        );
     }
 }
