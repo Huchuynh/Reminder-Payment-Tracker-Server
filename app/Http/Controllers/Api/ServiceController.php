@@ -26,7 +26,7 @@ class ServiceController extends Controller
     {
         try {
             $queryParamsDto = new QueryParamsDto(
-                $request->search,
+                $request->search ?? '',
                 $request->sort_by,
                 $request->sort_order,
                 $request->limit
