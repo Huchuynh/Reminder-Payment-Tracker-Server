@@ -2,129 +2,114 @@
 
 namespace App\Services;
 
+use App\Dto\Auth\RegisterRequestDto;
+use App\Dto\Auth\VerifyOtpRequestDto;
 use App\Models\Account;
-use App\Mail\OtpMail;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
-use Tymon\JWTAuth\Facades\JWTAuth;
-use Illuminate\Support\Facades\Cookie;
 use Google_Client;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthService
 {
-    public function getAccountByEmail(string $email): ?Account
+    public function getAccountByEmail(string $email): Account
     {
-        return Account::where('email', $email)->first() ?? null;
+        return Account::where('email', $email)->firstOrFail();
     }
 
-    public function sendEmailOtp(string $email): bool
+    public function sendEmailOtp(string $email)
     {
+        $otp = rand(100000, 999999);
+        $expires = 15;
         try {
-            $otp = rand(100000, 999999);
-            $expires = 15;
             Cache::put('otp_' . $email, $otp, now()->addMinutes($expires));
-
 //            Mail::to($email)->send(new OtpMail($otp, $expires));
-            \Log::info("Sending OTP to " . $email . "with OTP: " . $otp);
+            \Log::info("Sending OTP to " . $email . " with OTP: " . $otp);
 
-            return true;
-        } catch (\Throwable $e) {
+            return ["message" => "OTP sent to " . $email . " with OTP: " . $otp];
+        } catch (\Exception $e) {
             Cache::forget('otp_' . $email);
             \Log::error("Fail to send OTP: {$e->getMessage()}");
-            return false;
+            throw new \Exception("Fail to send OTP: {$e->getMessage()}");
         }
     }
 
     public function login(string $email) {
         try {
             $account = $this->getAccountByEmail($email);
-
-            if($account) {
-                $sent = $this->sendEmailOtp($email);
-                if (!$sent) {
-                    throw new \Exception('Failed to send OTP email.');
-                }
-                return ['account' => $account];
-            }
-
-            return ['error' => 'Account not found.'];
-        } catch (\Throwable $th) {
-            \Log::error("Login failed: {$th->getMessage()}");
-            return ['error' => 'Login failed. Please try again.'];
+            $this->sendEmailOtp($email);
+            return $account;
+        } catch (\Throwable $e) {
+            \Log::error("Login failed: {$e->getMessage()}");
+            throw new \Exception("Login failed: {$e->getMessage()}");
         }
-
     }
 
     public function loginGoogle(string $credentials) {
-        $client = new Google_Client(['client_id' => env('GOOGLE_CLIENT_ID')]);
+        try {
+            $client = new Google_Client(['client_id' => env('GOOGLE_CLIENT_ID')]);
 
-        $payload = $client->verifyIdToken($credentials);
+            $payload = $client->verifyIdToken($credentials);
 
-        if (!$payload) {
-            return ['error' => 'Invalid token'];
+            if (!$payload) throw new \Exception("Invalid token");
+
+            $account = Account::updateOrCreate(
+                ['email' => $payload['email']],
+                [
+                    'full_name' => $payload['name'],
+                    'avatar' => $payload['picture'],
+                    'password' => bcrypt(Str::random(16)),
+                    'role' => 'user',
+                ]
+            );
+
+            $token = JWTAuth::fromUser($account);
+
+            return compact('account', 'token');
+        } catch (\Throwable $e) {
+            \Log::error("Login with google failed: {$e->getMessage()}");
+            throw new \Exception("Login with google failed: {$e->getMessage()}");
         }
 
-        \Log::info($payload);
-        // Tạo hoặc cập nhật user
-        $account = Account::updateOrCreate(
-            ['email' => $payload['email']],
-            [
-                'full_name' => $payload['name'],
-                'avatar' => $payload['picture'],
-                'password' => bcrypt(Str::random(16)),
-                'role' => 'user',
-            ]
-        );
-
-        $token = JWTAuth::fromUser($account);
-
-        return compact('account', 'token');
     }
 
-    public function register(string $full_name, string $email)
+    public function register(RegisterRequestDto $request)
     {
         try {
-            $account = DB::transaction(function () use ($full_name, $email) {
+            $account = DB::transaction(function () use ($request) {
 
                 $newAccount = Account::create([
-                    'full_name' => $full_name,
-                    'email' => $email,
-                    'password' => bcrypt(Str::random(16)), // Mật khẩu tạm thời
+                    'full_name' => $request->getFullName(),
+                    'email' => $request->getEmail(),
+                    'password' => bcrypt(Str::random(16)),
                     'avatar' => env('APP_DEFAULT_AVATAR'),
                 ]);
 
-                $sent = $this->sendEmailOtp($newAccount->email);
-
-                if (!$sent) {
-                    throw new \Exception('Failed to send OTP email.');
-                }
+                $this->sendEmailOtp($newAccount->email);
 
                 return $newAccount;
             });
 
-            return ['account' => $account];
+            return $account;
 
         } catch (\Throwable $e) {
             \Log::error("Registration failed: {$e->getMessage()}");
-            return ['error' => 'Registration failed. Please try again.'];
+            throw new \Exception("Registration failed: {$e->getMessage()}");
         }
     }
 
-    public function verifyOtp(string $email, string $providedOtp)
+    public function verifyOtp(VerifyOtpRequestDto $request)
     {
         try {
-            $cacheKey = 'otp_' . $email;
+            $cacheKey = 'otp_' . $request->getEmail();
 
-            if (!Cache::has($cacheKey) || (int)Cache::get($cacheKey) !== (int)$providedOtp) {
-                return ['error' => 'Failed to verify OTP. Please try again.'];
+            if (!Cache::has($cacheKey) || (int)Cache::get($cacheKey) !== (int)$request->getOtp()) {
+                throw new \Exception("Invalid OTP");
             }
 
-            $account = $this->getAccountByEmail($email);
-            if(!$account) {
-                return ['error' => 'Account not found.'];
-            }
+            $account = $this->getAccountByEmail($request->getEmail());
 
             $token = JWTAuth::fromUser($account);
 
@@ -133,7 +118,7 @@ class AuthService
             return compact('token', 'account');
         } catch (\Throwable $e) {
             \Log::error("Failed to verify OTP: " . $e->getMessage());
-            return ['error' => 'Failed to verify OTP. Please try again.'];
+            throw new \Exception("Failed to verify OTP: {$e->getMessage()}");
         }
     }
 
@@ -142,16 +127,16 @@ class AuthService
         try {
             $token = JWTAuth::getToken();
 
-            if ($token) {
-                JWTAuth::invalidate($token);
-            }
+            if (!$token) throw new \Exception("Invalid token");
+
+            JWTAuth::invalidate($token);
 
             Cookie::queue(Cookie::forget('auth_token'));
 
             return ['message' => 'Logged out successfully'];
         } catch (\Throwable $e) {
             \Log::error("Failed to sign out user: " . $e->getMessage());
-            return ['error' => 'Failed to sign out user'];
+            throw new \Exception("Failed to sign out user: {$e->getMessage()}");
         }
     }
 }
