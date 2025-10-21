@@ -1,0 +1,37 @@
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: tracker_app
+        ports:
+            - "8000:8000"
+        volumes:
+            - ./:/var/www/html
+            - ./storage:/var/www/html/storage
+            - ./.env:/var/www/html/.env
+        depends_on:
+            - postgres
+
+    postgres:
+        image: postgres:15
+        container_name: tracker_postgres
+        environment:
+            POSTGRES_DB: ${DB_DATABASE}
+            POSTGRES_USER: ${DB_USERNAME}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+        ports:
+            - "5432:5432"
+        volumes:
+            - pgdata:/var/lib/postgresql/data
+
+    pgadmin:
+        image: dpage/pgadmin4
+        container_name: tracker_pgadmin
+        environment:
+            PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+            PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+        ports:
+            - "5050:80"
+volumes:
+    pgdata:
