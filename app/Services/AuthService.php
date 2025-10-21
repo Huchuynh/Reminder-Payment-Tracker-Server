@@ -26,9 +26,9 @@ class AuthService
         try {
             Cache::put('otp_' . $email, $otp, now()->addMinutes($expires));
 //            Mail::to($email)->send(new OtpMail($otp, $expires));
-            \Log::info("Sending OTP to " . $email . "with OTP: " . $otp);
+            \Log::info("Sending OTP to " . $email . " with OTP: " . $otp);
 
-            return ["message" => "OTP sent to " . $email . "with OTP: " . $otp];
+            return ["message" => "OTP sent to " . $email . " with OTP: " . $otp];
         } catch (\Exception $e) {
             Cache::forget('otp_' . $email);
             \Log::error("Fail to send OTP: {$e->getMessage()}");
