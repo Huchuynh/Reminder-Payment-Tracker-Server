@@ -1,22 +1,20 @@
 <?php
 namespace App\Http\Controllers\Api\Auth;
 
+use App\Dto\Auth\RegisterRequestDto;
+use App\Dto\Auth\VerifyOtpRequestDto;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GoogleLoginRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\VerifyOtpRequest;
-use App\Models\Account;
 use App\Services\AuthService;
 use App\Traits\ApiResponseTrait;
-use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
 {
     use ApiResponseTrait;
-
-    protected const JWT_TTL = 999999;
     protected AuthService $authService;
 
     public function __construct(AuthService $authService)
@@ -26,114 +24,95 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request)
     {
-        $result = $this->authService->login($request->email);
-
-        if(isset($result['error'])) {
-            return $this->responseError(
-                $result['error'],
-                Response::HTTP_BAD_REQUEST,
-                $result['error']
+        try {
+            $result = $this->authService->login($request->email);
+            return $this->responseSuccess(
+                $result,
+                'Login successful. Please check your email for the OTP to verify your account.',
             );
+        } catch (\Throwable $e) {
+            return $this->handleExceptionResponse($e);
         }
-
-        return $this->responseSuccess(
-            $result,
-            'Login successful. Please check your email for the OTP to verify your account.',
-            Response::HTTP_OK
-         );
     }
 
     public function loginGoogle(GoogleLoginRequest $request) {
-        $result = $this->authService->loginGoogle($request->credentials);
-
-        if(isset($result['error'])) {
-            return $this->responseError(
-                $result['error'],
-                Response::HTTP_UNAUTHORIZED,
-                $result['error']
+        try {
+            $result = $this->authService->loginGoogle($request->credentials);
+            return $this->responseSuccess(
+                $result,
+                'Login successful.',
             );
+        } catch(\Throwable $e) {
+            return $this->handleExceptionResponse($e);
         }
 
-        return $this->responseSuccess(
-            $result,
-            'Login successful.',
-            Response::HTTP_OK
-        );
     }
 
     public function register(RegisterRequest $request)
     {
-        $result = $this->authService->register($request->full_name, $request->email);
+        try {
+            $registerRequestDto = new RegisterRequestDto($request->full_name, $request->email);
+            $result = $this->authService->register($registerRequestDto);
 
-        if(isset($result['error'])) {
-            return $this->responseError($result['error'],
-                 RESPONSE::HTTP_BAD_REQUEST,
-                $result['error'],
+            return $this->responseCreateSuccess(
+                $result,
+                'Registration successful. Please check your email for the OTP to verify your account.',
             );
+        } catch(\Throwable $e) {
+            return $this->handleExceptionResponse($e);
         }
-
-        return $this->responseSuccess(
-            $result,
-            'Registration successful. Please check your email for the OTP to verify your account.',
-            RESPONSE::HTTP_CREATED
-         );
     }
 
     public function verifyOtp(VerifyOtpRequest $request) {
-        $result = $this->authService->verifyOtp($request->email, $request->otp);
+        try {
+            $verifyOtpRequestDto = new VerifyOtpRequestDto($request->email, $request->otp);
 
-        if(isset($result['error'])) {
-            return $this->responseError(
-                $result['error'],
-                RESPONSE::HTTP_BAD_REQUEST,
-                $result['error'],
+            $result = $this->authService->verifyOtp($verifyOtpRequestDto);
+
+            return $this->responseSuccess(
+                $result,
+                'OTP verified successfully.',
             );
+        } catch(\Throwable $e) {
+            return $this->handleExceptionResponse($e);
         }
-
-        return $this->responseSuccess(
-            $result,
-            'OTP verified successfully.',
-            RESPONSE::HTTP_OK
-         );
     }
 
     public function resendOtp(LoginRequest $request) {
-        $result = $this->authService->sendEmailOtp($request->email);
-        if(!$result) {
-            return $this->responseError(
-                'Fail to send OTP',
-                RESPONSE::HTTP_BAD_REQUEST
-            );
-        }
+        try {
+            $result = $this->authService->sendEmailOtp($request->email);
 
-        return $this->responseSuccess(
-            $result,
-            'OTP resent successfully.',
-            RESPONSE::HTTP_OK
-        );
+            return $this->responseSuccess(
+                null,
+                $result['message'],
+            );
+        } catch (\Throwable $e) {
+            return $this->handleExceptionResponse($e);
+        }
     }
 
     public function logout()
     {
-        $result = $this->authService->logout();
+        try {
+            $result = $this->authService->logout();
 
-        if (isset($result['error'])) {
-            return $this->responseError(
-                $result['error'],
-                Response::HTTP_BAD_REQUEST
-            );
+            return $this->responseSuccess(
+                null,
+                $result['message'],
+            )->withoutCookie('auth_token');
+        } catch(\Throwable $e) {
+            return $this->handleExceptionResponse($e);
         }
 
-        return $this->responseSuccess(
-            null,
-            $result['message'],
-            Response::HTTP_OK
-        )->withoutCookie('auth_token');
     }
 
     public function refresh()
     {
-        return $this->responseSuccess(auth()->refresh(), 'Token refreshed successfully.');
+        try {
+            return $this->responseSuccess(auth()->refresh(), 'Token refreshed successfully.');
+        } catch (\Throwable $e) {
+            return $this->handleExceptionResponse($e);
+        }
     }
 }
 

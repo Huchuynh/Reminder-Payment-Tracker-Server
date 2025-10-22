@@ -55,4 +55,6 @@ class QueryParamsDto
     {
         $this->limit = $limit;
     }
+
+
 }
