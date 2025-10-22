@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Dto\QueryParamsDto;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ServiceRequest;
 use App\Http\Resources\ServiceResource;
@@ -23,14 +24,20 @@ class ServiceController extends Controller
      */
     public function index(Request $request)
     {
-        $limit = (int) $request->query('limit', 5);
-        $search = $request->query('search');
-        $sort_by = $request->query('sort_by', 'created_at');
-        $sort_order = $request->query('sort_order', 'desc');
+        try {
+            $queryParamsDto = new QueryParamsDto(
+                $request->search ?? '',
+                $request->sort_by,
+                $request->sort_order,
+                $request->limit
+            );
 
-        $services = $this->serviceService->getAll($limit, $search, $sort_by, $sort_order);
+            $services = $this->serviceService->get($queryParamsDto);
 
-        return ServiceResource::collection($services);
+            return ServiceResource::collection($services);
+        } catch (\Throwable $e) {
+            return $this->handleExceptionResponse($e);
+        }
     }
 
     /**
@@ -38,25 +45,20 @@ class ServiceController extends Controller
      */
     public function store(ServiceRequest $request)
     {
-        $result = $this->serviceService->create([
-            "name" => $request->name,
-            "provider" => $request->provider,
-            "icon" => $request->icon
-        ]);
+        try {
+            $result = $this->serviceService->create([
+                "name" => $request->name,
+                "provider" => $request->provider,
+                "icon" => $request->icon
+            ]);
 
-        if(isset($result['error'])){
-            return $this->responseError(
-                $result['message'],
-                Response::HTTP_BAD_REQUEST,
-                $result['error']
+            return $this->responseCreateSuccess(
+                $result,
+                'Service successfully created'
             );
+        } catch(\Throwable $e) {
+            return $this->handleExceptionResponse($e);
         }
-
-        return $this->responseSuccess(
-            $result,
-            'Service successfully created',
-            Response::HTTP_CREATED
-        );
     }
 
     /**
@@ -64,21 +66,16 @@ class ServiceController extends Controller
      */
     public function show(string $id)
     {
-        $result = $this->serviceService->findById($id);
+        try {
+            $result = $this->serviceService->findById($id);
 
-        if(isset($result['error'])){
-            return $this->responseError(
-                $result['message'],
-                Response::HTTP_BAD_REQUEST,
-                $result['error']
+            return $this->responseSuccess(
+                $result,
+                'Service successfully found'
             );
+        } catch (\Throwable $e) {
+            return $this->handleExceptionResponse($e);
         }
-
-        return $this->responseSuccess(
-            $result,
-            'Service successfully found',
-            Response::HTTP_OK
-        );
     }
 
     /**
@@ -86,27 +83,22 @@ class ServiceController extends Controller
      */
     public function update(ServiceRequest $request, string $id)
     {
-        $result = $this->serviceService->update($id,
-            [
-                'name' => $request->name,
-                'provider' => $request->provider,
-                'icon' => $request->icon,
-            ]
-        );
-
-        if(isset($result['error'])){
-            return $this->responseError(
-                $result['message'],
-                Response::HTTP_BAD_REQUEST,
-                $result['error']
+        try {
+            $result = $this->serviceService->update($id,
+                [
+                    'name' => $request->name,
+                    'provider' => $request->provider,
+                    'icon' => $request->icon,
+                ]
             );
-        }
 
-        return $this->responseSuccess(
-            $result,
-            'Service successfully updated',
-            Response::HTTP_OK
-        );
+            return $this->responseSuccess(
+                $result,
+                'Service successfully updated',
+            );
+        } catch(\Throwable $e) {
+            return $this->handleExceptionResponse($e);
+        }
     }
 
     /**
@@ -114,20 +106,15 @@ class ServiceController extends Controller
      */
     public function destroy(string $id)
     {
-        $result = $this->serviceService->delete($id);
+        try {
+            $result = $this->serviceService->delete($id);
 
-        if(isset($result['error'])){
-            return $this->responseError(
-                $result['message'],
-                Response::HTTP_BAD_REQUEST,
-                $result['error']
+            return $this->responseSuccess(
+                null,
+                $result["message"],
             );
+        } catch(\Throwable $e) {
+            return $this->handleExceptionResponse($e);
         }
-
-        return $this->responseSuccess(
-            $result,
-            'Service successfully deleted',
-            Response::HTTP_OK
-        );
     }
 }
