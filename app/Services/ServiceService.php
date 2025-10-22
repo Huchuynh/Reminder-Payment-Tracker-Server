@@ -62,7 +62,7 @@ class ServiceService
     public function delete(int $id)
     {
         try {
-            $this->delete($id);
+            $this->findById($id)->delete();
             return ['message' => 'Service successfully deleted'];
         } catch (\Throwable $e) {
             \Log::error("Failed to delete service: " . $e->getMessage());
