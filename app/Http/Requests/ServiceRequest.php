@@ -22,9 +22,11 @@ class ServiceRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'account_id' => 'nullable|exists:accounts,id',
             'name' => 'required|string|max:255',
             'provider' => 'required|string|max:255',
             'icon' => 'nullable|string|max:255',
+            'is_base' => 'required|boolean',
         ];
     }
 }

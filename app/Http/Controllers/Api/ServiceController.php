@@ -48,8 +48,10 @@ class ServiceController extends Controller
         try {
             $result = $this->serviceService->create([
                 "name" => $request->name,
+                "account_id" => $request->account_id,
                 "provider" => $request->provider,
-                "icon" => $request->icon
+                "icon" => $request->icon,
+                "is_base" => $request->is_base
             ]);
 
             return $this->responseCreateSuccess(
@@ -87,8 +89,10 @@ class ServiceController extends Controller
             $result = $this->serviceService->update($id,
                 [
                     'name' => $request->name,
+                    'account_id' => $request->account_id,
                     'provider' => $request->provider,
                     'icon' => $request->icon,
+                    'is_base' => $request->is_base
                 ]
             );
 

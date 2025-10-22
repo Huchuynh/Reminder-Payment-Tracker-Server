@@ -48,6 +48,10 @@ class Account extends Authenticatable implements JWTSubject
         return $this->hasMany(SocialAccount::class);
     }
 
+    public function services(): HasMany {
+        return $this->hasMany(Service::class);
+    }
+
     public function subscriptions(): HasMany
     {
         return $this->hasMany(Subscription::class);

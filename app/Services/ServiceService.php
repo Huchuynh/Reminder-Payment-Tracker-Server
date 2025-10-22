@@ -14,13 +14,13 @@ class ServiceService
             $query = Service::query()->whereNull('deleted_at');
 
             $query->where(function ($query) use ($params) {
-                $query->where('name', 'ilike', "%{$params->getSearch()}%")
-                    ->orWhere('provider', 'ilike', "%{$params->getSearch()}%");
+                $query->where('name', 'ilike', "%{$params->search}%")
+                    ->orWhere('provider', 'ilike', "%{$params->search}%");
             });
 
-            $query->orderBy($params->getSortBy(), $params->getSortOrder());
+            $query->orderBy($params->search, $params->search);
 
-            return $query->paginate($params->getLimit());
+            return $query->paginate($params->limit);
         } catch (\Throwable $e) {
             \Log::error("Fail to get service: " . $e->getMessage());
             throw new \Exception("Failed to get service: " . $e->getMessage());
