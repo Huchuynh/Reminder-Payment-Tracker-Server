@@ -94,7 +94,7 @@ class SubscriptionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(SubscriptionRequest $request, string $id)
     {
         try {
             $result = $this->subscriptionService->update($id,
