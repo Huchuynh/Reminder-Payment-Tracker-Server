@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ServiceRequest extends FormRequest
+class QueryParamsRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,11 +22,10 @@ class ServiceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'account_id' => 'nullable|exists:accounts,id',
-            'name' => 'required|string|max:255',
-            'provider' => 'required|string|max:255',
-            'icon' => 'nullable|string|max:255',
-            'is_base' => 'required|boolean',
+            'search' => 'string|nullable',
+            'sort_by' => 'string|nullable',
+            'sort_order' => 'string|nullable',
+            'limit' => 'integer|nullable',
         ];
     }
 }

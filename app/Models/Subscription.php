@@ -7,15 +7,18 @@ use App\Models\Account;
 use App\Models\Service;
 use App\Models\Payment;
 use App\Models\Notification;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Subscription extends Model
 {
     protected $fillable = [
-        'account_id', 
-        'service_id', 
-        'start_date', 
-        'end_date', 
-        'status', 
+        'account_id',
+        'service_id',
+        'start_date',
+        'end_date',
+        'status',
+        'plan',
         'note'
     ];
 

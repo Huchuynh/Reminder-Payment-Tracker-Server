@@ -3,32 +3,37 @@
 namespace App\Http\Controllers\Api;
 
 use App\Dto\QueryParamsDto;
+use App\Dto\SubscriptionQueryParamsDto;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\QueryParamsRequest;
 use App\Http\Requests\ServiceRequest;
+use App\Http\Requests\SubscriptionQueryRequest;
+use App\Http\Requests\SubscriptionRequest;
 use App\Http\Resources\ServiceResource;
+use App\Http\Resources\SubscriptionResource;
+use App\Models\Subscription;
 use App\Services\ServiceService;
+use App\Services\SubscriptionService;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class ServiceController extends Controller
+class SubscriptionController extends Controller
 {
     use ApiResponseTrait;
-    protected $serviceService;
+    protected $subscriptionService;
 
-    public function __construct(ServiceService $serviceService){
-        $this->serviceService = $serviceService;
+    public function __construct(SubscriptionService $subscriptionService){
+        $this->subscriptionService = $subscriptionService;
     }
     /**
      * Display a listing of the resource.
      */
-    public function index(QueryParamsRequest $request)
+    public function index(SubscriptionQueryRequest $request)
     {
         try {
-            $services = $this->serviceService->get($request->validated());
+            $subscriptions = $this->subscriptionService->get($request->validated());
 
-            return ServiceResource::collection($services);
+            return SubscriptionResource::collection($subscriptions);
         } catch (\Throwable $e) {
             return $this->handleExceptionResponse($e);
         }
@@ -37,14 +42,14 @@ class ServiceController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ServiceRequest $request)
+    public function store(SubscriptionRequest $request)
     {
         try {
-            $result = $this->serviceService->create($request->validated());
+            $result = $this->subscriptionService->create($request->validated());
 
             return $this->responseCreateSuccess(
                 $result,
-                'Service successfully created'
+                'Subscription successfully created'
             );
         } catch(\Throwable $e) {
             return $this->handleExceptionResponse($e);
@@ -57,11 +62,11 @@ class ServiceController extends Controller
     public function show(string $id)
     {
         try {
-            $result = $this->serviceService->findById($id);
+            $result = $this->subscriptionService->findById($id);
 
             return $this->responseSuccess(
                 $result,
-                'Service successfully found'
+                'Subscription successfully found'
             );
         } catch (\Throwable $e) {
             return $this->handleExceptionResponse($e);
@@ -71,31 +76,14 @@ class ServiceController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(ServiceRequest $request, string $id)
+    public function update(SubscriptionRequest $request, string $id)
     {
         try {
-            $result = $this->serviceService->update($id, $request->validated());
+            $result = $this->subscriptionService->update($id,$request->validated());
 
             return $this->responseSuccess(
                 $result,
-                'Service successfully updated',
-            );
-        } catch(\Throwable $e) {
-            return $this->handleExceptionResponse($e);
-        }
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        try {
-            $result = $this->serviceService->delete($id);
-
-            return $this->responseSuccess(
-                null,
-                $result["message"],
+                'Subscription successfully updated',
             );
         } catch(\Throwable $e) {
             return $this->handleExceptionResponse($e);
