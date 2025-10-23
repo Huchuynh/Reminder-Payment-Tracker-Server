@@ -40,7 +40,9 @@ class Account extends Authenticatable implements JWTSubject
 
     public function getJWTCustomClaims()
     {
-        return [];
+        return [
+            "role" => $this->role
+        ];
     }
 
     public function socialAccounts(): HasMany

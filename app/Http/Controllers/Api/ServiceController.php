@@ -46,13 +46,7 @@ class ServiceController extends Controller
     public function store(ServiceRequest $request)
     {
         try {
-            $result = $this->serviceService->create([
-                "name" => $request->name,
-                "account_id" => $request->account_id,
-                "provider" => $request->provider,
-                "icon" => $request->icon,
-                "is_base" => $request->is_base
-            ]);
+            $result = $this->serviceService->create($request->all());
 
             return $this->responseCreateSuccess(
                 $result,
@@ -86,15 +80,7 @@ class ServiceController extends Controller
     public function update(ServiceRequest $request, string $id)
     {
         try {
-            $result = $this->serviceService->update($id,
-                [
-                    'name' => $request->name,
-                    'account_id' => $request->account_id,
-                    'provider' => $request->provider,
-                    'icon' => $request->icon,
-                    'is_base' => $request->is_base
-                ]
-            );
+            $result = $this->serviceService->update($id, $request->all());
 
             return $this->responseSuccess(
                 $result,

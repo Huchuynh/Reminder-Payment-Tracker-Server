@@ -55,15 +55,7 @@ class SubscriptionController extends Controller
     public function store(SubscriptionRequest $request)
     {
         try {
-            $result = $this->subscriptionService->create([
-                "account_id" => $request->account_id,
-                "service_id" => $request->service_id,
-                "start_date" => $request->start_date,
-                "end_date" => $request->end_date,
-                "status" => $request->status,
-                "plan" => $request->plan,
-                "notes" => $request->notes
-            ]);
+            $result = $this->subscriptionService->create($request->all());
 
             return $this->responseCreateSuccess(
                 $result,
@@ -97,17 +89,7 @@ class SubscriptionController extends Controller
     public function update(SubscriptionRequest $request, string $id)
     {
         try {
-            $result = $this->subscriptionService->update($id,
-                [
-                    "account_id" => $request->account_id,
-                    "service_id" => $request->service_id,
-                    "start_date" => $request->start_date,
-                    "end_date" => $request->end_date,
-                    "status" => $request->status,
-                    "plan" => $request->plan,
-                    "notes" => $request->notes
-                ]
-            );
+            $result = $this->subscriptionService->update($id,$request->all());
 
             return $this->responseSuccess(
                 $result,
