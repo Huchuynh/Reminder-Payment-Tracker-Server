@@ -75,14 +75,14 @@ class AuthService
 
     }
 
-    public function register(RegisterRequestDto $request)
+    public function register(array $request)
     {
         try {
             $account = DB::transaction(function () use ($request) {
 
                 $newAccount = Account::create([
-                    'full_name' => $request->getFullName(),
-                    'email' => $request->getEmail(),
+                    'full_name' => $request['full_name'],
+                    'email' => $request['email'],
                     'password' => bcrypt(Str::random(16)),
                     'avatar' => env('APP_DEFAULT_AVATAR'),
                 ]);
@@ -100,16 +100,16 @@ class AuthService
         }
     }
 
-    public function verifyOtp(VerifyOtpRequestDto $request)
+    public function verifyOtp(array $request)
     {
         try {
-            $cacheKey = 'otp_' . $request->getEmail();
+            $cacheKey = 'otp_' . $request['email'];
 
-            if (!Cache::has($cacheKey) || (int)Cache::get($cacheKey) !== (int)$request->getOtp()) {
+            if (!Cache::has($cacheKey) || (int)Cache::get($cacheKey) !== (int)$request['otp']) {
                 throw new \Exception("Invalid OTP");
             }
 
-            $account = $this->getAccountByEmail($request->getEmail());
+            $account = $this->getAccountByEmail($request['email']);
 
             $token = JWTAuth::fromUser($account);
 

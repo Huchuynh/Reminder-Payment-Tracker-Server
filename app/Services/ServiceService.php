@@ -9,18 +9,18 @@ use Illuminate\Database\Eloquent\Collection;
 
 class ServiceService
 {
-    public function get(QueryParamsDto $params) {
+    public function get(array $params) {
         try {
-            $query = Service::query()->whereNull('deleted_at');
+            $query = Service::query();
 
             $query->where(function ($query) use ($params) {
-                $query->where('name', 'ilike', "%{$params->search}%")
-                    ->orWhere('provider', 'ilike', "%{$params->search}%");
+                $query->where('name', 'ilike', "%{$params['search']}%")
+                    ->orWhere('provider', 'ilike', "%{$params['search']}%");
             });
 
-            $query->orderBy($params->search, $params->search);
+            $query->orderBy($params['sort_by'], $params['sort_order']);
 
-            return $query->paginate($params->limit);
+            return $query->paginate($params['limit']);
         } catch (\Throwable $e) {
             \Log::error("Fail to get service: " . $e->getMessage());
             throw new \Exception("Failed to get service: " . $e->getMessage());

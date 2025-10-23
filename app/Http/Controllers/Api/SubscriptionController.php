@@ -6,6 +6,7 @@ use App\Dto\QueryParamsDto;
 use App\Dto\SubscriptionQueryParamsDto;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ServiceRequest;
+use App\Http\Requests\SubscriptionQueryRequest;
 use App\Http\Requests\SubscriptionRequest;
 use App\Http\Resources\ServiceResource;
 use App\Http\Resources\SubscriptionResource;
@@ -27,23 +28,12 @@ class SubscriptionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(SubscriptionQueryRequest $request)
     {
         try {
-            $params = new SubscriptionQueryParamsDto(
-                $request->search ?? '',
-                $request->sort_by,
-                $request->sort_order,
-                $request->limit,
-                $request->account_id,
-                $request->start_date,
-                $request->end_date,
-                $request->status
-            );
+            $subscriptions = $this->subscriptionService->get($request->validated());
 
-            $services = $this->subscriptionService->get($params);
-
-            return SubscriptionResource::collection($services);
+            return SubscriptionResource::collection($subscriptions);
         } catch (\Throwable $e) {
             return $this->handleExceptionResponse($e);
         }
@@ -55,7 +45,7 @@ class SubscriptionController extends Controller
     public function store(SubscriptionRequest $request)
     {
         try {
-            $result = $this->subscriptionService->create($request->all());
+            $result = $this->subscriptionService->create($request->validated());
 
             return $this->responseCreateSuccess(
                 $result,
@@ -89,7 +79,7 @@ class SubscriptionController extends Controller
     public function update(SubscriptionRequest $request, string $id)
     {
         try {
-            $result = $this->subscriptionService->update($id,$request->all());
+            $result = $this->subscriptionService->update($id,$request->validated());
 
             return $this->responseSuccess(
                 $result,

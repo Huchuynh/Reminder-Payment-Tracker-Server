@@ -1,8 +1,6 @@
 <?php
 namespace App\Http\Controllers\Api\Auth;
 
-use App\Dto\Auth\RegisterRequestDto;
-use App\Dto\Auth\VerifyOtpRequestDto;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GoogleLoginRequest;
 use App\Http\Requests\LoginRequest;
@@ -51,8 +49,7 @@ class AuthController extends Controller
     public function register(RegisterRequest $request)
     {
         try {
-            $registerRequestDto = new RegisterRequestDto($request->full_name, $request->email);
-            $result = $this->authService->register($registerRequestDto);
+            $result = $this->authService->register($request->validated());
 
             return $this->responseCreateSuccess(
                 $result,
@@ -65,9 +62,7 @@ class AuthController extends Controller
 
     public function verifyOtp(VerifyOtpRequest $request) {
         try {
-            $verifyOtpRequestDto = new VerifyOtpRequestDto($request->email, $request->otp);
-
-            $result = $this->authService->verifyOtp($verifyOtpRequestDto);
+            $result = $this->authService->verifyOtp($request->validated());
 
             return $this->responseSuccess(
                 $result,

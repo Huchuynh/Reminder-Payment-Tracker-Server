@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Dto\QueryParamsDto;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\QueryParamsRequest;
 use App\Http\Requests\ServiceRequest;
 use App\Http\Resources\ServiceResource;
 use App\Services\ServiceService;
@@ -22,17 +23,10 @@ class ServiceController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(QueryParamsRequest $request)
     {
         try {
-            $queryParamsDto = new QueryParamsDto(
-                $request->search ?? '',
-                $request->sort_by,
-                $request->sort_order,
-                $request->limit
-            );
-
-            $services = $this->serviceService->get($queryParamsDto);
+            $services = $this->serviceService->get($request->validated());
 
             return ServiceResource::collection($services);
         } catch (\Throwable $e) {
@@ -46,7 +40,7 @@ class ServiceController extends Controller
     public function store(ServiceRequest $request)
     {
         try {
-            $result = $this->serviceService->create($request->all());
+            $result = $this->serviceService->create($request->validated());
 
             return $this->responseCreateSuccess(
                 $result,
@@ -80,7 +74,7 @@ class ServiceController extends Controller
     public function update(ServiceRequest $request, string $id)
     {
         try {
-            $result = $this->serviceService->update($id, $request->all());
+            $result = $this->serviceService->update($id, $request->validated());
 
             return $this->responseSuccess(
                 $result,

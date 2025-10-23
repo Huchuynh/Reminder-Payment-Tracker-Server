@@ -8,25 +8,24 @@ use Illuminate\Support\Facades\DB;
 
 class SubscriptionService
 {
-    public function get(SubscriptionQueryParamsDto $params) {
+    public function get(array $params) {
         try {
             $query = Subscription::query()->with("service");
 
-            $query->where('account_id', $params->account_id);
+            $query->where('account_id', $params['account_id']);
 //
             $query->whereHas('service', function($query) use($params) {
-                $query->where('name', 'ilike', "%{$params->search}%")
-                    ->whereNull('deleted_at');
+                $query->where('name', 'ilike', "%{$params['search']}%");
             });
 //
-            $query->where('status', $params->status);
+            $query->where('status', $params['status']);
 //
-            if($params->start_date && $params->end_date)
-                $query->whereBetween('start_date', [$params->start_date, $params->end_date]);
+            if(isset($params['start_date']) && isset($params['end_date']))
+                $query->whereBetween('start_date', [$params['start_date'], $params['end_date']]);
 //
-            $query->orderBy($params->sort_by, $params->sort_order);
+            $query->orderBy($params['sort_by'], $params['sort_order']);
 
-            return $query->paginate($params->limit);
+            return $query->paginate($params['limit']);
         } catch (\Throwable $e) {
             \Log::error("Fail to get service: " . $e->getMessage());
             throw new \Exception("Failed to get service: " . $e->getMessage());
