@@ -89,4 +89,73 @@ class SubscriptionController extends Controller
             return $this->handleExceptionResponse($e);
         }
     }
+
+    public function getInquiryServiceData(string $customer_id) {
+
+        $fakeServices = [
+            "YT0987654321" => [
+                "customer_id" => $customer_id,
+                "customer_name" => "Michael Nguyen",
+                "service_name" => "YouTube Premium",
+                "provider" => "Google LLC",
+                "start_date" => "2025-01-01 00:00:00",
+                "end_date" => "2025-12-31 23:59:59",
+                "status" => "active",
+                "plan" => "Family",
+                "note" => ""
+            ],
+            "NF1122334455" => [
+                "customer_id" => $customer_id,
+                "customer_name" => "Sophia Tran",
+                "service_name" => "Netflix",
+                "provider" => "Netflix Singapore Pte. Ltd.",
+                "start_date" => "2025-03-10 00:00:00",
+                "end_date" => "2026-03-09 23:59:59",
+                "status" => "active",
+                "plan" => "Premium",
+                "note" => "Auto-renew enabled"
+            ],
+            "SP7766554433" => [
+                "customer_id" => $customer_id,
+                "customer_name" => "David Pham",
+                "service_name" => "Spotify Premium",
+                "provider" => "Spotify AB",
+                "start_date" => "2025-04-01 00:00:00",
+                "end_date" => "2026-04-01 00:00:00",
+                "status" => "active",
+                "plan" => "Individual",
+                "note" => "Linked with Apple ID"
+            ],
+            "EVN0011223344" => [
+                "customer_id" => $customer_id,
+                "customer_name" => "Nam Pham",
+                "service_name" => "Electricity Bill",
+                "provider" => "PowerGrid Energy",
+                "start_date" => "2025-10-01 00:00:00",
+                "end_date" => "2025-10-31 23:59:59",
+                "status" => "active",
+                "plan" => "Residential",
+                "note" => "Monthly usage: 312 kWh"
+            ],
+            "WT6677889900" => [
+                "customer_id" => $customer_id,
+                "customer_name" => "Linh Le",
+                "service_name" => "Water Supply",
+                "provider" => "AquaFlow Utilities",
+                "start_date" => "2025-09-01 00:00:00",
+                "end_date" => "2025-09-30 23:59:59",
+                "status" => "expired",
+                "plan" => "Standard",
+                "note" => "Used 12 cubic meters"
+            ],
+        ];
+
+        if(!array_key_exists($customer_id, $fakeServices))
+            return $this->responseNotFound("Customer not found");
+
+        return $this->responseSuccess(
+            $fakeServices[$customer_id],
+            "Service found successfully"
+        ) ;
+    }
 }

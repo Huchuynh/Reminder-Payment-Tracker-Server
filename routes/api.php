@@ -22,8 +22,11 @@ Route::controller(AuthController::class)->prefix('auth')->group(function () {
 
 Route::middleware('auth:api')->group(function () {
     Route::apiResource('services', ServiceController::class);
+    Route::get('services/filter/base', [ServiceController::class, 'getBase']);
     Route::apiResource('subscriptions', SubscriptionController::class);
 });
+
+Route::get("/inquiry-service/{customer_id}", [SubscriptionController::class, "getInquiryServiceData"]);
 
 
 

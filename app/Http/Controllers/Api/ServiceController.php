@@ -34,6 +34,19 @@ class ServiceController extends Controller
         }
     }
 
+    public function getBase() {
+        try {
+            $services = $this->serviceService->getBase();
+
+            return $this->responseSuccess(
+                $services,
+                "Get base service successfully."
+            );
+        } catch(\Throwable $e) {
+            return $this->handleExceptionResponse($e);
+        }
+    }
+
     /**
      * Store a newly created resource in storage.
      */
