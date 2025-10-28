@@ -1,7 +1,7 @@
 <?php
-use App\Http\Controllers\Api\Auth\AuthController;
+
 use App\Http\Controllers\AccountController;
-use App\Http\Controllers\Api\Auth\SocialAuthController;
+use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\SubscriptionController;
 use Illuminate\Support\Facades\Route;
@@ -26,7 +26,7 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('subscriptions', SubscriptionController::class);
 });
 
-Route::get("/inquiry-service/{customer_id}", [SubscriptionController::class, "getInquiryServiceData"]);
+Route::get("/inquiry-youtube-service/{customer_id}", [SubscriptionController::class, "getInquiryYoutubeServiceData"]);
 
 
 

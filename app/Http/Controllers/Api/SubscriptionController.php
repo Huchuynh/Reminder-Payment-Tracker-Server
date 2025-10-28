@@ -5,26 +5,23 @@ namespace App\Http\Controllers\Api;
 use App\Dto\QueryParamsDto;
 use App\Dto\SubscriptionQueryParamsDto;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ServiceRequest;
 use App\Http\Requests\SubscriptionQueryRequest;
 use App\Http\Requests\SubscriptionRequest;
-use App\Http\Resources\ServiceResource;
 use App\Http\Resources\SubscriptionResource;
-use App\Models\Subscription;
-use App\Services\ServiceService;
 use App\Services\SubscriptionService;
 use App\Traits\ApiResponseTrait;
-use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class SubscriptionController extends Controller
 {
     use ApiResponseTrait;
+
     protected $subscriptionService;
 
-    public function __construct(SubscriptionService $subscriptionService){
+    public function __construct(SubscriptionService $subscriptionService)
+    {
         $this->subscriptionService = $subscriptionService;
     }
+
     /**
      * Display a listing of the resource.
      */
@@ -51,7 +48,7 @@ class SubscriptionController extends Controller
                 $result,
                 'Subscription successfully created'
             );
-        } catch(\Throwable $e) {
+        } catch (\Throwable $e) {
             return $this->handleExceptionResponse($e);
         }
     }
@@ -79,22 +76,23 @@ class SubscriptionController extends Controller
     public function update(SubscriptionRequest $request, string $id)
     {
         try {
-            $result = $this->subscriptionService->update($id,$request->validated());
+            $result = $this->subscriptionService->update($id, $request->validated());
 
             return $this->responseSuccess(
                 $result,
                 'Subscription successfully updated',
             );
-        } catch(\Throwable $e) {
+        } catch (\Throwable $e) {
             return $this->handleExceptionResponse($e);
         }
     }
 
-    public function getInquiryServiceData(string $customer_id) {
+    public function getInquiryYoutubeServiceData(string $customer_id)
+    {
 
-        $fakeServices = [
+        $youtubeSamples = [
             "YT0987654321" => [
-                "customer_id" => $customer_id,
+                "customer_id" => 101,
                 "customer_name" => "Michael Nguyen",
                 "service_name" => "YouTube Premium",
                 "provider" => "Google LLC",
@@ -104,58 +102,135 @@ class SubscriptionController extends Controller
                 "plan" => "Family",
                 "note" => ""
             ],
-            "NF1122334455" => [
-                "customer_id" => $customer_id,
-                "customer_name" => "Sophia Tran",
-                "service_name" => "Netflix",
-                "provider" => "Netflix Singapore Pte. Ltd.",
-                "start_date" => "2025-03-10 00:00:00",
-                "end_date" => "2026-03-09 23:59:59",
-                "status" => "active",
-                "plan" => "Premium",
-                "note" => "Auto-renew enabled"
-            ],
-            "SP7766554433" => [
-                "customer_id" => $customer_id,
-                "customer_name" => "David Pham",
-                "service_name" => "Spotify Premium",
-                "provider" => "Spotify AB",
-                "start_date" => "2025-04-01 00:00:00",
-                "end_date" => "2026-04-01 00:00:00",
+            "YT1029384756" => [
+                "customer_id" => 102,
+                "customer_name" => "Linh Tran",
+                "service_name" => "YouTube Premium",
+                "provider" => "Google LLC",
+                "start_date" => "2025-06-15 09:00:00",
+                "end_date" => "2026-06-14 23:59:59",
                 "status" => "active",
                 "plan" => "Individual",
-                "note" => "Linked with Apple ID"
+                "note" => "auto-renew on; card ending 4242"
             ],
-            "EVN0011223344" => [
-                "customer_id" => $customer_id,
-                "customer_name" => "Nam Pham",
-                "service_name" => "Electricity Bill",
-                "provider" => "PowerGrid Energy",
-                "start_date" => "2025-10-01 00:00:00",
-                "end_date" => "2025-10-31 23:59:59",
-                "status" => "active",
-                "plan" => "Residential",
-                "note" => "Monthly usage: 312 kWh"
-            ],
-            "WT6677889900" => [
-                "customer_id" => $customer_id,
-                "customer_name" => "Linh Le",
-                "service_name" => "Water Supply",
-                "provider" => "AquaFlow Utilities",
-                "start_date" => "2025-09-01 00:00:00",
-                "end_date" => "2025-09-30 23:59:59",
+            "YT5647382910" => [
+                "customer_id" => 103,
+                "customer_name" => "Anh Pham",
+                "service_name" => "YouTube Premium",
+                "provider" => "Google LLC",
+                "start_date" => "2024-12-01 00:00:00",
+                "end_date" => "2025-11-30 23:59:59",
                 "status" => "expired",
-                "plan" => "Standard",
-                "note" => "Used 12 cubic meters"
+                "plan" => "Student",
+                "note" => "student verification expired 2025-11-29"
             ],
+            "YT0011223344" => [
+                "customer_id" => 104,
+                "customer_name" => "Hoa Le",
+                "service_name" => "YouTube Premium",
+                "provider" => "Google LLC",
+                "start_date" => "2025-09-01 12:00:00",
+                "end_date" => "2025-09-30 23:59:59",
+                "status" => "cancelled",
+                "plan" => "Individual",
+                "note" => "user cancelled during free month"
+            ],
+            "YT7776665554" => [
+                "customer_id" => 105,
+                "customer_name" => "Quang Vu",
+                "service_name" => "YouTube Premium",
+                "provider" => "Google LLC",
+                "start_date" => "2025-10-01 00:00:00",
+                "end_date" => "2026-09-30 23:59:59",
+                "status" => "active",
+                "plan" => "Individual",
+                "note" => "7-day trial started 2025-10-01"
+            ],
+            "YT9090909090" => [
+                "customer_id" => 106,
+                "customer_name" => "Minh Ho",
+                "service_name" => "YouTube Premium",
+                "provider" => "Google LLC",
+                "start_date" => "2023-11-01 00:00:00",
+                "end_date" => "2024-10-31 23:59:59",
+                "status" => "expired",
+                "plan" => "Family",
+                "note" => "family manager moved to another account"
+            ],
+            "YT2468135790" => [
+                "customer_id" => 107,
+                "customer_name" => "Trang Nguyen",
+                "service_name" => "YouTube Premium",
+                "provider" => "Google LLC",
+                "start_date" => "2025-03-20 08:30:00",
+                "end_date" => "2026-03-19 23:59:59",
+                "status" => "active",
+                "plan" => "Family",
+                "note" => "includes 4 family members"
+            ],
+            "YT1357924680" => [
+                "customer_id" => 108,
+                "customer_name" => "Bao Ly",
+                "service_name" => "YouTube Premium",
+                "provider" => "Google LLC",
+                "start_date" => "2025-02-01 00:00:00",
+                "end_date" => "2025-08-01 23:59:59",
+                "status" => "expired",
+                "plan" => "Individual",
+                "note" => "payment failed since 2025-05-10"
+            ],
+            "YT3141592653" => [
+                "customer_id" => 109,
+                "customer_name" => "Huyen Do",
+                "service_name" => "YouTube Premium",
+                "provider" => "Google LLC",
+                "start_date" => "2025-07-01 00:00:00",
+                "end_date" => "2026-06-30 23:59:59",
+                "status" => "active",
+                "plan" => "Student",
+                "note" => "verified student until 2026-06-01"
+            ],
+            "YT8080808080" => [
+                "customer_id" => 110,
+                "customer_name" => "Tu Nguyen",
+                "service_name" => "YouTube Premium",
+                "provider" => "Google LLC",
+                "start_date" => "2024-05-10 10:00:00",
+                "end_date" => "2025-05-09 23:59:59",
+                "status" => "cancelled",
+                "plan" => "Family",
+                "note" => "cancelled due to moving abroad"
+            ],
+            "YT5554443332" => [
+                "customer_id" => 111,
+                "customer_name" => "Khanh Vu",
+                "service_name" => "YouTube Premium",
+                "provider" => "Google LLC",
+                "start_date" => "2025-10-10 14:45:00",
+                "end_date" => "2026-10-09 23:59:59",
+                "status" => "active",
+                "plan" => "Family",
+                "note" => "promo: NEWYEAR2025 applied"
+            ],
+            "YT1010101010" => [
+                "customer_id" => 112,
+                "customer_name" => "Nga Phan",
+                "service_name" => "YouTube Premium",
+                "provider" => "Google LLC",
+                "start_date" => "2025-04-01 00:00:00",
+                "end_date" => "2025-04-30 23:59:59",
+                "status" => "expired",
+                "plan" => "Individual",
+                "note" => "14-day trial"
+            ]
         ];
 
-        if(!array_key_exists($customer_id, $fakeServices))
+        if (!array_key_exists($customer_id, $youtubeSamples))
             return $this->responseNotFound("Customer not found");
 
         return $this->responseSuccess(
-            $fakeServices[$customer_id],
+            $youtubeSamples[$customer_id],
             "Service found successfully"
-        ) ;
+        );
     }
 }
