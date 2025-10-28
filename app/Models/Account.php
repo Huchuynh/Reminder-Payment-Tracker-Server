@@ -2,25 +2,19 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use App\Models\SocialAccount;
-use App\Models\Subscription;
-use App\Models\ReminderSetting;
-use App\Models\Notification;
-use App\Models\Payment;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Tymon\JWTAuth\Contracts\JWTSubject;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-
+use Illuminate\Notifications\Notifiable;
+use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
 
 class Account extends Authenticatable implements JWTSubject
 {
-    use HasFactory;
+    use HasFactory, Notifiable;
 
-    protected $fillable = ['full_name', 'email', 'phone', 'avatar', 'role', 'password'];
+    protected $fillable = ['full_name', 'email', 'phone', 'avatar', 'role', 'password', 'fcm_token'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -45,12 +39,23 @@ class Account extends Authenticatable implements JWTSubject
         ];
     }
 
+    /**
+     * Specifies the user's FCM token
+     *
+     * @return string|array
+     */
+    public function routeNotificationForFcm()
+    {
+        return $this->fcm_token;
+    }
+
     public function socialAccounts(): HasMany
     {
         return $this->hasMany(SocialAccount::class);
     }
 
-    public function services(): HasMany {
+    public function services(): HasMany
+    {
         return $this->hasMany(Service::class);
     }
 
@@ -62,11 +67,6 @@ class Account extends Authenticatable implements JWTSubject
     public function reminderSettings(): HasOne
     {
         return $this->hasOne(ReminderSetting::class);
-    }
-
-    public function notifications(): HasMany
-    {
-        return $this->hasMany(Notification::class);
     }
 
     public function payments(): HasMany

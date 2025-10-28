@@ -3,10 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Account;
-use App\Models\Service;
-use App\Models\Payment;
-use App\Models\Notification;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -40,10 +36,5 @@ class Subscription extends Model
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
-    }
-
-    public function notifications(): HasMany
-    {
-        return $this->hasMany(Notification::class);
     }
 }

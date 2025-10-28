@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
@@ -8,11 +9,12 @@ use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\VerifyOtpRequest;
 use App\Services\AuthService;
 use App\Traits\ApiResponseTrait;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
     use ApiResponseTrait;
+
     protected AuthService $authService;
 
     public function __construct(AuthService $authService)
@@ -33,14 +35,15 @@ class AuthController extends Controller
         }
     }
 
-    public function loginGoogle(GoogleLoginRequest $request) {
+    public function loginGoogle(GoogleLoginRequest $request)
+    {
         try {
             $result = $this->authService->loginGoogle($request->credentials);
             return $this->responseSuccess(
                 $result,
                 'Login successful.',
             );
-        } catch(\Throwable $e) {
+        } catch (\Throwable $e) {
             return $this->handleExceptionResponse($e);
         }
 
@@ -55,12 +58,13 @@ class AuthController extends Controller
                 $result,
                 'Registration successful. Please check your email for the OTP to verify your account.',
             );
-        } catch(\Throwable $e) {
+        } catch (\Throwable $e) {
             return $this->handleExceptionResponse($e);
         }
     }
 
-    public function verifyOtp(VerifyOtpRequest $request) {
+    public function verifyOtp(VerifyOtpRequest $request)
+    {
         try {
             $result = $this->authService->verifyOtp($request->validated());
 
@@ -68,12 +72,13 @@ class AuthController extends Controller
                 $result,
                 'OTP verified successfully.',
             );
-        } catch(\Throwable $e) {
+        } catch (\Throwable $e) {
             return $this->handleExceptionResponse($e);
         }
     }
 
-    public function resendOtp(LoginRequest $request) {
+    public function resendOtp(LoginRequest $request)
+    {
         try {
             $result = $this->authService->sendEmailOtp($request->email);
 
@@ -86,16 +91,16 @@ class AuthController extends Controller
         }
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
         try {
-            $result = $this->authService->logout();
+            $result = $this->authService->logout($request->user());
 
             return $this->responseSuccess(
                 null,
                 $result['message'],
             )->withoutCookie('auth_token');
-        } catch(\Throwable $e) {
+        } catch (\Throwable $e) {
             return $this->handleExceptionResponse($e);
         }
 

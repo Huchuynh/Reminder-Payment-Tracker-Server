@@ -24,6 +24,7 @@ class VerifyOtpRequest extends FormRequest
         return [
             'email' => 'required|string|email|exists:accounts,email',
             'otp' => 'required|digits:6',
+            'fcm_token' => 'required|string'
         ];
     }
 }
