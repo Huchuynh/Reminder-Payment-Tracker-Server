@@ -92,7 +92,7 @@ class SubscriptionController extends Controller
 
         $youtubeSamples = [
             "YT0987654321" => [
-                "customer_id" => 101,
+                "customer_id" => $customer_id,
                 "customer_name" => "Michael Nguyen",
                 "service_name" => "YouTube Premium",
                 "provider" => "Google LLC",
@@ -103,7 +103,7 @@ class SubscriptionController extends Controller
                 "note" => ""
             ],
             "YT1029384756" => [
-                "customer_id" => 102,
+                "customer_id" => $customer_id,
                 "customer_name" => "Linh Tran",
                 "service_name" => "YouTube Premium",
                 "provider" => "Google LLC",
@@ -114,7 +114,7 @@ class SubscriptionController extends Controller
                 "note" => "auto-renew on; card ending 4242"
             ],
             "YT5647382910" => [
-                "customer_id" => 103,
+                "customer_id" => $customer_id,
                 "customer_name" => "Anh Pham",
                 "service_name" => "YouTube Premium",
                 "provider" => "Google LLC",
@@ -125,7 +125,7 @@ class SubscriptionController extends Controller
                 "note" => "student verification expired 2025-11-29"
             ],
             "YT0011223344" => [
-                "customer_id" => 104,
+                "customer_id" => $customer_id,
                 "customer_name" => "Hoa Le",
                 "service_name" => "YouTube Premium",
                 "provider" => "Google LLC",
@@ -136,7 +136,7 @@ class SubscriptionController extends Controller
                 "note" => "user cancelled during free month"
             ],
             "YT7776665554" => [
-                "customer_id" => 105,
+                "customer_id" => $customer_id,
                 "customer_name" => "Quang Vu",
                 "service_name" => "YouTube Premium",
                 "provider" => "Google LLC",
@@ -147,7 +147,7 @@ class SubscriptionController extends Controller
                 "note" => "7-day trial started 2025-10-01"
             ],
             "YT9090909090" => [
-                "customer_id" => 106,
+                "customer_id" => $customer_id,
                 "customer_name" => "Minh Ho",
                 "service_name" => "YouTube Premium",
                 "provider" => "Google LLC",
@@ -158,7 +158,7 @@ class SubscriptionController extends Controller
                 "note" => "family manager moved to another account"
             ],
             "YT2468135790" => [
-                "customer_id" => 107,
+                "customer_id" => $customer_id,
                 "customer_name" => "Trang Nguyen",
                 "service_name" => "YouTube Premium",
                 "provider" => "Google LLC",
@@ -169,7 +169,7 @@ class SubscriptionController extends Controller
                 "note" => "includes 4 family members"
             ],
             "YT1357924680" => [
-                "customer_id" => 108,
+                "customer_id" => $customer_id,
                 "customer_name" => "Bao Ly",
                 "service_name" => "YouTube Premium",
                 "provider" => "Google LLC",
@@ -180,7 +180,7 @@ class SubscriptionController extends Controller
                 "note" => "payment failed since 2025-05-10"
             ],
             "YT3141592653" => [
-                "customer_id" => 109,
+                "customer_id" => $customer_id,
                 "customer_name" => "Huyen Do",
                 "service_name" => "YouTube Premium",
                 "provider" => "Google LLC",
@@ -191,7 +191,7 @@ class SubscriptionController extends Controller
                 "note" => "verified student until 2026-06-01"
             ],
             "YT8080808080" => [
-                "customer_id" => 110,
+                "customer_id" => $customer_id,
                 "customer_name" => "Tu Nguyen",
                 "service_name" => "YouTube Premium",
                 "provider" => "Google LLC",
@@ -202,7 +202,7 @@ class SubscriptionController extends Controller
                 "note" => "cancelled due to moving abroad"
             ],
             "YT5554443332" => [
-                "customer_id" => 111,
+                "customer_id" => $customer_id,
                 "customer_name" => "Khanh Vu",
                 "service_name" => "YouTube Premium",
                 "provider" => "Google LLC",
@@ -213,7 +213,7 @@ class SubscriptionController extends Controller
                 "note" => "promo: NEWYEAR2025 applied"
             ],
             "YT1010101010" => [
-                "customer_id" => 112,
+                "customer_id" => $customer_id,
                 "customer_name" => "Nga Phan",
                 "service_name" => "YouTube Premium",
                 "provider" => "Google LLC",
@@ -230,6 +230,153 @@ class SubscriptionController extends Controller
 
         return $this->responseSuccess(
             $youtubeSamples[$customer_id],
+            "Service found successfully"
+        );
+    }
+
+    public function getInquiryNetflixServiceData(string $customer_id)
+    {
+        $netflixSamples = [
+            "NF1000000001" => [
+                "customer_id" => $customer_id,
+                "customer_name" => "Michael Nguyen",
+                "service_name" => "Netflix",
+                "provider" => "Netflix, Inc.",
+                "start_date" => "2025-01-01 00:00:00",
+                "end_date" => "2025-12-31 23:59:59",
+                "status" => "active",
+                "plan" => "Premium (UHD)",
+                "note" => "auto-renew on; payment via Visa 4242"
+            ],
+            "NF2000000002" => [
+                "customer_id" => $customer_id,
+                "customer_name" => "Linh Tran",
+                "service_name" => "Netflix",
+                "provider" => "Netflix, Inc.",
+                "start_date" => "2025-07-10 09:30:00",
+                "end_date" => "2026-07-09 23:59:59",
+                "status" => "active",
+                "plan" => "Standard (HD)",
+                "note" => "shared with 2 profiles"
+            ],
+            "NF3000000003" => [
+                "customer_id" => $customer_id,
+                "customer_name" => "Anh Pham",
+                "service_name" => "Netflix",
+                "provider" => "Netflix, Inc.",
+                "start_date" => "2024-11-01 00:00:00",
+                "end_date" => "2025-10-31 23:59:59",
+                "status" => "expired",
+                "plan" => "Basic",
+                "note" => "card expired before renewal"
+            ],
+            "NF4000000004" => [
+                "customer_id" => $customer_id,
+                "customer_name" => "Hoa Le",
+                "service_name" => "Netflix",
+                "provider" => "Netflix, Inc.",
+                "start_date" => "2025-09-15 00:00:00",
+                "end_date" => "2025-10-14 23:59:59",
+                "status" => "cancelled",
+                "plan" => "Mobile",
+                "note" => "user cancelled after 1-month trial"
+            ],
+            "NF5000000005" => [
+                "customer_id" => $customer_id,
+                "customer_name" => "Quang Vu",
+                "service_name" => "Netflix",
+                "provider" => "Netflix, Inc.",
+                "start_date" => "2025-10-01 00:00:00",
+                "end_date" => "2025-10-30 23:59:59",
+                "status" => "expiring",
+                "plan" => "Standard (HD)",
+                "note" => "renewal scheduled 2025-10-30"
+            ],
+            "NF6000000006" => [
+                "customer_id" => $customer_id,
+                "customer_name" => "Minh Ho",
+                "service_name" => "Netflix",
+                "provider" => "Netflix, Inc.",
+                "start_date" => "2024-12-01 00:00:00",
+                "end_date" => "2025-11-30 23:59:59",
+                "status" => "expiring",
+                "plan" => "Premium (UHD)",
+                "note" => "subscription ends in 2 days"
+            ],
+            "NF7000000007" => [
+                "customer_id" => $customer_id,
+                "customer_name" => "Trang Nguyen",
+                "service_name" => "Netflix",
+                "provider" => "Netflix, Inc.",
+                "start_date" => "2025-03-20 08:00:00",
+                "end_date" => "2026-03-19 23:59:59",
+                "status" => "active",
+                "plan" => "Premium (UHD)",
+                "note" => "includes 4 active devices"
+            ],
+            "NF8000000008" => [
+                "customer_id" => $customer_id,
+                "customer_name" => "Bao Ly",
+                "service_name" => "Netflix",
+                "provider" => "Netflix, Inc.",
+                "start_date" => "2025-02-01 00:00:00",
+                "end_date" => "2025-08-01 23:59:59",
+                "status" => "expired",
+                "plan" => "Standard (HD)",
+                "note" => "payment failed during August renewal"
+            ],
+            "NF9000000009" => [
+                "customer_id" => $customer_id,
+                "customer_name" => "Huyen Do",
+                "service_name" => "Netflix",
+                "provider" => "Netflix, Inc.",
+                "start_date" => "2025-07-01 00:00:00",
+                "end_date" => "2026-06-30 23:59:59",
+                "status" => "active",
+                "plan" => "Basic with Ads",
+                "note" => "discounted promotional plan"
+            ],
+            "NF1010101010" => [
+                "customer_id" => $customer_id,
+                "customer_name" => "Tu Nguyen",
+                "service_name" => "Netflix",
+                "provider" => "Netflix, Inc.",
+                "start_date" => "2024-04-10 10:00:00",
+                "end_date" => "2025-04-09 23:59:59",
+                "status" => "cancelled",
+                "plan" => "Premium (UHD)",
+                "note" => "cancelled due to switching to shared account"
+            ],
+            "NF1111111111" => [
+                "customer_id" => $customer_id,
+                "customer_name" => "Khanh Vu",
+                "service_name" => "Netflix",
+                "provider" => "Netflix, Inc.",
+                "start_date" => "2025-10-10 14:45:00",
+                "end_date" => "2026-10-09 23:59:59",
+                "status" => "active",
+                "plan" => "Premium (UHD)",
+                "note" => "promo applied: NEWYEAR2025"
+            ],
+            "NF1212121212" => [
+                "customer_id" => $customer_id,
+                "customer_name" => "Nga Phan",
+                "service_name" => "Netflix",
+                "provider" => "Netflix, Inc.",
+                "start_date" => "2025-10-01 00:00:00",
+                "end_date" => "2025-10-31 23:59:59",
+                "status" => "expiring",
+                "plan" => "Mobile",
+                "note" => "trial ending soon"
+            ]
+        ];
+
+        if (!array_key_exists($customer_id, $netflixSamples)) {
+            return $this->responseNotFound("Customer not found");
+        }
+
+        return $this->responseSuccess(
+            $netflixSamples[$customer_id],
             "Service found successfully"
         );
     }

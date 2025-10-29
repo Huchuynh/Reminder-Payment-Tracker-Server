@@ -27,6 +27,7 @@ Route::middleware('auth:api')->group(function () {
 });
 
 Route::get("/inquiry-youtube-service/{customer_id}", [SubscriptionController::class, "getInquiryYoutubeServiceData"]);
+Route::get("/inquiry-netflix-service/{customer_id}", [SubscriptionController::class, "getInquiryNetflixServiceData"]);
 
 
 
