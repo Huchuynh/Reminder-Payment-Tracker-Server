@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use AlertChanels;
 use App\Models\Subscription;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -10,18 +11,19 @@ use Illuminate\Notifications\Notification;
 use NotificationChannels\Fcm\FcmChannel;
 use NotificationChannels\Fcm\FcmMessage;
 use NotificationChannels\Fcm\Resources\Notification as FcmNotification;
+use SubscriptionStatus;
 
 class SubscriptionReminderNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
     protected Subscription $subscription;
-    protected string $type;
+    protected SubscriptionStatus $type;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(Subscription $subscription, string $type)
+    public function __construct(Subscription $subscription, SubscriptionStatus $type)
     {
         $this->subscription = $subscription;
         $this->type = $type;
@@ -38,9 +40,9 @@ class SubscriptionReminderNotification extends Notification implements ShouldQue
 
         $prefs = $this->subscription->reminder_channels ?? [];
 
-        if (in_array("email", $prefs)) $channels[] = "mail";
-        if (in_array("in_app", $prefs)) $channels[] = "database";
-        if (in_array("push", $prefs)) $channels[] = FcmChannel::class;
+        if (in_array(AlertChanels::EMAIL, $prefs)) $channels[] = "mail";
+        if (in_array(AlertChanels::IN_APP, $prefs)) $channels[] = "database";
+        if (in_array(AlertChanels::PUSH, $prefs)) $channels[] = FcmChannel::class;
 
         return $channels;
     }
@@ -66,7 +68,7 @@ class SubscriptionReminderNotification extends Notification implements ShouldQue
         )))
             ->data([
                 "subscription_id" => (string)$this->subscription->id,
-                "type" => $this->type,
+                "type" => $this->type->value,
             ]);
     }
 

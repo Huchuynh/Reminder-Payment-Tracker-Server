@@ -7,6 +7,7 @@ use App\Notifications\SubscriptionReminderNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
+use SubscriptionStatus;
 
 class CheckSubscriptionRemindersJob implements ShouldQueue
 {
@@ -18,26 +19,34 @@ class CheckSubscriptionRemindersJob implements ShouldQueue
     public function handle(): void
     {
         $subscriptions = Subscription::with('accounts')
-            ->where('status', 'active')
+            ->where('status', SubscriptionStatus::ACTIVE)
             ->get();
 
         foreach ($subscriptions as $subscription) {
-            $daysDiff = now()->diffInDays($subscription->end_date, false);
+            $daysLeft = now()->diffInDays($subscription->end_date, false);
             $threshold = $subscription->alert_thresholds ?? [];
 
-            if (in_array($daysDiff, $threshold) && $subscription->isDueForReminder())
-                $type = "expiring";
-            else if ($daysDiff == 0 && $subscription->isDueForReminder())
-                $type = "expired";
-            else if ($daysDiff < 0 && $subscription->isDueForReminder())
-                $type = "overdue";
-            else continue;
+            $reminderType = $this->getReminderType($daysLeft, $threshold);
 
-            $subscription->account->notify(new SubscriptionReminderNotification($subscription, $type));
+            if (!$subscription->isDueForReminder() || !$reminderType) continue;
+
+            $subscription->account->notify(new SubscriptionReminderNotification($subscription, $reminderType));
 
             $subscription->update(["last_reminded_at" => now()]);
 
-            \Log::info("Reminder sent for subscription ID {$subscription->id} ({$type})");
+            \Log::info("Reminder sent for subscription ID {$subscription->id} ({$reminderType->value})");
         }
+    }
+
+    private function getReminderType(int $daysLeft, array $threshold): ?SubscriptionStatus
+    {
+        if (in_array($daysLeft, $threshold))
+            return SubscriptionStatus::EXPIRING;
+        if ($daysLeft == 0)
+            return SubscriptionStatus::EXPIRED;
+        if ($daysLeft < 0)
+            return SubscriptionStatus::OVERDUE;
+
+        return null;
     }
 }
