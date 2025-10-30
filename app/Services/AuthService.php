@@ -2,15 +2,13 @@
 
 namespace App\Services;
 
-use App\Dto\Auth\RegisterRequestDto;
-use App\Dto\Auth\VerifyOtpRequestDto;
 use App\Models\Account;
 use Google_Client;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Tymon\JWTAuth\Facades\JWTAuth;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class AuthService
 {
@@ -36,7 +34,8 @@ class AuthService
         }
     }
 
-    public function login(string $email) {
+    public function login(string $email)
+    {
         try {
             $account = $this->getAccountByEmail($email);
             $this->sendEmailOtp($email);
@@ -47,7 +46,8 @@ class AuthService
         }
     }
 
-    public function loginGoogle(string $credentials) {
+    public function loginGoogle(string $credentials)
+    {
         try {
             $client = new Google_Client(['client_id' => env('GOOGLE_CLIENT_ID')]);
 
@@ -113,6 +113,8 @@ class AuthService
 
             $token = JWTAuth::fromUser($account);
 
+            $account->update(['fcm_token' => $request['fcm_token']]);
+
             Cache::forget($cacheKey);
 
             return compact('token', 'account');
@@ -122,7 +124,7 @@ class AuthService
         }
     }
 
-    public function logout()
+    public function logout(Account $account)
     {
         try {
             $token = JWTAuth::getToken();
@@ -130,6 +132,8 @@ class AuthService
             if (!$token) throw new \Exception("Invalid token");
 
             JWTAuth::invalidate($token);
+
+            $account->update(['fcm_token' => null]);
 
             Cookie::queue(Cookie::forget('auth_token'));
 
