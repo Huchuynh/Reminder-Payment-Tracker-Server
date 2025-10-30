@@ -1,0 +1,187 @@
+[
+    {
+        "customer_code": "NF202510001",
+        "account": {
+            "email": "michael.nguyen@gmail.com",
+            "profile_name": "Michael Nguyen",
+            "country": "VN"
+        },
+        "subscription": {
+            "plan_name": "Standard (1080p)",
+            "price": {
+                "amount": 220000,
+                "currency": "VND",
+                "billing_cycle": "monthly"
+            },
+            "start_time": "2025-01-05T00:00:00Z",
+            "next_billing_date": "2025-11-05T00:00:00Z",
+            "status": "ACTIVE"
+        },
+        "payment": {
+            "method": "MasterCard **** 5522",
+            "auto_renew": true,
+            "last_transaction": {
+                "id": "TXN56789123",
+                "date": "2025-10-05T03:00:00Z",
+                "amount": 220000
+            }
+        },
+        "device_info": {
+            "linked_devices": 4,
+            "last_used_device": "Smart TV LG 55UQ8000"
+        },
+        "metadata": {
+            "region": "Asia-Pacific",
+            "language": "vi-VN",
+            "timezone": "UTC+7"
+        }
+    },
+    {
+        "customer_code": "NF202510002",
+        "account": {
+            "email": "linh.tran@yahoo.com",
+            "profile_name": "Linh Tran",
+            "country": "VN"
+        },
+        "subscription": {
+            "plan_name": "Premium (4K UHD)",
+            "price": {
+                "amount": 260000,
+                "currency": "VND",
+                "billing_cycle": "monthly"
+            },
+            "start_time": "2024-12-20T00:00:00Z",
+            "next_billing_date": "2025-10-20T00:00:00Z",
+            "status": "EXPIRING"
+        },
+        "payment": {
+            "method": "Visa **** 9911",
+            "auto_renew": true,
+            "last_transaction": {
+                "id": "TXN78945012",
+                "date": "2025-09-20T02:00:00Z",
+                "amount": 260000
+            }
+        },
+        "device_info": {
+            "linked_devices": 6,
+            "last_used_device": "MacBook Air M2"
+        },
+        "metadata": {
+            "region": "Asia-Pacific",
+            "language": "vi-VN",
+            "timezone": "UTC+7"
+        }
+    },
+    {
+        "customer_code": "NF202510003",
+        "account": {
+            "email": "bao.ly@gmail.com",
+            "profile_name": "Bao Ly",
+            "country": "VN"
+        },
+        "subscription": {
+            "plan_name": "Basic (720p)",
+            "price": {
+                "amount": 180000,
+                "currency": "VND",
+                "billing_cycle": "monthly"
+            },
+            "start_time": "2024-06-01T00:00:00Z",
+            "next_billing_date": "2024-07-01T00:00:00Z",
+            "status": "EXPIRED"
+        },
+        "payment": {
+            "method": "Momo Wallet",
+            "auto_renew": false,
+            "last_transaction": {
+                "id": "TXN12457890",
+                "date": "2024-06-01T01:30:00Z",
+                "amount": 180000
+            }
+        },
+        "device_info": {
+            "linked_devices": 2,
+            "last_used_device": "Android Phone"
+        },
+        "metadata": {
+            "region": "Asia-Pacific",
+            "language": "vi-VN",
+            "timezone": "UTC+7"
+        }
+    },
+    {
+        "customer_code": "NF202510004",
+        "account": {
+            "email": "huyen.do@gmail.com",
+            "profile_name": "Huyen Do",
+            "country": "VN"
+        },
+        "subscription": {
+            "plan_name": "Premium (4K UHD)",
+            "price": {
+                "amount": 260000,
+                "currency": "VND",
+                "billing_cycle": "monthly"
+            },
+            "start_time": "2025-03-10T00:00:00Z",
+            "next_billing_date": "2025-11-10T00:00:00Z",
+            "status": "ACTIVE"
+        },
+        "payment": {
+            "method": "ZaloPay",
+            "auto_renew": true,
+            "last_transaction": {
+                "id": "TXN88854123",
+                "date": "2025-10-10T04:00:00Z",
+                "amount": 260000
+            }
+        },
+        "device_info": {
+            "linked_devices": 5,
+            "last_used_device": "iPhone 15 Pro"
+        },
+        "metadata": {
+            "region": "Asia-Pacific",
+            "language": "vi-VN",
+            "timezone": "UTC+7"
+        }
+    },
+    {
+        "customer_code": "NF202510005",
+        "account": {
+            "email": "tu.nguyen@gmail.com",
+            "profile_name": "Tu Nguyen",
+            "country": "VN"
+        },
+        "subscription": {
+            "plan_name": "Standard (1080p)",
+            "price": {
+                "amount": 220000,
+                "currency": "VND",
+                "billing_cycle": "monthly"
+            },
+            "start_time": "2024-09-01T00:00:00Z",
+            "next_billing_date": "2024-10-01T00:00:00Z",
+            "status": "CANCELLED"
+        },
+        "payment": {
+            "method": "PayPal",
+            "auto_renew": false,
+            "last_transaction": {
+                "id": "TXN32165498",
+                "date": "2024-09-01T02:15:00Z",
+                "amount": 220000
+            }
+        },
+        "device_info": {
+            "linked_devices": 3,
+            "last_used_device": "Windows PC"
+        },
+        "metadata": {
+            "region": "Asia-Pacific",
+            "language": "vi-VN",
+            "timezone": "UTC+7"
+        }
+    }
+]

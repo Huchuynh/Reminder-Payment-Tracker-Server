@@ -1,0 +1,262 @@
+[
+    {
+        "customer_id": "YT0987654321",
+        "account": {
+            "id": "google_101",
+            "email": "michael.nguyen@gmail.com",
+            "name": "Michael Nguyen"
+        },
+        "product": {
+            "id": "youtube_premium_family",
+            "name": "YouTube Premium",
+            "plan": "Family",
+            "provider": "Google LLC"
+        },
+        "status": "ACTIVE",
+        "start_time": "2025-01-01T00:00:00Z",
+        "expiry_time": "2025-12-31T23:59:59Z",
+        "renewal": {
+            "auto_renew": true,
+            "renewal_date": "2026-01-01T00:00:00Z",
+            "payment_method": "VISA **** 4242"
+        },
+        "metadata": {
+            "region": "VN",
+            "device_count": 5
+        }
+    },
+    {
+        "customer_id": "YT1029384756",
+        "account": {
+            "id": "google_102",
+            "email": "linh.tran@gmail.com",
+            "name": "Linh Tran"
+        },
+        "product": {
+            "id": "youtube_premium_individual",
+            "name": "YouTube Premium",
+            "plan": "Individual",
+            "provider": "Google LLC"
+        },
+        "status": "ACTIVE",
+        "start_time": "2025-06-15T09:00:00Z",
+        "expiry_time": "2026-06-14T23:59:59Z",
+        "renewal": {
+            "auto_renew": true,
+            "renewal_date": "2026-06-15T00:00:00Z",
+            "payment_method": "MASTERCARD **** 8899"
+        },
+        "metadata": {
+            "region": "VN",
+            "device_count": 2
+        }
+    },
+    {
+        "customer_id": "YT2468135790",
+        "account": {
+            "id": "google_103",
+            "email": "trang.nguyen@gmail.com",
+            "name": "Trang Nguyen"
+        },
+        "product": {
+            "id": "youtube_premium_family",
+            "name": "YouTube Premium",
+            "plan": "Family",
+            "provider": "Google LLC"
+        },
+        "status": "EXPIRING",
+        "start_time": "2024-10-25T00:00:00Z",
+        "expiry_time": "2025-10-25T23:59:59Z",
+        "renewal": {
+            "auto_renew": true,
+            "renewal_date": "2025-10-26T00:00:00Z",
+            "payment_method": "VISA **** 3311"
+        },
+        "metadata": {
+            "region": "VN",
+            "device_count": 4
+        }
+    },
+    {
+        "customer_id": "YT5554443332",
+        "account": {
+            "id": "google_104",
+            "email": "khanh.vu@gmail.com",
+            "name": "Khanh Vu"
+        },
+        "product": {
+            "id": "youtube_premium_family",
+            "name": "YouTube Premium",
+            "plan": "Family",
+            "provider": "Google LLC"
+        },
+        "status": "ACTIVE",
+        "start_time": "2025-10-10T14:45:00Z",
+        "expiry_time": "2026-10-09T23:59:59Z",
+        "renewal": {
+            "auto_renew": true,
+            "renewal_date": "2026-10-10T00:00:00Z",
+            "payment_method": "VISA **** 5566"
+        },
+        "metadata": {
+            "region": "VN",
+            "device_count": 6
+        }
+    },
+    {
+        "customer_id": "YT0011223344",
+        "account": {
+            "id": "google_105",
+            "email": "hoa.le@gmail.com",
+            "name": "Hoa Le"
+        },
+        "product": {
+            "id": "youtube_premium_trial",
+            "name": "YouTube Premium",
+            "plan": "Individual",
+            "provider": "Google LLC"
+        },
+        "status": "CANCELLED",
+        "start_time": "2025-09-01T12:00:00Z",
+        "expiry_time": "2025-09-30T23:59:59Z",
+        "renewal": {
+            "auto_renew": false,
+            "renewal_date": null,
+            "payment_method": null
+        },
+        "metadata": {
+            "region": "VN",
+            "device_count": 1
+        }
+    },
+    {
+        "customer_id": "YT3141592653",
+        "account": {
+            "id": "google_106",
+            "email": "huyen.do@gmail.com",
+            "name": "Huyen Do"
+        },
+        "product": {
+            "id": "youtube_premium_student",
+            "name": "YouTube Premium",
+            "plan": "Student",
+            "provider": "Google LLC"
+        },
+        "status": "ACTIVE",
+        "start_time": "2025-07-01T00:00:00Z",
+        "expiry_time": "2026-06-30T23:59:59Z",
+        "renewal": {
+            "auto_renew": true,
+            "renewal_date": "2026-07-01T00:00:00Z",
+            "payment_method": "VISA **** 9932"
+        },
+        "metadata": {
+            "region": "VN",
+            "device_count": 2
+        }
+    },
+    {
+        "customer_id": "YT8080808080",
+        "account": {
+            "id": "google_107",
+            "email": "tu.nguyen@gmail.com",
+            "name": "Tu Nguyen"
+        },
+        "product": {
+            "id": "youtube_premium_family",
+            "name": "YouTube Premium",
+            "plan": "Family",
+            "provider": "Google LLC"
+        },
+        "status": "EXPIRED",
+        "start_time": "2024-05-10T10:00:00Z",
+        "expiry_time": "2025-05-09T23:59:59Z",
+        "renewal": {
+            "auto_renew": false,
+            "renewal_date": null,
+            "payment_method": "VISA **** 9090"
+        },
+        "metadata": {
+            "region": "VN",
+            "device_count": 5
+        }
+    },
+    {
+        "customer_id": "YT1357924680",
+        "account": {
+            "id": "google_108",
+            "email": "bao.ly@gmail.com",
+            "name": "Bao Ly"
+        },
+        "product": {
+            "id": "youtube_premium_individual",
+            "name": "YouTube Premium",
+            "plan": "Individual",
+            "provider": "Google LLC"
+        },
+        "status": "EXPIRED",
+        "start_time": "2025-02-01T00:00:00Z",
+        "expiry_time": "2025-08-01T23:59:59Z",
+        "renewal": {
+            "auto_renew": false,
+            "renewal_date": null,
+            "payment_method": "MASTERCARD **** 4455"
+        },
+        "metadata": {
+            "region": "VN",
+            "device_count": 1
+        }
+    },
+    {
+        "customer_id": "YT9090909090",
+        "account": {
+            "id": "google_109",
+            "email": "minh.ho@gmail.com",
+            "name": "Minh Ho"
+        },
+        "product": {
+            "id": "youtube_premium_family",
+            "name": "YouTube Premium",
+            "plan": "Family",
+            "provider": "Google LLC"
+        },
+        "status": "EXPIRED",
+        "start_time": "2023-11-01T00:00:00Z",
+        "expiry_time": "2024-10-31T23:59:59Z",
+        "renewal": {
+            "auto_renew": false,
+            "renewal_date": null,
+            "payment_method": null
+        },
+        "metadata": {
+            "region": "VN",
+            "device_count": 5
+        }
+    },
+    {
+        "customer_id": "YT5559990001",
+        "account": {
+            "id": "google_110",
+            "email": "nam.tran@gmail.com",
+            "name": "Nam Tran"
+        },
+        "product": {
+            "id": "youtube_premium_individual",
+            "name": "YouTube Premium",
+            "plan": "Individual",
+            "provider": "Google LLC"
+        },
+        "status": "EXPIRING",
+        "start_time": "2025-11-01T00:00:00Z",
+        "expiry_time": "2025-11-30T23:59:59Z",
+        "renewal": {
+            "auto_renew": true,
+            "renewal_date": "2025-12-01T00:00:00Z",
+            "payment_method": "VISA **** 3388"
+        },
+        "metadata": {
+            "region": "VN",
+            "device_count": 1
+        }
+    }
+]
