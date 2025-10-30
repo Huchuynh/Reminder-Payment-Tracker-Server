@@ -2,7 +2,8 @@
 
 namespace App\Notifications;
 
-use AlertChanels;
+use App\Enums\AlertChanels;
+use App\Enums\SubscriptionStatus;
 use App\Models\Subscription;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -11,7 +12,6 @@ use Illuminate\Notifications\Notification;
 use NotificationChannels\Fcm\FcmChannel;
 use NotificationChannels\Fcm\FcmMessage;
 use NotificationChannels\Fcm\Resources\Notification as FcmNotification;
-use SubscriptionStatus;
 
 class SubscriptionReminderNotification extends Notification implements ShouldQueue
 {
@@ -40,9 +40,9 @@ class SubscriptionReminderNotification extends Notification implements ShouldQue
 
         $prefs = $this->subscription->reminder_channels ?? [];
 
-        if (in_array(AlertChanels::EMAIL, $prefs)) $channels[] = "mail";
-        if (in_array(AlertChanels::IN_APP, $prefs)) $channels[] = "database";
-        if (in_array(AlertChanels::PUSH, $prefs)) $channels[] = FcmChannel::class;
+        if (in_array(AlertChanels::EMAIL->value, $prefs)) $channels[] = "mail";
+        if (in_array(AlertChanels::IN_APP->value, $prefs)) $channels[] = "database";
+        if (in_array(AlertChanels::PUSH->value, $prefs)) $channels[] = FcmChannel::class;
 
         return $channels;
     }
@@ -63,21 +63,25 @@ class SubscriptionReminderNotification extends Notification implements ShouldQue
     public function toFcm(object $notifiable): FcmMessage
     {
         return (new FcmMessage(notification: new FcmNotification(
-            title: "Service {$this->subscription->name}",
+            title: "Service {$this->subscription->service->name}",
             body: $this->messageText(),
         )))
             ->data([
-                "subscription_id" => (string)$this->subscription->id,
-                "type" => $this->type->value,
+                'subscription_id' => $this->subscription->id,
+                'service_name' => $this->subscription->service->name,
+                'service_icon' => $this->subscription->service->icon,
+                'message' => $this->messageText(),
+                'end_date' => $this->subscription->end_date
             ]);
     }
 
     public function toDatabase(object $notifiable): array
     {
         return [
-            'service_id' => $this->subscription->service->id,
+            'subscription_id' => $this->subscription->id,
             'service_name' => $this->subscription->service->name,
-            'message' => $this->message,
+            'service_icon' => $this->subscription->service->icon,
+            'message' => $this->messageText(),
             'end_date' => $this->subscription->end_date
         ];
     }
@@ -85,12 +89,13 @@ class SubscriptionReminderNotification extends Notification implements ShouldQue
     private function messageText(): string
     {
         $service = $this->subscription->service->name;
-        $days = now()->diffInDays($this->subscription->end_date, false);
+        $hoursLeft = now()->diffInHours($this->subscription->end_date, false);
+        $hoursDisplay = floor(abs($hoursLeft));
 
         return match (true) {
-            $days > 0 => "Service {$service} will expire in {$days} days.",
-            $days == 0 => "Service {$service} expires today.",
-            default => "Service {$service} is expired " . abs($days) . " days.",
+            $hoursLeft > 0 => "{$service} will expire in {$hoursDisplay} hours.",
+            $hoursLeft == 0 => "{$service} expires this hour.",
+            default => "{$service} expired {$hoursDisplay} hours ago.",
         };
     }
 }

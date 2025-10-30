@@ -1,7 +1,7 @@
 <?php
-use App\Http\Controllers\Api\Auth\AuthController;
+
 use App\Http\Controllers\AccountController;
-use App\Http\Controllers\Api\Auth\SocialAuthController;
+use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\SubscriptionController;
 use Illuminate\Support\Facades\Route;

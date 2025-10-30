@@ -2,12 +2,12 @@
 
 namespace App\Jobs;
 
+use App\Enums\SubscriptionStatus;
 use App\Models\Subscription;
 use App\Notifications\SubscriptionReminderNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
-use SubscriptionStatus;
 
 class CheckSubscriptionRemindersJob implements ShouldQueue
 {
@@ -18,7 +18,7 @@ class CheckSubscriptionRemindersJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $subscriptions = Subscription::with('accounts')
+        $subscriptions = Subscription::with('account')
             ->where('status', SubscriptionStatus::ACTIVE)
             ->get();
 
