@@ -36,15 +36,15 @@ class SubscriptionReminderNotification extends Notification implements ShouldQue
      */
     public function via(object $notifiable): array
     {
-        $channels = [];
+        $map = [
+            AlertChanels::EMAIL->value => "mail",
+            AlertChanels::IN_APP->value => "database",
+            AlertChanels::PUSH->value => FcmChannel::class,
+        ];
 
-        $prefs = $this->subscription->reminder_channels ?? [];
-
-        if (in_array(AlertChanels::EMAIL->value, $prefs)) $channels[] = "mail";
-        if (in_array(AlertChanels::IN_APP->value, $prefs)) $channels[] = "database";
-        if (in_array(AlertChanels::PUSH->value, $prefs)) $channels[] = FcmChannel::class;
-
-        return $channels;
+        return array_values(
+            array_intersect_key($map, array_flip($this->subscription->reminder_channels ?? [])),
+        );
     }
 
     /**
