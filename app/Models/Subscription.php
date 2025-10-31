@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\SubscriptionStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -14,6 +15,7 @@ class Subscription extends Model
     ];
 
     protected $casts = [
+        'status' => SubscriptionStatus::class,
         'alert_thresholds' => 'array',
         'reminder_channels' => 'array',
         'start_date' => 'datetime',
@@ -29,6 +31,11 @@ class Subscription extends Model
     public function service(): BelongsTo
     {
         return $this->belongsTo(Service::class);
+    }
+
+    public function histories(): HasMany
+    {
+        return $this->hasMany(SubscriptionHistory::class);
     }
 
     public function payments(): HasMany
