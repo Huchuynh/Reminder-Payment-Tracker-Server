@@ -21,7 +21,8 @@ class SubscriptionService
             $query->where('status', $params['status']);
 //
             if(isset($params['start_date']) && isset($params['end_date']))
-                $query->whereBetween('start_date', [$params['start_date'], $params['end_date']]);
+                $query->where('start_date','<=' , $params['end_date'])
+                ->where('end_date','>=' , $params['start_date']);
 //
             $query->orderBy($params['sort_by'], $params['sort_order']);
 
@@ -35,7 +36,7 @@ class SubscriptionService
 
     public function findById(int $id)
     {
-        return Subscription::findOrFail($id);
+        return Subscription::findOrFail($id)->load('service');
     }
 
     public function create(array $data)

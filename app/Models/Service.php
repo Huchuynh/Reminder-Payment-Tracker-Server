@@ -21,4 +21,8 @@ class Service extends Model
     public function accounts(): BelongsTo {
         return $this->belongsTo(Account::class);
     }
+
+    public function service_apis(): HasMany {
+        return $this->hasMany(ServiceApi::class);
+    }
 }

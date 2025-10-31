@@ -27,6 +27,9 @@ class ServiceService
         }
     }
 
+    public function getBase(){
+        return Service::where('is_base', true)->get()->load('service_apis');
+    }
 
     public function findById(int $id)
     {

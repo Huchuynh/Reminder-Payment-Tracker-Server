@@ -5,26 +5,23 @@ namespace App\Http\Controllers\Api;
 use App\Dto\QueryParamsDto;
 use App\Dto\SubscriptionQueryParamsDto;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ServiceRequest;
 use App\Http\Requests\SubscriptionQueryRequest;
 use App\Http\Requests\SubscriptionRequest;
-use App\Http\Resources\ServiceResource;
 use App\Http\Resources\SubscriptionResource;
-use App\Models\Subscription;
-use App\Services\ServiceService;
 use App\Services\SubscriptionService;
 use App\Traits\ApiResponseTrait;
-use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class SubscriptionController extends Controller
 {
     use ApiResponseTrait;
+
     protected $subscriptionService;
 
-    public function __construct(SubscriptionService $subscriptionService){
+    public function __construct(SubscriptionService $subscriptionService)
+    {
         $this->subscriptionService = $subscriptionService;
     }
+
     /**
      * Display a listing of the resource.
      */
@@ -51,7 +48,7 @@ class SubscriptionController extends Controller
                 $result,
                 'Subscription successfully created'
             );
-        } catch(\Throwable $e) {
+        } catch (\Throwable $e) {
             return $this->handleExceptionResponse($e);
         }
     }
@@ -79,13 +76,13 @@ class SubscriptionController extends Controller
     public function update(SubscriptionRequest $request, string $id)
     {
         try {
-            $result = $this->subscriptionService->update($id,$request->validated());
+            $result = $this->subscriptionService->update($id, $request->validated());
 
             return $this->responseSuccess(
                 $result,
                 'Subscription successfully updated',
             );
-        } catch(\Throwable $e) {
+        } catch (\Throwable $e) {
             return $this->handleExceptionResponse($e);
         }
     }
