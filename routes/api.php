@@ -26,6 +26,8 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('services', ServiceController::class);
     Route::get('services/filter/base', [ServiceController::class, 'getBase']);
     Route::apiResource('subscriptions', SubscriptionController::class);
+    Route::post('subscriptions/{id}/renew', [SubscriptionController::class, 'renew']);
+    Route::post('subscriptions/{id}/unsubscribe', [SubscriptionController::class, 'unsubscribe']);
 });
 
 Route::get("/provider/youtube/inquiry/{customerCode}", [YoutubeProviderController::class, "inquiry"]);

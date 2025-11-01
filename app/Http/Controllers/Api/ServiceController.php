@@ -2,24 +2,24 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Dto\QueryParamsDto;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\QueryParamsRequest;
 use App\Http\Requests\ServiceRequest;
 use App\Http\Resources\ServiceResource;
 use App\Services\ServiceService;
 use App\Traits\ApiResponseTrait;
-use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class ServiceController extends Controller
 {
     use ApiResponseTrait;
+
     protected $serviceService;
 
-    public function __construct(ServiceService $serviceService){
+    public function __construct(ServiceService $serviceService)
+    {
         $this->serviceService = $serviceService;
     }
+
     /**
      * Display a listing of the resource.
      */
@@ -34,7 +34,8 @@ class ServiceController extends Controller
         }
     }
 
-    public function getBase() {
+    public function getBase()
+    {
         try {
             $services = $this->serviceService->getBase();
 
@@ -42,7 +43,7 @@ class ServiceController extends Controller
                 $services,
                 "Get base service successfully."
             );
-        } catch(\Throwable $e) {
+        } catch (\Throwable $e) {
             return $this->handleExceptionResponse($e);
         }
     }
@@ -59,7 +60,7 @@ class ServiceController extends Controller
                 $result,
                 'Service successfully created'
             );
-        } catch(\Throwable $e) {
+        } catch (\Throwable $e) {
             return $this->handleExceptionResponse($e);
         }
     }
@@ -93,7 +94,7 @@ class ServiceController extends Controller
                 $result,
                 'Service successfully updated',
             );
-        } catch(\Throwable $e) {
+        } catch (\Throwable $e) {
             return $this->handleExceptionResponse($e);
         }
     }
@@ -110,7 +111,7 @@ class ServiceController extends Controller
                 null,
                 $result["message"],
             );
-        } catch(\Throwable $e) {
+        } catch (\Throwable $e) {
             return $this->handleExceptionResponse($e);
         }
     }

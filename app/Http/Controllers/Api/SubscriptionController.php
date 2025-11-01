@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Dto\QueryParamsDto;
 use App\Dto\SubscriptionQueryParamsDto;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreateSubscriptionRequest;
+use App\Http\Requests\RenewSubscriptionRequest;
 use App\Http\Requests\SubscriptionQueryRequest;
-use App\Http\Requests\SubscriptionRequest;
+use App\Http\Requests\UpdateSubscriptionRequest;
 use App\Http\Resources\SubscriptionResource;
 use App\Services\SubscriptionService;
 use App\Traits\ApiResponseTrait;
@@ -39,7 +41,7 @@ class SubscriptionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(SubscriptionRequest $request)
+    public function store(CreateSubscriptionRequest $request)
     {
         try {
             $result = $this->subscriptionService->create($request->validated());
@@ -73,7 +75,7 @@ class SubscriptionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(SubscriptionRequest $request, string $id)
+    public function update(UpdateSubscriptionRequest $request, string $id)
     {
         try {
             $result = $this->subscriptionService->update($id, $request->validated());
@@ -81,6 +83,34 @@ class SubscriptionController extends Controller
             return $this->responseSuccess(
                 $result,
                 'Subscription successfully updated',
+            );
+        } catch (\Throwable $e) {
+            return $this->handleExceptionResponse($e);
+        }
+    }
+
+    public function renew(RenewSubscriptionRequest $request, string $id)
+    {
+        try {
+            $result = $this->subscriptionService->renew($id, $request->validated());
+
+            return $this->responseSuccess(
+                $result,
+                'Service successfully renewed',
+            );
+        } catch (\Throwable $e) {
+            return $this->handleExceptionResponse($e);
+        }
+    }
+
+    public function unsubscribe(string $id)
+    {
+        try {
+            $result = $this->subscriptionService->unsubscribe($id);
+
+            return $this->responseSuccess(
+                $result,
+                'Service successfully canceled',
             );
         } catch (\Throwable $e) {
             return $this->handleExceptionResponse($e);
