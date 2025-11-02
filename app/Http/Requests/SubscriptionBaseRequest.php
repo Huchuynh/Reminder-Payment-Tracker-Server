@@ -26,7 +26,8 @@ class SubscriptionBaseRequest extends FormRequest
             "notes" => "nullable|string",
             "alert_thresholds" => "nullable|array",
             "reminder_frequency" => "nullable|integer",
-            "reminder_channels" => "nullable|in:email,in_app,push",
+            'reminder_channels' => 'nullable|array',
+            'reminder_channels.*' => 'in:email,in_app,push',
             "last_reminded_at" => "nullable|date|date_format:Y-m-d H:i:s"
         ];
     }

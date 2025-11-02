@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Subscription extends Model
 {
     protected $fillable = [
-        'account_id', 'service_id', 'start_date', 'end_date', 'status', 'plan', 'note',
+        'account_id', 'service_id', 'start_date', 'end_date', 'status', 'plan', 'notes',
         'alert_thresholds', 'reminder_frequency', 'reminder_channels', 'last_reminded_at',
     ];
 
