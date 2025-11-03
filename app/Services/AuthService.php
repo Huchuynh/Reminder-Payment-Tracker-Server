@@ -113,7 +113,8 @@ class AuthService
 
             $token = JWTAuth::fromUser($account);
 
-            $account->update(['fcm_token' => $request['fcm_token']]);
+            if ($request['fcm_token'])
+                $account->update(['fcm_token' => $request['fcm_token']]);
 
             Cache::forget($cacheKey);
 
