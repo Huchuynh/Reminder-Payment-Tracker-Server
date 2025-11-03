@@ -20,7 +20,7 @@ class SubscriptionResource extends JsonResource
             'plan' => $this->plan,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
-            'note' => $this->note,
+            'notes' => $this->notes,
 
             // load service relationship
             'service' => [
