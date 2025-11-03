@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Enums\SubscriptionStatus;
 use App\Models\Subscription;
 use App\Notifications\SubscriptionReminderNotification;
+use App\Services\SubscriptionStatusService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
@@ -19,16 +20,19 @@ class CheckSubscriptionRemindersJob implements ShouldQueue
     public function handle(): void
     {
         $subscriptions = Subscription::with('account')
-            ->where('status', SubscriptionStatus::ACTIVE)
+            ->whereIn('status', [
+                SubscriptionStatus::ACTIVE,
+                SubscriptionStatus::EXPIRING
+            ])
             ->get();
 
         foreach ($subscriptions as $subscription) {
             $daysLeft = now()->diffInDays($subscription->end_date, false);
             $threshold = $subscription->alert_thresholds ?? [];
 
-            $reminderType = $this->getReminderType($daysLeft, $threshold);
+            $reminderType = SubscriptionStatusService::evaluateStatus($daysLeft, $threshold);
 
-            if (!$subscription->isDueForReminder() || !$reminderType) continue;
+            if (!$subscription->isDueForReminder() || $reminderType === SubscriptionStatus::ACTIVE) continue;
 
             $subscription->account->notify(new SubscriptionReminderNotification($subscription, $reminderType));
 
@@ -36,17 +40,5 @@ class CheckSubscriptionRemindersJob implements ShouldQueue
 
             \Log::info("Reminder sent for subscription ID {$subscription->id} ({$reminderType->value})");
         }
-    }
-
-    private function getReminderType(int $daysLeft, array $threshold): ?SubscriptionStatus
-    {
-        if (in_array($daysLeft, $threshold))
-            return SubscriptionStatus::EXPIRING;
-        if ($daysLeft == 0)
-            return SubscriptionStatus::EXPIRED;
-        if ($daysLeft < 0)
-            return SubscriptionStatus::OVERDUE;
-
-        return null;
     }
 }
