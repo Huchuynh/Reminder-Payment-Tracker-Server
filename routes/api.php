@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\NetflixProviderController;
 use App\Http\Controllers\Api\ServiceController;
+use App\Http\Controllers\Api\StatisticController;
 use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\YoutubeProviderController;
 use Illuminate\Support\Facades\Route;
@@ -32,6 +33,9 @@ Route::middleware('auth:api')->group(function () {
 
     // Account Routes
     Route::get('admin/accounts', [AccountController::class, 'getAccountWithSubscription']);
+
+    // Statistic Routes
+    Route::get('admin/statistics/renew-cancel', [StatisticController::class, 'getRenewCancelStatistic']);
 });
 
 Route::get("/provider/youtube/inquiry/{customerCode}", [YoutubeProviderController::class, "inquiry"]);
