@@ -62,16 +62,24 @@ class SubscriptionReminderNotification extends Notification implements ShouldQue
 
     public function toFcm(object $notifiable): FcmMessage
     {
+        $notificationData = [
+            'subscription_id' => (string)$this->subscription->id,
+            'service_name' => $this->subscription->service->name,
+            'service_icon' => $this->subscription->service->icon,
+            'message' => $this->messageText(),
+            'end_date' => $this->subscription->end_date->toIso8601String()
+        ];
+        
         return (new FcmMessage(notification: new FcmNotification(
             title: "Service {$this->subscription->service->name}",
             body: $this->messageText(),
         )))
             ->data([
-                'subscription_id' => $this->subscription->id,
-                'service_name' => $this->subscription->service->name,
-                'service_icon' => $this->subscription->service->icon,
-                'message' => $this->messageText(),
-                'end_date' => $this->subscription->end_date
+                'id' => (string)$this->id,
+                'notifiable_id' => (string)$notifiable->id,
+                'notification_data' => json_encode($notificationData),
+                'read_at' => '',
+                'created_at' => now()->toIso8601String(),
             ]);
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\AccountRole;
 use App\Models\Account;
 use Google_Client;
 use Illuminate\Support\Facades\Cache;
@@ -61,7 +62,7 @@ class AuthService
                     'full_name' => $payload['name'],
                     'avatar' => $payload['picture'],
                     'password' => bcrypt(Str::random(16)),
-                    'role' => 'user',
+                    'role' => AccountRole::USER,
                 ]
             );
 

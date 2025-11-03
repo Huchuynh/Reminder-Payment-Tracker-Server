@@ -1,5 +1,7 @@
 set -e
 
+service cron start
+
 # Chạy migrates
 php artisan migrate --force
 

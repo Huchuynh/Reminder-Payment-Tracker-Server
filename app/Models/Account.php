@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\AccountRole;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -16,6 +17,9 @@ class Account extends Authenticatable implements JWTSubject
 
     protected $fillable = ['full_name', 'email', 'phone', 'avatar', 'role', 'password', 'fcm_token'];
 
+    protected $casts = [
+        'role' => AccountRole::class,
+    ];
     /**
      * The attributes that should be hidden for serialization.
      *
