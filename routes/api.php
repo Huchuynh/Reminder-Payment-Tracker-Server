@@ -35,6 +35,8 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/read-all', 'markAllAsRead');
         Route::delete('/{id}', 'destroy');
     });
+    Route::post('subscriptions/{id}/renew', [SubscriptionController::class, 'renew']);
+    Route::post('subscriptions/{id}/unsubscribe', [SubscriptionController::class, 'unsubscribe']);
 });
 
 
