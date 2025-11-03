@@ -36,6 +36,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/{id}', 'show');
         Route::post('/{id}/read', 'markAsRead');
         Route::post('/read-all', 'markAllAsRead');
+        Route::post('/admin/send-reminder', 'reminderSubscription');
         Route::delete('/{id}', 'destroy');
     });
     Route::post('subscriptions/{id}/renew', [SubscriptionController::class, 'renew']);

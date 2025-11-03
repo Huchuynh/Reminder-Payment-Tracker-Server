@@ -2,6 +2,10 @@
 
 namespace App\Services;
 
+use App\Enums\SubscriptionStatus;
+use App\Models\Subscription;
+use App\Notifications\SubscriptionReminderNotification;
+
 class NotificationService
 {
     public function get($user, array $data)
@@ -57,6 +61,18 @@ class NotificationService
         } catch (\Throwable $e) {
             \Log::error("Failed to delete notification {$id}: " . $e->getMessage());
             throw new \Exception("Failed to delete notification {$id}. " . $e->getMessage());
+        }
+    }
+
+    public function reminderSubscription(array $data)
+    {
+        try {
+            $subscription = Subscription::with('account')->findOrFail($data['subscription_id']);
+            $subscription->account->notify(new SubscriptionReminderNotification($subscription, SubscriptionStatus::from($data['status'])));
+            return ["message" => "Notification has been sent"];
+        } catch (\Throwable $e) {
+            \Log::error("Failed to send notification to {$subscription->account_id}: " . $e->getMessage());
+            throw new \Exception("Failed to send notification to {$subscription->account_id}. " . $e->getMessage());
         }
     }
 }
