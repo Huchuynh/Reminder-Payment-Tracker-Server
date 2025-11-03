@@ -2,8 +2,6 @@
 
 namespace App\Services;
 
-use App\Dto\QueryParamsDto;
-use App\Dto\SubscriptionQueryParamsDto;
 use App\Enums\SubscriptionHistoryAction;
 use App\Enums\SubscriptionStatus;
 use App\Models\Subscription;
@@ -58,10 +56,9 @@ class SubscriptionService
 
     }
 
-    public function update(int $id, array $data)
+    public function update(Subscription $subscription, array $data)
     {
         try {
-            $subscription = $this->findById($id);
             $subscription->update($data);
             return $subscription;
         } catch (\Throwable $e) {
@@ -70,10 +67,9 @@ class SubscriptionService
         }
     }
 
-    public function renew(int $id, array $data)
+    public function renew(Subscription $subscription, array $data)
     {
         try {
-            $subscription = $this->findById($id);
             $subscription->update(['end_date' => $data['end_date']]);
 
             SubscriptionHistory::create([
@@ -88,10 +84,9 @@ class SubscriptionService
         }
     }
 
-    public function unsubscribe(int $id)
+    public function unsubscribe(Subscription $subscription)
     {
         try {
-            $subscription = $this->findById($id);
             $subscription->update(['status' => SubscriptionStatus::CANCELED]);
 
             return $subscription;

@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use App\Enums\SubscriptionStatus;
+use App\Policies\SubscriptionPolicy;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+#[UsePolicy(SubscriptionPolicy::class)]
 class Subscription extends Model
 {
     protected $fillable = [

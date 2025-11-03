@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Dto\QueryParamsDto;
-use App\Dto\SubscriptionQueryParamsDto;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateSubscriptionRequest;
 use App\Http\Requests\RenewSubscriptionRequest;
 use App\Http\Requests\SubscriptionQueryRequest;
 use App\Http\Requests\UpdateSubscriptionRequest;
 use App\Http\Resources\SubscriptionResource;
+use App\Models\Subscription;
 use App\Services\SubscriptionService;
 use App\Traits\ApiResponseTrait;
+use Illuminate\Support\Facades\Gate;
 
 class SubscriptionController extends Controller
 {
@@ -78,7 +78,11 @@ class SubscriptionController extends Controller
     public function update(UpdateSubscriptionRequest $request, string $id)
     {
         try {
-            $result = $this->subscriptionService->update($id, $request->validated());
+            $subscription = Subscription::findOrFail($id);
+
+            Gate::authorize('update', $subscription);
+
+            $result = $this->subscriptionService->update($subscription, $request->validated());
 
             return $this->responseSuccess(
                 $result,
@@ -92,7 +96,11 @@ class SubscriptionController extends Controller
     public function renew(RenewSubscriptionRequest $request, string $id)
     {
         try {
-            $result = $this->subscriptionService->renew($id, $request->validated());
+            $subscription = Subscription::findOrFail($id);
+
+            Gate::authorize('renew', $subscription);
+
+            $result = $this->subscriptionService->renew($subscription, $request->validated());
 
             return $this->responseSuccess(
                 $result,
@@ -106,7 +114,11 @@ class SubscriptionController extends Controller
     public function unsubscribe(string $id)
     {
         try {
-            $result = $this->subscriptionService->unsubscribe($id);
+            $subscription = Subscription::findOrFail($id);
+
+            Gate::authorize('unsubscribe', $subscription);
+
+            $result = $this->subscriptionService->unsubscribe($subscription);
 
             return $this->responseSuccess(
                 $result,
