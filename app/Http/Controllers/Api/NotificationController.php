@@ -39,10 +39,10 @@ class NotificationController extends Controller
     public function getAdminLogNotifications(Request $request)
     {
         try {
-            $limit = $request->validate([
+            $data = $request->validate([
                 "limit" => ["nullable", "integer"],
             ]);
-            $notifications = $this->notificationService->getAdminLogNotifications($limit);
+            $notifications = $this->notificationService->getAdminLogNotifications($data['limit']);
 
             return NotificationResource::collection($notifications);
         } catch (\Throwable $e) {

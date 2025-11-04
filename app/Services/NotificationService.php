@@ -23,10 +23,11 @@ class NotificationService
     {
         try {
             return DatabaseNotification::query()
-                ->where('type', AdminReminderNotification::class)
                 ->with(['notifiable' => function ($query) {
-                    $query->select('id', 'full_name', 'email', 'avatar'); // lấy cột cần thiết
+                    $query->select('id', 'full_name', 'email', 'avatar');
                 }])
+                ->where('type', AdminReminderNotification::class)
+                ->orderByDesc('created_at')
                 ->paginate($limit);
         } catch (\Throwable $e) {
             \Log::error("Failed to get notifications: " . $e->getMessage());
