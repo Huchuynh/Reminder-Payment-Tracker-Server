@@ -4,7 +4,8 @@ namespace App\Services;
 
 use App\Enums\SubscriptionStatus;
 use App\Models\Subscription;
-use App\Notifications\SubscriptionReminderNotification;
+use App\Notifications\AdminReminderNotification;
+use Illuminate\Notifications\DatabaseNotification;
 
 class NotificationService
 {
@@ -12,6 +13,21 @@ class NotificationService
     {
         try {
             return $user->notifications()->paginate($data['limit'] ?? 10);
+        } catch (\Throwable $e) {
+            \Log::error("Failed to get notifications: " . $e->getMessage());
+            throw new \Exception("Failed to get notifications. " . $e->getMessage());
+        }
+    }
+
+    public function getAdminLogNotifications($limit = 5)
+    {
+        try {
+            return DatabaseNotification::query()
+                ->where('type', AdminReminderNotification::class)
+                ->with(['notifiable' => function ($query) {
+                    $query->select('id', 'full_name', 'email', 'avatar'); // lấy cột cần thiết
+                }])
+                ->paginate($limit);
         } catch (\Throwable $e) {
             \Log::error("Failed to get notifications: " . $e->getMessage());
             throw new \Exception("Failed to get notifications. " . $e->getMessage());
@@ -68,7 +84,7 @@ class NotificationService
     {
         try {
             $subscription = Subscription::with('account')->findOrFail($data['subscription_id']);
-            $subscription->account->notify(new SubscriptionReminderNotification($subscription, SubscriptionStatus::from($data['status'])));
+            $subscription->account->notify(new AdminReminderNotification($subscription, SubscriptionStatus::from($data['status'])));
             return ["message" => "Notification has been sent"];
         } catch (\Throwable $e) {
             \Log::error("Failed to send notification to {$subscription->account_id}: " . $e->getMessage());

@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RenewCancelStatisticRequest;
 use App\Services\StatisticService;
 use App\Traits\ApiResponseTrait;
-use Illuminate\Http\Request;
 
 class StatisticController extends Controller
 {
@@ -18,17 +18,14 @@ class StatisticController extends Controller
         $this->statisticService = $statisticService;
     }
 
-    public function getRenewCancelStatistic(Request $request)
+    public function getRenewCancelStatisticByService(RenewCancelStatisticRequest $request)
     {
         try {
-            $result = $this->statisticService->getRenewCancelStatistic($request->validate([
-                "from" => "required|date|date_format:Y-m-d H:i:s",
-                "to" => "required|date|date_format:Y-m-d H:i:s|after:from",
-            ]));
+            $result = $this->statisticService->getRenewCancelStatisticByService($request->validated());
 
             return $this->responseSuccess(
-                $result,
-                "Get renew and cancel statistic successfully."
+                $result['data'],
+                $result['message'],
             );
         } catch (\Throwable $e) {
             return $this->handleExceptionResponse($e);

@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\NetflixProviderController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ServiceController;
+use App\Http\Controllers\Api\StatisticController;
 use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\YoutubeProviderController;
 use Illuminate\Support\Facades\Route;
@@ -30,23 +31,25 @@ Route::middleware('auth:api')->group(function () {
 
     // Subscription Routes
     Route::apiResource('subscriptions', SubscriptionController::class);
+    Route::post('subscriptions/{id}/renew', [SubscriptionController::class, 'renew']);
+    Route::post('subscriptions/{id}/unsubscribe', [SubscriptionController::class, 'unsubscribe']);
 
+    // Notification Routes
     Route::controller(NotificationController::class)->prefix('notifications')->group(function () {
         Route::get('/', 'index');
         Route::get('/{id}', 'show');
+        Route::get('/admin/get  ', 'getAdminLogNotifications');
         Route::post('/{id}/read', 'markAsRead');
         Route::post('/read-all', 'markAllAsRead');
         Route::post('/admin/send-reminder', 'reminderSubscription');
         Route::delete('/{id}', 'destroy');
     });
-    Route::post('subscriptions/{id}/renew', [SubscriptionController::class, 'renew']);
-    Route::post('subscriptions/{id}/unsubscribe', [SubscriptionController::class, 'unsubscribe']);
 
     // Account Routes
     Route::get('admin/accounts', [AccountController::class, 'getAccountWithSubscription']);
 
     // Statistic Routes
-    Route::get('admin/statistics/renew-cancel', [StatisticController::class, 'getRenewCancelStatistic']);
+    Route::get('admin/statistics/renew-cancel', [StatisticController::class, 'getRenewCancelStatisticByService']);
 });
 
 Route::get("/provider/youtube/inquiry/{customerCode}", [YoutubeProviderController::class, "inquiry"]);
