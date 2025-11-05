@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\SubscriptionStatus;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class VerifyOtpRequest extends FormRequest
+class SubscriptionReminderRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,9 +24,8 @@ class VerifyOtpRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|string|email|exists:accounts,email',
-            'otp' => 'required|digits:6',
-            'fcm_token' => 'nullable|string'
+            'subscription_id' => 'required|integer|exists:subscriptions,id',
+            'status' => ['required', Rule::in(SubscriptionStatus::remindableValues())],
         ];
     }
 }

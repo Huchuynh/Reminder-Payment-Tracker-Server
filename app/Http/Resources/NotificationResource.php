@@ -16,9 +16,10 @@ class NotificationResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'notifiable_id' => $this->notifiable_id,
+            'notifiable' => $this->notifiable,
             'notification_data' => $this->data,
             'read_at' => $this->read_at,
+            'sent_at' => $this->created_at,
             'created_at' => $this->created_at->diffForHumans(),
         ];
     }

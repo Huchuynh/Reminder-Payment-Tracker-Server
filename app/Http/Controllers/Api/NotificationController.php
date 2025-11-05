@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SubscriptionReminderRequest;
 use App\Http\Resources\NotificationResource;
 use App\Services\NotificationService;
 use App\Traits\ApiResponseTrait;
@@ -28,6 +29,20 @@ class NotificationController extends Controller
                     "limit" => ["nullable", "integer"],
                 ])
             );
+
+            return NotificationResource::collection($notifications);
+        } catch (\Throwable $e) {
+            return $this->handleExceptionResponse($e);
+        }
+    }
+
+    public function getAdminLogNotifications(Request $request)
+    {
+        try {
+            $data = $request->validate([
+                "limit" => ["nullable", "integer"],
+            ]);
+            $notifications = $this->notificationService->getAdminLogNotifications($data['limit']);
 
             return NotificationResource::collection($notifications);
         } catch (\Throwable $e) {
@@ -82,6 +97,20 @@ class NotificationController extends Controller
     {
         try {
             $result = $this->notificationService->delete($request->user(), $id);;
+
+            return $this->responseSuccess(
+                null,
+                $result['message']
+            );
+        } catch (\Throwable $e) {
+            return $this->handleExceptionResponse($e);
+        }
+    }
+
+    public function reminderSubscription(SubscriptionReminderRequest $request)
+    {
+        try {
+            $result = $this->notificationService->reminderSubscription($request->validated());
 
             return $this->responseSuccess(
                 null,

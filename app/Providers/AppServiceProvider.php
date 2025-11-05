@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Notification;
 use App\Models\Subscription;
 use App\Policies\SubscriptionPolicy;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -23,5 +25,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::policy(Subscription::class, SubscriptionPolicy::class);
+
+        Notification::creating(function (Notification $notification) {
+            if (Auth::check() && empty($notification->sender_id)) {
+                $notification->sender_id = Auth::id();
+            }
+        });
     }
 }

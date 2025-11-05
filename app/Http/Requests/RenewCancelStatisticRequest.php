@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class VerifyOtpRequest extends FormRequest
+class RenewCancelStatisticRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,9 +22,9 @@ class VerifyOtpRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|string|email|exists:accounts,email',
-            'otp' => 'required|digits:6',
-            'fcm_token' => 'nullable|string'
+            "from" => "required|date|",
+            "to" => "required|date|after:from",
+            "service_id" => "required|integer",
         ];
     }
 }

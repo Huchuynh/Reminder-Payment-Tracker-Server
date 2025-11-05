@@ -69,7 +69,7 @@ class SubscriptionReminderNotification extends Notification implements ShouldQue
             'message' => $this->messageText(),
             'end_date' => $this->subscription->end_date->toIso8601String()
         ];
-        
+
         return (new FcmMessage(notification: new FcmNotification(
             title: "Service {$this->subscription->service->name}",
             body: $this->messageText(),

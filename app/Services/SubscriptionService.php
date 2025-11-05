@@ -70,7 +70,10 @@ class SubscriptionService
     public function renew(Subscription $subscription, array $data)
     {
         try {
-            $subscription->update(['end_date' => $data['end_date']]);
+            $subscription->update([
+                'end_date' => $data['end_date'],
+                'status' => SubscriptionStatus::ACTIVE,
+            ]);
 
             SubscriptionHistory::create([
                 'subscription_id' => $subscription->id,
@@ -88,6 +91,11 @@ class SubscriptionService
     {
         try {
             $subscription->update(['status' => SubscriptionStatus::CANCELED]);
+
+            SubscriptionHistory::create([
+                'subscription_id' => $subscription->id,
+                'action' => SubscriptionHistoryAction::CANCELED
+            ]);
 
             return $subscription;
         } catch (\Throwable $e) {
