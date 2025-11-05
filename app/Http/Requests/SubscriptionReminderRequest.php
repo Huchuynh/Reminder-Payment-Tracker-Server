@@ -25,11 +25,7 @@ class SubscriptionReminderRequest extends FormRequest
     {
         return [
             'subscription_id' => 'required|integer|exists:subscriptions,id',
-            'status' => ['required', Rule::in([
-                SubscriptionStatus::EXPIRED->value,
-                SubscriptionStatus::EXPIRING->value,
-                SubscriptionStatus::OVERDUE->value,
-            ])],
+            'status' => ['required', Rule::in(SubscriptionStatus::remindableValues())],
         ];
     }
 }

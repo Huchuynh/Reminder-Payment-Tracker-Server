@@ -9,4 +9,21 @@ enum SubscriptionStatus: string
     case EXPIRING = 'expiring';
     case CANCELED = 'canceled';
     case OVERDUE = 'overdue';
+    case PAID = 'paid';
+
+    public function isRemindable(): bool
+    {
+        return match ($this) {
+            self::ACTIVE, self::EXPIRED, self::EXPIRING, self::CANCELED, self::OVERDUE, self::PAID => true,
+            default => false
+        };
+    }
+
+    public static function remindableValues(): array
+    {
+        return array_map(
+            fn(self $case) => $case->value,
+            array_filter(self::cases(), fn(self $case) => $case->isRemindable())
+        );
+    }
 }
