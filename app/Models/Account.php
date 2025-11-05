@@ -68,6 +68,12 @@ class Account extends Authenticatable implements JWTSubject
         return $this->hasMany(Subscription::class);
     }
 
+    public function notifications()
+    {
+        return $this->morphMany(Notification::class, 'notifiable');
+    }
+
+
     public function reminderSettings(): HasOne
     {
         return $this->hasOne(ReminderSetting::class);
