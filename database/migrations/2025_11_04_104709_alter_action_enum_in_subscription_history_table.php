@@ -15,7 +15,14 @@ return new class extends Migration {
             $table->dropColumn('action');
         });
 
-        DB::statement("CREATE TYPE subscription_history_action_enum AS ENUM ('expired', 'canceled', 'renewed')");
+        DB::statement("
+            DO $$
+            BEGIN
+                IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'subscription_history_action_enum') THEN
+                    CREATE TYPE subscription_history_action_enum AS ENUM ('expired', 'canceled', 'renewed');
+                END IF;
+            END$$;
+        ");
 
         Schema::table('subscription_history', function (Blueprint $table) {
             $table->enum('action', ['expired', 'canceled', 'renewed'])
