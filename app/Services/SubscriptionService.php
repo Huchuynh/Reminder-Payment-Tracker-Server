@@ -104,7 +104,7 @@ class SubscriptionService
         }
     }
 
-    public function paid(Subscription $subscription)
+    public function pay(Subscription $subscription)
     {
         try {
             $subscription->update(['status' => SubscriptionStatus::PAID]);

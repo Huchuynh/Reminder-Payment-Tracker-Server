@@ -129,14 +129,14 @@ class SubscriptionController extends Controller
         }
     }
 
-    public function paid(string $id)
+    public function pay(string $id)
     {
         try {
             $subscription = Subscription::findOrFail($id);
 
             Gate::authorize('paid', $subscription);
 
-            $result = $this->subscriptionService->paid($subscription);
+            $result = $this->subscriptionService->pay($subscription);
 
             return $this->responseSuccess(
                 $result,
