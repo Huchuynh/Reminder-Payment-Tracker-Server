@@ -128,4 +128,22 @@ class SubscriptionController extends Controller
             return $this->handleExceptionResponse($e);
         }
     }
+
+    public function paid(string $id)
+    {
+        try {
+            $subscription = Subscription::findOrFail($id);
+
+            Gate::authorize('paid', $subscription);
+
+            $result = $this->subscriptionService->paid($subscription);
+
+            return $this->responseSuccess(
+                $result,
+                'Service successfully paid',
+            );
+        } catch (\Throwable $e) {
+            return $this->handleExceptionResponse($e);
+        }
+    }
 }

@@ -103,4 +103,16 @@ class SubscriptionService
             throw new \Exception("Failed to cancel service. " . $e->getMessage());
         }
     }
+
+    public function paid(Subscription $subscription)
+    {
+        try {
+            $subscription->update(['status' => SubscriptionStatus::PAID]);
+
+            return $subscription;
+        } catch (\Throwable $e) {
+            \Log::error("Failed to pay service: " . $e->getMessage());
+            throw new \Exception("Failed to pay service. " . $e->getMessage());
+        }
+    }
 }

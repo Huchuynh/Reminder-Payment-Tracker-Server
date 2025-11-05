@@ -33,12 +33,13 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('subscriptions', SubscriptionController::class);
     Route::post('subscriptions/{id}/renew', [SubscriptionController::class, 'renew']);
     Route::post('subscriptions/{id}/unsubscribe', [SubscriptionController::class, 'unsubscribe']);
+    Route::post('subscriptions/{id}/paid', [SubscriptionController::class, 'paid']);
 
     // Notification Routes
     Route::controller(NotificationController::class)->prefix('notifications')->group(function () {
         Route::get('/', 'index');
         Route::get('/{id}', 'show');
-        Route::get('/admin/get  ', 'getAdminLogNotifications');
+        Route::get('/admin/get', 'getAdminLogNotifications');
         Route::post('/{id}/read', 'markAsRead');
         Route::post('/read-all', 'markAllAsRead');
         Route::post('/admin/send-reminder', 'reminderSubscription');
