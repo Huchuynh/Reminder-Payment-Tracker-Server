@@ -38,7 +38,7 @@ class AuthController extends Controller
     public function loginGoogle(GoogleLoginRequest $request)
     {
         try {
-            $result = $this->authService->loginGoogle($request->credentials);
+            $result = $this->authService->loginGoogle($request->validated());
             return $this->responseSuccess(
                 $result,
                 'Login successful.',
