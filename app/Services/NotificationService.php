@@ -12,7 +12,9 @@ class NotificationService
     public function get($user, array $data)
     {
         try {
-            return $user->notifications()->paginate($data['limit'] ?? 10);
+            return $user->notifications()
+                ->orderBy('created_at', 'desc')
+                ->paginate($data['limit'] ?? 10);
         } catch (\Throwable $e) {
             \Log::error("Failed to get notifications: " . $e->getMessage());
             throw new \Exception("Failed to get notifications. " . $e->getMessage());

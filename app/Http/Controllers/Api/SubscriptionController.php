@@ -129,14 +129,14 @@ class SubscriptionController extends Controller
         }
     }
 
-    public function pay(string $id)
+    public function mark_as_paid(string $id)
     {
         try {
             $subscription = Subscription::findOrFail($id);
 
-            Gate::authorize('paid', $subscription);
+            Gate::authorize('mark_as_paid', $subscription);
 
-            $result = $this->subscriptionService->pay($subscription);
+            $result = $this->subscriptionService->mark_as_paid($subscription);
 
             return $this->responseSuccess(
                 $result,

@@ -56,7 +56,7 @@ class SubscriptionReminderNotification extends Notification implements ShouldQue
             ->subject("Reminder for {$this->subscription->service->name}")
             ->greeting("Hello {$notifiable->name},")
             ->line($this->messageText())
-            ->action("For more details, please visit: ", url("/subscriptions/" . $this->subscription->id))
+            ->action("For more details, please visit: ", env("FRONT_END_URL") . "/my-services/" . $this->subscription->id)
             ->line("Expire date: {$this->subscription->end_date}");
     }
 
@@ -97,13 +97,13 @@ class SubscriptionReminderNotification extends Notification implements ShouldQue
     private function messageText(): string
     {
         $service = $this->subscription->service->name;
-        $hoursLeft = now()->diffInHours($this->subscription->end_date, false);
-        $hoursDisplay = floor(abs($hoursLeft));
+        $daysLeft = now()->diffInDays($this->subscription->end_date, false);
+        $daysDisplay = floor(abs($daysLeft));
 
         return match (true) {
-            $hoursLeft > 0 => "{$service} will expire in {$hoursDisplay} hours.",
-            $hoursLeft == 0 => "{$service} expires this hour.",
-            default => "{$service} expired {$hoursDisplay} hours ago.",
+            $daysLeft > 0 => "{$service} will expire in {$daysDisplay} days.",
+            $daysLeft == 0 => "{$service} expires today.",
+            default => "{$service} expired {$daysDisplay} days ago.",
         };
     }
 }

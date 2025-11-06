@@ -23,7 +23,7 @@ class SubscriptionPolicy
         return $this->manage($account, $subscription);
     }
 
-    public function paid(Account $account, Subscription $subscription): bool
+    public function mark_as_paid(Account $account, Subscription $subscription): bool
     {
         return $this->manage($account, $subscription);
     }

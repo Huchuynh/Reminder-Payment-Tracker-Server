@@ -1,22 +1,22 @@
 <?php
+
 namespace App\Services;
 
 use App\Dto\QueryParamsDto;
 use App\Models\Service;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\Collection;
 
 class ServiceService
 {
-    public function get(array $params) {
+    public function get(array $params)
+    {
         try {
             $query = Service::query();
 
             $query->where(function ($query) use ($params) {
                 $query->where('name', 'ilike', "%{$params['search']}%")
                     ->orWhere('provider', 'ilike', "%{$params['search']}%");
-            });
+            })->where('is_base', true);
 
             $query->orderBy($params['sort_by'], $params['sort_order']);
 
@@ -27,13 +27,14 @@ class ServiceService
         }
     }
 
-    public function getBase(){
+    public function getBase()
+    {
         return Service::where('is_base', true)->get()->load('service_apis');
     }
 
     public function findById(int $id)
     {
-        return Service::findOrFail($id);
+        return Service::with('service_apis')->findOrFail($id);
     }
 
     public function create(array $data)

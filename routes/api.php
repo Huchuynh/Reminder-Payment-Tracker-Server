@@ -33,7 +33,7 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('subscriptions', SubscriptionController::class);
     Route::post('subscriptions/{id}/renew', [SubscriptionController::class, 'renew']);
     Route::post('subscriptions/{id}/unsubscribe', [SubscriptionController::class, 'unsubscribe']);
-    Route::post('subscriptions/{id}/pay', [SubscriptionController::class, 'pay']);
+    Route::post('subscriptions/{id}/mark-as-paid', [SubscriptionController::class, 'mark_as_paid']);
 
     // Notification Routes
     Route::controller(NotificationController::class)->prefix('notifications')->group(function () {

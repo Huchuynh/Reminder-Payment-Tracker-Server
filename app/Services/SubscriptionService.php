@@ -104,15 +104,15 @@ class SubscriptionService
         }
     }
 
-    public function pay(Subscription $subscription)
+    public function mark_as_paid(Subscription $subscription)
     {
         try {
             $subscription->update(['status' => SubscriptionStatus::PAID]);
 
             return $subscription;
         } catch (\Throwable $e) {
-            \Log::error("Failed to pay service: " . $e->getMessage());
-            throw new \Exception("Failed to pay service. " . $e->getMessage());
+            \Log::error("Failed to mark as paid service: " . $e->getMessage());
+            throw new \Exception("Failed to mark as paid service. " . $e->getMessage());
         }
     }
 }
