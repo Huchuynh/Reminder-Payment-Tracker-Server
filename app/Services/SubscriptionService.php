@@ -16,17 +16,17 @@ class SubscriptionService
             $query = Subscription::query()->with("service");
 
             $query->where('account_id', $params['account_id']);
-//
+
             $query->whereHas('service', function ($query) use ($params) {
                 $query->where('name', 'ilike', "%{$params['search']}%");
             });
-//
+
             $query->where('status', $params['status']);
-//
+
             if (isset($params['start_date']) && isset($params['end_date']))
                 $query->where('start_date', '<=', $params['end_date'])
                     ->where('end_date', '>=', $params['start_date']);
-//
+
             $query->orderBy($params['sort_by'], $params['sort_order']);
 
             return $query->paginate($params['limit']);

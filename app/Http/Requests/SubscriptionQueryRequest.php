@@ -2,8 +2,6 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-
 class SubscriptionQueryRequest extends QueryParamsRequest
 {
     /**
@@ -14,7 +12,7 @@ class SubscriptionQueryRequest extends QueryParamsRequest
     public function rules(): array
     {
         return array_merge(parent::rules(), [
-            'account_id' => 'integer|required',
+            'account_id' => 'integer|required|exists:accounts,id',
             'start_date' => 'date|nullable',
             'end_date' => 'date|nullable',
             'status' => 'string|required',

@@ -12,7 +12,7 @@ class Service extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['name', 'provider', 'icon'];
+    protected $fillable = ['name', 'provider', 'icon', 'account_id'];
 
     public function subscriptions(): HasMany
     {

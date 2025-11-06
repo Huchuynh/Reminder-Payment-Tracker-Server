@@ -13,16 +13,23 @@ class CreateSubscriptionTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected $account;
+    private string $prefix = "/api/subscriptions";
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->account = Account::factory()->create();
+        $this->actingAs($this->account, 'api');
+    }
+
     #[Test]
     public function it_can_create_a_subscription(): void
     {
-        $account = Account::factory()->create();
-        $this->actingAs($account, 'api');
-
         $service = Service::factory()->create();
 
         $payload = [
-            'account_id' => $account->id,
+            'account_id' => $this->account->id,
             'service_id' => $service->id,
             'start_date' => now()->subDay()->toDateTimeString(),
             'end_date' => now()->addMonth()->toDateTimeString(),
@@ -34,7 +41,7 @@ class CreateSubscriptionTest extends TestCase
             'status' => 'active',
         ];
 
-        $response = $this->postJson('/api/subscriptions', $payload);
+        $response = $this->postJson($this->prefix, $payload);
 
         $response->assertStatus(201)
             ->assertJsonFragment(['message' => 'Subscription successfully created']);
@@ -42,7 +49,7 @@ class CreateSubscriptionTest extends TestCase
         $subscription = Subscription::latest()->first();
 
         $this->assertDatabaseHas('subscriptions', [
-            'account_id' => $account->id,
+            'account_id' => $this->account->id,
             'service_id' => $service->id,
             'start_date' => $payload['start_date'],
             'end_date' => $payload['end_date'],
@@ -58,9 +65,6 @@ class CreateSubscriptionTest extends TestCase
     #[Test]
     public function it_fails_when_account_id_is_missing(): void
     {
-        $account = Account::factory()->create();
-        $this->actingAs($account, 'api');
-
         $service = Service::factory()->create();
 
         $payload = [
@@ -75,7 +79,7 @@ class CreateSubscriptionTest extends TestCase
             'status' => 'active',
         ];
 
-        $response = $this->postJson('/api/subscriptions', $payload);
+        $response = $this->postJson($this->prefix, $payload);
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['account_id']);
@@ -86,13 +90,10 @@ class CreateSubscriptionTest extends TestCase
     #[Test]
     public function it_fails_when_alert_thresholds_is_not_array(): void
     {
-        $account = Account::factory()->create();
-        $this->actingAs($account, 'api');
-
         $service = Service::factory()->create();
 
         $payload = [
-            'account_id' => $account->id,
+            'account_id' => $this->account->id,
             'service_id' => $service->id,
             'start_date' => now()->subDay()->toDateTimeString(),
             'end_date' => now()->addMonth()->toDateTimeString(),
@@ -104,7 +105,7 @@ class CreateSubscriptionTest extends TestCase
             'status' => 'active',
         ];
 
-        $response = $this->postJson('/api/subscriptions', $payload);
+        $response = $this->postJson($this->prefix, $payload);
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['alert_thresholds']);
 
@@ -114,13 +115,9 @@ class CreateSubscriptionTest extends TestCase
     #[Test]
     public function it_fails_when_status_is_invalid(): void
     {
-        $account = Account::factory()->create();
-        $this->actingAs($account, 'api');
-
         $service = Service::factory()->create();
 
         $payload = [
-
             'service_id' => $service->id,
             'start_date' => now()->subDay()->toDateTimeString(),
             'end_date' => now()->addMonth()->toDateTimeString(),
@@ -132,7 +129,7 @@ class CreateSubscriptionTest extends TestCase
             'status' => 'this is an invalid status',
         ];
 
-        $response = $this->postJson('/api/subscriptions', $payload);
+        $response = $this->postJson($this->prefix, $payload);
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['status']);
 
