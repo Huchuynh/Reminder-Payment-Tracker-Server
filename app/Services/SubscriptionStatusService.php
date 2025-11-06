@@ -10,10 +10,8 @@ class SubscriptionStatusService
     {
         if (in_array($daysLeft, $threshold))
             return SubscriptionStatus::EXPIRING;
-        if ($daysLeft == 0)
+        if ($daysLeft <= 0)
             return SubscriptionStatus::EXPIRED;
-        if ($daysLeft < 0)
-            return SubscriptionStatus::OVERDUE;
 
         return SubscriptionStatus::ACTIVE;
     }

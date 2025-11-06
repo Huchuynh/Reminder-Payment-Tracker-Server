@@ -2,8 +2,7 @@
 
 namespace App\Notifications;
 
-use App\Enums\AlertChanels;
-use App\Enums\SubscriptionStatus;
+use App\Enums\AlertChannels;
 use App\Models\Subscription;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -18,15 +17,13 @@ class SubscriptionReminderNotification extends Notification implements ShouldQue
     use Queueable;
 
     protected Subscription $subscription;
-    protected SubscriptionStatus $type;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(Subscription $subscription, SubscriptionStatus $type)
+    public function __construct(Subscription $subscription)
     {
         $this->subscription = $subscription;
-        $this->type = $type;
     }
 
     /**
@@ -37,14 +34,14 @@ class SubscriptionReminderNotification extends Notification implements ShouldQue
     public function via(object $notifiable): array
     {
         $map = [
-            AlertChanels::EMAIL->value => "mail",
-            AlertChanels::IN_APP->value => "database",
-            AlertChanels::PUSH->value => FcmChannel::class,
+            AlertChannels::EMAIL->value => 'mail',
+            AlertChannels::NOTIFICATION->value => ['database', FcmChannel::class],
         ];
 
-        return array_values(
-            array_intersect_key($map, array_flip($this->subscription->reminder_channels ?? [])),
-        );
+        $selected = array_intersect_key($map, array_flip($this->subscription->reminder_channels ?? []));
+
+        \Log::info(collect($selected)->flatten()->values()->all());
+        return collect($selected)->flatten()->values()->all();
     }
 
     /**
