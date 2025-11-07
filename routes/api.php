@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\StatisticController;
 use App\Http\Controllers\Api\SubscriptionController;
+use App\Http\Controllers\Api\SubscriptionHistoryController;
 use App\Http\Controllers\Api\YoutubeProviderController;
 use Illuminate\Support\Facades\Route;
 
@@ -31,6 +32,7 @@ Route::middleware('auth:api')->group(function () {
 
     // Subscription Routes
     Route::apiResource('subscriptions', SubscriptionController::class);
+    Route::get('subscriptions/{id}/history', [SubscriptionHistoryController::class, 'getBySubscriptionId']);
     Route::post('subscriptions/{id}/renew', [SubscriptionController::class, 'renew']);
     Route::post('subscriptions/{id}/unsubscribe', [SubscriptionController::class, 'unsubscribe']);
     Route::post('subscriptions/{id}/mark-as-paid', [SubscriptionController::class, 'mark_as_paid']);

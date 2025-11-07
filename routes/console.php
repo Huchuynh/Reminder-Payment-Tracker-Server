@@ -12,5 +12,5 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::job(new CheckSubscriptionRemindersJob())->hourly();
-Schedule::job(new HandleOverdueSubscriptionsJob())->everyMinute();
+Schedule::job(new HandleOverdueSubscriptionsJob())->hourly();
 Schedule::job(new UpdateSubscriptionStatusJob())->daily();

@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Dto\QueryParamsDto;
 use App\Models\Service;
 use Illuminate\Support\Facades\DB;
 
