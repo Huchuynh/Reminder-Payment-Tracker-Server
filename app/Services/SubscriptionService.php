@@ -24,8 +24,8 @@ class SubscriptionService
             $query->where('status', $params['status']);
 //
             if (isset($params['start_date']) && isset($params['end_date']))
-                $query->where('start_date', '<=', $params['end_date'])
-                    ->where('end_date', '>=', $params['start_date']);
+                $query->where('start_date', '>=', $params['start_date'])
+                    ->where('end_date', '<=', $params['end_date']);
 //
             $query->orderBy($params['sort_by'], $params['sort_order']);
 

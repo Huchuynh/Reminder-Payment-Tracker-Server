@@ -15,7 +15,7 @@ class Account extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
 
-    protected $fillable = ['full_name', 'email', 'phone', 'avatar', 'role', 'password', 'fcm_token'];
+    protected $fillable = ['full_name', 'email', 'phone', 'avatar', 'role', 'password', 'fcm_token', 'last_active_at'];
 
     protected $casts = [
         'role' => AccountRole::class,

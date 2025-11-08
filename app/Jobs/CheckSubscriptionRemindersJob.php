@@ -20,13 +20,12 @@ class CheckSubscriptionRemindersJob implements ShouldQueue
     {
         $subscriptions = Subscription::with('account')
             ->where('status', SubscriptionStatus::EXPIRING)
+            ->whereRaw("EXTRACT(EPOCH FROM (NOW() - last_reminded_at)) / 3600 >= reminder_frequency")
             ->get();
 
         $expiringSubscriptionIds = $subscriptions->pluck('id')->toArray();
 
         foreach ($subscriptions as $subscription) {
-            if (!$subscription->isDueForReminder()) continue;
-
             $subscription->account->notify(new SubscriptionReminderNotification($subscription));
 
             \Log::info("Sent reminder for subscription ID {$subscription->id}");

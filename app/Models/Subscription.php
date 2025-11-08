@@ -45,11 +45,4 @@ class Subscription extends Model
     {
         return $this->hasMany(Payment::class);
     }
-
-    public function isDueForReminder(): bool
-    {
-        if (!$this->last_reminded_at) return true;
-
-        return $this->last_reminded_at->diffInHours(now()) >= $this->reminder_frequency;
-    }
 }
