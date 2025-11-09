@@ -45,6 +45,7 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/{id}/read', 'markAsRead');
         Route::post('/read-all', 'markAllAsRead');
         Route::post('/admin/send-reminder', 'reminderSubscription');
+        Route::post('/admin/send-message', 'sendMessage');
         Route::delete('/{id}', 'destroy');
     });
 
