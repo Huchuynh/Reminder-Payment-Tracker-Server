@@ -23,13 +23,15 @@ class NotificationService
 
     public function getAdminLogNotifications($limit = 5)
     {
+
         try {
             return Notification::query()
                 ->with(['notifiable' => function ($query) {
                     $query->select('id', 'full_name', 'email', 'avatar');
                 }])
-                ->where('sender_id', auth()->id())
+                ->where('sender_id', 1)
                 ->orderByDesc('created_at')
+                ->orderByDesc('id')
                 ->paginate($limit);
         } catch (\Throwable $e) {
             \Log::error("Failed to get notifications: " . $e->getMessage());

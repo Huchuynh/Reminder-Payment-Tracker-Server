@@ -17,13 +17,15 @@ class SubscriptionReminderNotification extends Notification implements ShouldQue
     use Queueable;
 
     protected Subscription $subscription;
+    protected string $message;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(Subscription $subscription)
+    public function __construct(Subscription $subscription, string $message = null)
     {
         $this->subscription = $subscription;
+        $this->message = $message;
     }
 
     /**

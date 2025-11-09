@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -15,9 +14,11 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('provider')->nullable();
-            $table->string('plan')->nullable();
-            $table->boolean('is_deleted')->default(false);
+            $table->string('icon')->nullable();
+            $table->boolean('is_base')->default(false);
+            $table->foreignId('account_id')->nullable()->constrained('accounts')->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\AccountRole;
 use App\Models\Account;
 
 class AccountService
@@ -67,10 +68,11 @@ class AccountService
         }
     }
 
-
-    public function findById(int $id)
+    public function getSelectableAccounts()
     {
-
+        return Account::query()
+            ->select(['id', 'full_name', 'email'])
+            ->where('role', AccountRole::USER)
+            ->get();
     }
-
 }

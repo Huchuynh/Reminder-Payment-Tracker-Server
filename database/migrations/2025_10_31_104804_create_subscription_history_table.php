@@ -13,8 +13,8 @@ return new class extends Migration {
         Schema::create('subscription_history', function (Blueprint $table) {
             $table->id();
             $table->foreignId('subscription_id')->constrained('subscriptions')->onDelete('cascade');
-            $table->enum('action', ['expired', 'renewed']);
-            
+            $table->enum('action', ['expired', 'renewed', 'canceled']);
+
             $table->timestamps();
         });
     }

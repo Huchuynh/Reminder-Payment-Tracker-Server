@@ -50,6 +50,7 @@ Route::middleware('auth:api')->group(function () {
 
     // Account Routes
     Route::get('admin/accounts', [AccountController::class, 'getAccountWithSubscription']);
+    Route::get('admin/accounts/selectable', [AccountController::class, 'getSelectableAccounts']);
 
     // Statistic Routes
     Route::get('admin/statistics/renew-cancel', [StatisticController::class, 'getRenewCancelStatisticByService']);
