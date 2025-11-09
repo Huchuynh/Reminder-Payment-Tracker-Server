@@ -56,10 +56,16 @@ class SubscriptionService
 
     }
 
-    public function update(Subscription $subscription, array $data)
+    public function update(string $id, array $data)
     {
         try {
-            $subscription->update($data);
+            $dayLeft = now()->diffInDays($data['end_date']);
+            $newData = array_merge($data, [
+                'status' => SubscriptionStatusService::evaluateStatus($dayLeft, $data['alert_thresholds'])
+            ]);
+
+            $subscription = Subscription::findOrFail($id);
+            $subscription->update($newData);
             return $subscription;
         } catch (\Throwable $e) {
             \Log::error("Failed to update subscription: " . $e->getMessage());
@@ -67,9 +73,10 @@ class SubscriptionService
         }
     }
 
-    public function renew(Subscription $subscription, array $data)
+    public function renew(string $id, array $data)
     {
         try {
+            $subscription = Subscription::findOrFail($id);
             $subscription->update([
                 'end_date' => $data['end_date'],
                 'status' => SubscriptionStatus::ACTIVE,
@@ -87,9 +94,10 @@ class SubscriptionService
         }
     }
 
-    public function unsubscribe(Subscription $subscription)
+    public function unsubscribe(string $id)
     {
         try {
+            $subscription = Subscription::findOrFail($id);
             $subscription->update(['status' => SubscriptionStatus::CANCELED]);
 
             SubscriptionHistory::create([
@@ -104,9 +112,10 @@ class SubscriptionService
         }
     }
 
-    public function mark_as_paid(Subscription $subscription)
+    public function mark_as_paid(string $id)
     {
         try {
+            $subscription = Subscription::findOrFail($id);
             $subscription->update(['status' => SubscriptionStatus::PAID]);
 
             return $subscription;

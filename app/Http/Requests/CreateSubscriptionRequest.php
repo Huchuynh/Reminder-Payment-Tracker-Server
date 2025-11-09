@@ -23,8 +23,6 @@ class CreateSubscriptionRequest extends SubscriptionBaseRequest
                     ->where(fn($query) => $query->where('account_id', $this->account_id))
                     ->ignore($this->route('subscription')),
             ],
-            "start_date" => "required|date|date_format:Y-m-d H:i:s",
-            "end_date" => "required|date|date_format:Y-m-d H:i:s|after:start_date",
             "status" => ['required', Rule::in(SubscriptionStatus::remindableValues())]
         ]);
     }

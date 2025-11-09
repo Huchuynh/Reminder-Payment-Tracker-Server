@@ -8,10 +8,8 @@ use App\Http\Requests\RenewSubscriptionRequest;
 use App\Http\Requests\SubscriptionQueryRequest;
 use App\Http\Requests\UpdateSubscriptionRequest;
 use App\Http\Resources\SubscriptionResource;
-use App\Models\Subscription;
 use App\Services\SubscriptionService;
 use App\Traits\ApiResponseTrait;
-use Illuminate\Support\Facades\Gate;
 
 class SubscriptionController extends Controller
 {
@@ -78,11 +76,7 @@ class SubscriptionController extends Controller
     public function update(UpdateSubscriptionRequest $request, string $id)
     {
         try {
-            $subscription = Subscription::findOrFail($id);
-
-            Gate::authorize('update', $subscription);
-
-            $result = $this->subscriptionService->update($subscription, $request->validated());
+            $result = $this->subscriptionService->update($id, $request->validated());
 
             return $this->responseSuccess(
                 $result,
@@ -96,11 +90,7 @@ class SubscriptionController extends Controller
     public function renew(RenewSubscriptionRequest $request, string $id)
     {
         try {
-            $subscription = Subscription::findOrFail($id);
-
-            Gate::authorize('renew', $subscription);
-
-            $result = $this->subscriptionService->renew($subscription, $request->validated());
+            $result = $this->subscriptionService->renew($id, $request->validated());
 
             return $this->responseSuccess(
                 $result,
@@ -114,11 +104,9 @@ class SubscriptionController extends Controller
     public function unsubscribe(string $id)
     {
         try {
-            $subscription = Subscription::findOrFail($id);
 
-            Gate::authorize('unsubscribe', $subscription);
 
-            $result = $this->subscriptionService->unsubscribe($subscription);
+            $result = $this->subscriptionService->unsubscribe($id);
 
             return $this->responseSuccess(
                 $result,
@@ -132,11 +120,7 @@ class SubscriptionController extends Controller
     public function mark_as_paid(string $id)
     {
         try {
-            $subscription = Subscription::findOrFail($id);
-
-            Gate::authorize('mark_as_paid', $subscription);
-
-            $result = $this->subscriptionService->mark_as_paid($subscription);
+            $result = $this->subscriptionService->mark_as_paid($id);
 
             return $this->responseSuccess(
                 $result,

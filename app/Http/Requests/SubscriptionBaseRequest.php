@@ -24,6 +24,8 @@ class SubscriptionBaseRequest extends FormRequest
     public function rules(): array
     {
         return [
+            "start_date" => "required|date|date_format:Y-m-d H:i:s",
+            "end_date" => "required|date|date_format:Y-m-d H:i:s|after:start_date",
             "plan" => "required|string",
             "notes" => "nullable|string",
             "alert_thresholds" => "nullable|integer",
