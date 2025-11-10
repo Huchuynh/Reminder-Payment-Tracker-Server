@@ -2,31 +2,26 @@
 
 namespace App\Models;
 
+use App\Enums\PaymentStatus;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Account;
-use App\Models\Subscription;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Payment extends Model
 {
     protected $fillable = [
-        'account_id', 
-        'subscription_id', 
-        'amount', 
-        'method', 
-        'status', 
-        'transaction_ref', 
+        'subscription_id',
+        'amount',
+        'method',
+        'status',
+        'transaction_ref',
         'paid_at'
     ];
 
     protected $casts = [
         'paid_at' => 'datetime',
         'amount' => 'decimal:2',
+        'status' => PaymentStatus::class,
     ];
-
-    public function account(): BelongsTo
-    {
-        return $this->belongsTo(Account::class);
-    }
 
     public function subscription(): BelongsTo
     {

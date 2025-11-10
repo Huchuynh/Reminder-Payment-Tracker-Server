@@ -72,9 +72,4 @@ class Account extends Authenticatable implements JWTSubject
     {
         return $this->morphMany(Notification::class, 'notifiable');
     }
-
-    public function payments(): HasMany
-    {
-        return $this->hasMany(Payment::class);
-    }
 }

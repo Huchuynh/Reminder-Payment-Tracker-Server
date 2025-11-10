@@ -21,7 +21,7 @@ class SubscriptionResource extends JsonResource
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
             'notes' => $this->notes,
-
+            'price' => $this->price,
             // load service relationship
             'service' => [
                 'id' => $this->service->id ?? null,

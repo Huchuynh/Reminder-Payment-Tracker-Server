@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\Auth\AuthController;
+use App\Http\Controllers\Api\MomoController;
 use App\Http\Controllers\Api\NetflixProviderController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ServiceController;
@@ -55,7 +56,12 @@ Route::middleware('auth:api')->group(function () {
 
     // Statistic Routes
     Route::get('admin/statistics/renew-cancel', [StatisticController::class, 'getRenewCancelStatisticByService']);
+
+    // Momo Routes
+    Route::post('momo/pay', [MomoController::class, 'pay']);
 });
 
-Route::get("/provider/youtube/inquiry/{customerCode}", [YoutubeProviderController::class, "inquiry"]);
-Route::get("/provider/netflix/inquiry/{customerCode}", [NetflixProviderController::class, "inquiry"]);
+Route::post('momo/callback/{id}', [MomoController::class, 'notify']);
+
+Route::post("/provider/youtube/inquiry", [YoutubeProviderController::class, "inquiry"]);
+Route::post("/provider/netflix/inquiry", [NetflixProviderController::class, "inquiry"]);

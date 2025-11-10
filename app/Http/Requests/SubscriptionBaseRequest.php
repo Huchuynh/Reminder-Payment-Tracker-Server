@@ -28,6 +28,7 @@ class SubscriptionBaseRequest extends FormRequest
             "end_date" => "required|date|date_format:Y-m-d H:i:s|after:start_date",
             "plan" => "required|string",
             "notes" => "nullable|string",
+            "price" => "required|numeric",
             "alert_thresholds" => "nullable|integer",
             "reminder_frequency" => "nullable|integer",
             'reminder_channels' => 'nullable|array',

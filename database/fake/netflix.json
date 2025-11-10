@@ -1,6 +1,6 @@
 [
     {
-        "customer_code": "NF202510001",
+        "id": "NF202510001",
         "account": {
             "email": "michael.nguyen@gmail.com",
             "profile_name": "Michael Nguyen",
@@ -37,7 +37,7 @@
         }
     },
     {
-        "customer_code": "NF202510002",
+        "id": "NF202510002",
         "account": {
             "email": "linh.tran@yahoo.com",
             "profile_name": "Linh Tran",
@@ -74,7 +74,7 @@
         }
     },
     {
-        "customer_code": "NF202510003",
+        "id": "NF202510003",
         "account": {
             "email": "bao.ly@gmail.com",
             "profile_name": "Bao Ly",
@@ -111,7 +111,7 @@
         }
     },
     {
-        "customer_code": "NF202510004",
+        "id": "NF202510004",
         "account": {
             "email": "huyen.do@gmail.com",
             "profile_name": "Huyen Do",
@@ -148,7 +148,7 @@
         }
     },
     {
-        "customer_code": "NF202510005",
+        "id": "NF202510005",
         "account": {
             "email": "tu.nguyen@gmail.com",
             "profile_name": "Tu Nguyen",
