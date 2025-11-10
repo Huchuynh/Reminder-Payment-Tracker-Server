@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class GoogleLoginRequest extends FormRequest
+class MomoPaymentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,9 @@ class GoogleLoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'credentials' => 'required|string',
-            'fcm_token' => 'required|string'
+            "subscription_id" => "required|integer|exists:subscriptions,id",
+            "amount" => "required|numeric",
+            "renewal_date" => "nullable|date",
         ];
     }
 }

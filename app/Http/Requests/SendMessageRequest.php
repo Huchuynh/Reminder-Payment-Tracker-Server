@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class GoogleLoginRequest extends FormRequest
+class SendMessageRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,9 @@ class GoogleLoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'credentials' => 'required|string',
-            'fcm_token' => 'required|string'
+            'recipients' => 'required|array',
+            'recipients.*' => 'exists:accounts,email',
+            'message' => 'required|string|max:500',
         ];
     }
 }

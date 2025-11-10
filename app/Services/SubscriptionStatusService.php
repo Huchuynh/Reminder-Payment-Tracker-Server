@@ -6,14 +6,12 @@ use App\Enums\SubscriptionStatus;
 
 class SubscriptionStatusService
 {
-    public static function evaluateStatus(int $daysLeft, array $threshold): SubscriptionStatus
+    public static function evaluateStatus(int $daysLeft, int $threshold = 7): SubscriptionStatus
     {
-        if (in_array($daysLeft, $threshold))
+        if ($daysLeft <= $threshold)
             return SubscriptionStatus::EXPIRING;
-        if ($daysLeft == 0)
+        if ($daysLeft <= 0)
             return SubscriptionStatus::EXPIRED;
-        if ($daysLeft < 0)
-            return SubscriptionStatus::OVERDUE;
 
         return SubscriptionStatus::ACTIVE;
     }

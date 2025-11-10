@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SendMessageRequest;
 use App\Http\Requests\SubscriptionReminderRequest;
 use App\Http\Resources\NotificationResource;
 use App\Services\NotificationService;
@@ -111,6 +112,20 @@ class NotificationController extends Controller
     {
         try {
             $result = $this->notificationService->reminderSubscription($request->validated());
+
+            return $this->responseSuccess(
+                null,
+                $result['message']
+            );
+        } catch (\Throwable $e) {
+            return $this->handleExceptionResponse($e);
+        }
+    }
+
+    public function sendMessage(SendMessageRequest $request)
+    {
+        try {
+            $result = $this->notificationService->sendMessage($request->validated());
 
             return $this->responseSuccess(
                 null,

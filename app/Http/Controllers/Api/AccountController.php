@@ -31,6 +31,20 @@ class AccountController extends Controller
         }
     }
 
+    public function getSelectableAccounts()
+    {
+        try {
+            $recipients = $this->accountService->getSelectableAccounts();
+
+            return $this->responseSuccess(
+                $recipients,
+                "Get recipients successfully."
+            );
+        } catch (\Throwable $e) {
+            return $this->handleExceptionResponse($e);
+        }
+    }
+
     public function me(Request $request)
     {
         return $this->responseSuccess(

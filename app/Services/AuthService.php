@@ -3,11 +3,13 @@
 namespace App\Services;
 
 use App\Enums\AccountRole;
+use App\Mail\OtpMail;
 use App\Models\Account;
 use Google_Client;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
@@ -24,7 +26,7 @@ class AuthService
         $expires = 15;
         try {
             Cache::put('otp_' . $email, $otp, now()->addMinutes($expires));
-//            Mail::to($email)->send(new OtpMail($otp, $expires));
+            Mail::to($email)->send(new OtpMail($otp, $expires));
             \Log::info("Sending OTP to " . $email . " with OTP: " . $otp);
 
             return ["message" => "OTP sent to " . $email . " with OTP: " . $otp];
@@ -47,12 +49,12 @@ class AuthService
         }
     }
 
-    public function loginGoogle(string $credentials)
+    public function loginGoogle(array $data)
     {
         try {
             $client = new Google_Client(['client_id' => env('GOOGLE_CLIENT_ID')]);
 
-            $payload = $client->verifyIdToken($credentials);
+            $payload = $client->verifyIdToken($data['credentials']);
 
             if (!$payload) throw new \Exception("Invalid token");
 
@@ -63,6 +65,7 @@ class AuthService
                     'avatar' => $payload['picture'],
                     'password' => bcrypt(Str::random(16)),
                     'role' => AccountRole::USER,
+                    'fcm_token' => $data['fcm_token'],
                 ]
             );
 

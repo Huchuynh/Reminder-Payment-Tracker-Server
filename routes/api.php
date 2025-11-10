@@ -2,11 +2,13 @@
 
 use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\Auth\AuthController;
+use App\Http\Controllers\Api\MomoController;
 use App\Http\Controllers\Api\NetflixProviderController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\StatisticController;
 use App\Http\Controllers\Api\SubscriptionController;
+use App\Http\Controllers\Api\SubscriptionHistoryController;
 use App\Http\Controllers\Api\YoutubeProviderController;
 use Illuminate\Support\Facades\Route;
 
@@ -31,26 +33,35 @@ Route::middleware('auth:api')->group(function () {
 
     // Subscription Routes
     Route::apiResource('subscriptions', SubscriptionController::class);
+    Route::get('subscriptions/{id}/history', [SubscriptionHistoryController::class, 'getBySubscriptionId']);
     Route::post('subscriptions/{id}/renew', [SubscriptionController::class, 'renew']);
     Route::post('subscriptions/{id}/unsubscribe', [SubscriptionController::class, 'unsubscribe']);
+    Route::post('subscriptions/{id}/mark-as-paid', [SubscriptionController::class, 'mark_as_paid']);
 
     // Notification Routes
     Route::controller(NotificationController::class)->prefix('notifications')->group(function () {
         Route::get('/', 'index');
         Route::get('/{id}', 'show');
-        Route::get('/admin/get  ', 'getAdminLogNotifications');
+        Route::get('/admin/get', 'getAdminLogNotifications');
         Route::post('/{id}/read', 'markAsRead');
         Route::post('/read-all', 'markAllAsRead');
         Route::post('/admin/send-reminder', 'reminderSubscription');
+        Route::post('/admin/send-message', 'sendMessage');
         Route::delete('/{id}', 'destroy');
     });
 
     // Account Routes
     Route::get('admin/accounts', [AccountController::class, 'getAccountWithSubscription']);
+    Route::get('admin/accounts/selectable', [AccountController::class, 'getSelectableAccounts']);
 
     // Statistic Routes
     Route::get('admin/statistics/renew-cancel', [StatisticController::class, 'getRenewCancelStatisticByService']);
+
+    // Momo Routes
+    Route::post('momo/pay', [MomoController::class, 'pay']);
 });
 
-Route::get("/provider/youtube/inquiry/{customerCode}", [YoutubeProviderController::class, "inquiry"]);
-Route::get("/provider/netflix/inquiry/{customerCode}", [NetflixProviderController::class, "inquiry"]);
+Route::post('momo/callback/{id}', [MomoController::class, 'notify']);
+
+Route::post("/provider/youtube/inquiry", [YoutubeProviderController::class, "inquiry"]);
+Route::post("/provider/netflix/inquiry", [NetflixProviderController::class, "inquiry"]);

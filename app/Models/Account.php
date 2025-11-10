@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Enums\AccountRole;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
@@ -15,10 +14,11 @@ class Account extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
 
-    protected $fillable = ['full_name', 'email', 'phone', 'avatar', 'role', 'password', 'fcm_token'];
+    protected $fillable = ['full_name', 'email', 'phone', 'avatar', 'role', 'password', 'fcm_token', 'last_active_at'];
 
     protected $casts = [
         'role' => AccountRole::class,
+        'last_active_at' => 'datetime',
     ];
     /**
      * The attributes that should be hidden for serialization.
@@ -71,16 +71,5 @@ class Account extends Authenticatable implements JWTSubject
     public function notifications()
     {
         return $this->morphMany(Notification::class, 'notifiable');
-    }
-
-
-    public function reminderSettings(): HasOne
-    {
-        return $this->hasOne(ReminderSetting::class);
-    }
-
-    public function payments(): HasMany
-    {
-        return $this->hasMany(Payment::class);
     }
 }

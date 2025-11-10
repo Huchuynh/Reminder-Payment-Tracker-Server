@@ -20,17 +20,24 @@ class HandleOverdueSubscriptionsJob implements ShouldQueue
     public function handle(): void
     {
         $subscriptions = Subscription::with('account')
-            ->where('status', SubscriptionStatus::OVERDUE)
+            ->where('status', SubscriptionStatus::EXPIRED)
+            ->whereRaw("EXTRACT(EPOCH FROM (NOW() - last_reminded_at)) / 3600 >= reminder_frequency")
             ->get();
 
+        $expiredSubscriptionIds = $subscriptions->pluck('id')->toArray();
+
         foreach ($subscriptions as $subscription) {
-            if (!$subscription->isDueForReminder()) continue;
-
-            $subscription->account->notify(new SubscriptionReminderNotification($subscription, SubscriptionStatus::OVERDUE));
-
-            $subscription->update(["last_reminded_at" => now()]);
+            $subscription->account->notify(new SubscriptionReminderNotification($subscription));
 
             \Log::info("Sent overdue reminder for subscription ID {$subscription->id}");
         }
+
+        $this->updateSubscriptionLastReminder($expiredSubscriptionIds);
+    }
+
+    public function updateSubscriptionLastReminder($subscriptionIds): void
+    {
+        Subscription::whereIn('id', $subscriptionIds)
+            ->update(['last_reminded_at' => now()]);
     }
 }

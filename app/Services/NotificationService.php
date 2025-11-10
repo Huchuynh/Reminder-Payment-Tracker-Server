@@ -3,16 +3,21 @@
 namespace App\Services;
 
 use App\Enums\SubscriptionStatus;
+use App\Models\Account;
 use App\Models\Notification;
 use App\Models\Subscription;
+use App\Notifications\SendMessageNotification;
 use App\Notifications\SubscriptionReminderNotification;
+use Illuminate\Support\Facades\Notification as FacadesNotification;
 
 class NotificationService
 {
     public function get($user, array $data)
     {
         try {
-            return $user->notifications()->paginate($data['limit'] ?? 10);
+            return $user->notifications()
+                ->orderBy('created_at', 'desc')
+                ->paginate($data['limit'] ?? 10);
         } catch (\Throwable $e) {
             \Log::error("Failed to get notifications: " . $e->getMessage());
             throw new \Exception("Failed to get notifications. " . $e->getMessage());
@@ -21,13 +26,15 @@ class NotificationService
 
     public function getAdminLogNotifications($limit = 5)
     {
+
         try {
             return Notification::query()
                 ->with(['notifiable' => function ($query) {
                     $query->select('id', 'full_name', 'email', 'avatar');
                 }])
-                ->where('sender_id', auth()->id())
+                ->where('sender_id', 1)
                 ->orderByDesc('created_at')
+                ->orderByDesc('id')
                 ->paginate($limit);
         } catch (\Throwable $e) {
             \Log::error("Failed to get notifications: " . $e->getMessage());
@@ -90,6 +97,21 @@ class NotificationService
         } catch (\Throwable $e) {
             \Log::error("Failed to send notification to {$subscription->account_id}: " . $e->getMessage());
             throw new \Exception("Failed to send notification to {$subscription->account_id}. " . $e->getMessage());
+        }
+    }
+
+    public function sendMessage(array $data)
+    {
+        try {
+            $recipients = Account::whereIn('email', $data['recipients'])->get();
+            $message = $data['message'];
+
+            FacadesNotification::send($recipients, new SendMessageNotification($message));
+
+            return ["message" => "Message has been sent"];
+        } catch (\Throwable $e) {
+            \Log::error("Failed to send message notification : " . $e->getMessage());
+            throw new \Exception("Failed to send message notification. " . $e->getMessage());
         }
     }
 }
