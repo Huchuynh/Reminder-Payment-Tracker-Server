@@ -44,7 +44,7 @@ class ServiceFactory extends Factory
         return [
             'name' => $serviceTypes[array_rand($serviceTypes)] . ' ' . $serviceModifiers[array_rand($serviceModifiers)],
             'provider' => $this->faker->company(),
-            'icon' => $this->faker->imageUrl(128, 128, 'business', true, 'Icon'),
+            'icon' => "https://cdn-icons-png.freepik.com/512/5519/5519311.png",
             'account_id' => Account::factory(),
             'is_base' => $this->faker->boolean(30),
             'created_at' => now()->format('Y-m-d H:i:s'),

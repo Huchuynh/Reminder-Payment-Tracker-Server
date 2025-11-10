@@ -25,7 +25,7 @@ class AccountFactory extends Factory
             'full_name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
             'phone' => $this->faker->phoneNumber(),
-            'avatar' => $this->faker->imageUrl(200, 200, 'people', true, 'Avatar'),
+            'avatar' => "https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg",
             'role' => AccountRole::USER,
             'password' => bcrypt(Str::random(16)),
             'fcm_token' => null,

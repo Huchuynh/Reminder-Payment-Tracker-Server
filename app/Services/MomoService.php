@@ -90,11 +90,15 @@ class MomoService
             ]);
 
             $subscription = Subscription::findOrFail($subscriptionId);
-            $subscription->update([
-                'status' => SubscriptionStatus::ACTIVE,
-                'end_date' => $data['extraData']
-            ]);
-
+            if ($data['extraData'])
+                $subscription->update([
+                    'status' => SubscriptionStatus::ACTIVE,
+                    'end_date' => $data['extraData']
+                ]);
+            else
+                $subscription->update([
+                    'status' => SubscriptionStatus::PAID,
+                ]);
             return $payment;
         } catch (\Throwable $e) {
             \Log::error("Failed to handle callback from momo: " . $e->getMessage());

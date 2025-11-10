@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Account;
 use App\Models\Notification;
+use App\Models\Payment;
 use App\Models\Service;
 use App\Models\ServiceApi;
 use App\Models\Subscription;
@@ -21,60 +22,65 @@ class DatabaseSeeder extends Seeder
     {
         $faker = \Faker\Factory::create();
 
-        // 1️⃣ Tạo admin
         $admin = Account::factory()->create([
             'role' => 'admin',
-            'email' => 'tuanhaomach@gmail.com'
+            'full_name' => 'Chris Mach',
+            'email' => 'chris.mach.gos@gmail.com',
         ]);
 
-        // 2️⃣ Tạo 9 user
-        $users = Account::factory(4)->create();
+        $users = Account::factory(5)->create();
 
-        $allAccounts = $users->push($admin);
+        $servicesPerUser = 1000;
+        $servicesForAdmin = 10;
 
-        foreach ($allAccounts as $account) {
+        for ($i = 0; $i < $servicesForAdmin; $i++) {
+            $service = Service::factory()->create([
+                'account_id' => $admin->id,
+                'is_base' => true,
+            ]);
 
-            $faker->unique(true); // reset unique cho mỗi account
-            $services = [];
+            ServiceApi::factory(rand(1, 3))->create([
+                'service_id' => $service->id,
+            ]);
 
-            // 3️⃣ Tạo 1000 service cho mỗi account
-            for ($i = 0; $i < 1000; $i++) {
+        }
+
+        foreach ($users as $user) {
+            $faker->unique(true);
+
+            for ($i = 0; $i < $servicesPerUser; $i++) {
                 $service = Service::factory()->create([
-                    'account_id' => $account->id,
-                    'is_base' => $account->role === 'admin' ? (rand(0, 1) ? true : false) : false,
+                    'account_id' => $user->id,
+                    'is_base' => false,
                 ]);
 
-                // Tạo 1-3 service_api cho service
                 ServiceApi::factory(rand(1, 3))->create([
                     'service_id' => $service->id,
                 ]);
 
-                $services[] = $service;
+                $subscription = Subscription::factory()->create([
+                    'account_id' => $user->id,
+                    'service_id' => $service->id,
+                ]);
+
+                Payment::factory(rand(1, 100))->create([
+                    'subscription_id' => $subscription->id,
+                ]);
+
+                SubscriptionHistory::factory(rand(1, 100))->create([
+                    'subscription_id' => $subscription->id,
+                ]);
             }
 
-            // 4️⃣ Nếu là user, tạo subscription
-            if ($account->role !== 'admin') {
-                foreach ($services as $service) {
-
-
-                    $subscription = Subscription::factory()->create([
-                        'account_id' => $account->id,
-                        'service_id' => $service->id,
-                    ]);
-
-                    // 5️⃣ Subscription history 1-3 bản
-                    SubscriptionHistory::factory(rand(1, 3))->create([
-                        'subscription_id' => $subscription->id,
-                    ]);
-                }
-            }
-
-            // 6️⃣ Notifications
-            for ($n = 0; $n < 50; $n++) {
+            for ($n = 0; $n < 100; $n++) {
                 Notification::factory()->create([
                     'sender_id' => rand(0, 1) ? $admin->id : null,
+                    'notifiable_id' => $user->id, // nếu bạn có trường recipient_id
                 ]);
             }
         }
+
+        $this->command->info("Seeding completed: admin {$servicesForAdmin} services, " .
+            count($users) . " users x {$servicesPerUser} services each.");
     }
 }

@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->timestamp('start_date')->nullable();
             $table->timestamp('end_date')->nullable();
             $table->string('plan')->nullable();
+            $table->decimal('price', 15, 2)->default(0);
             $table->enum('status', ['active', 'expiring', 'expired', 'canceled', 'paid'])->default('active');
             $table->text('notes')->nullable();
             $table->integer('alert_thresholds')->nullable();

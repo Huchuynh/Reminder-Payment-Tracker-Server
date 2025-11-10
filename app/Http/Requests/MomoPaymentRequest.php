@@ -24,7 +24,7 @@ class MomoPaymentRequest extends FormRequest
         return [
             "subscription_id" => "required|integer|exists:subscriptions,id",
             "amount" => "required|numeric",
-            "renewal_date" => "required|date",
+            "renewal_date" => "nullable|date",
         ];
     }
 }

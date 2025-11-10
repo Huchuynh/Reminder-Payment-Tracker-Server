@@ -28,6 +28,7 @@ class SubscriptionResource extends JsonResource
                 'name' => $this->service->name ?? null,
                 'provider' => $this->service->provider ?? null,
                 'icon' => $this->service->icon ?? null,
+                'is_base' => $this->service->is_base ?? null,
             ]
         ];
     }

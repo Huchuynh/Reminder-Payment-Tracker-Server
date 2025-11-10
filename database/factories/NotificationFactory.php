@@ -18,6 +18,7 @@ class NotificationFactory extends Factory
         $admin = Account::where('role', 'admin')->first();
 
         return [
+            'id' => $this->faker->uuid(),
             'type' => 'App\\Notifications\\SubscriptionReminderNotification', // tên notification class
             'notifiable_type' => Account::class,
             'notifiable_id' => $subscription->account_id,

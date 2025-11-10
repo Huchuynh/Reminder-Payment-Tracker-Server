@@ -33,7 +33,7 @@ class SubscriptionFactory extends Factory
             $status = SubscriptionStatus::PAID->value; // chưa bắt đầu nhưng đã thanh toán
         } elseif ($now->between($start, $end)) {
             $daysLeft = $now->diffInDays($end);
-            if ($daysLeft <= 5) {
+            if ($daysLeft <= 7) {
                 $status = SubscriptionStatus::EXPIRING->value; // sắp hết hạn
             } else {
                 $status = SubscriptionStatus::ACTIVE->value; // đang hoạt động
@@ -53,6 +53,7 @@ class SubscriptionFactory extends Factory
             'end_date' => $end,
             'status' => $status,
             'plan' => $this->faker->randomElement(['basic', 'standard', 'premium']),
+            'price' => $this->faker->randomFloat(0, 10000, 500000),
             'notes' => $this->faker->paragraph(),
             'reminder_channels' => $channels = fake()->randomElements(
                 array_map(fn($c) => $c->value, AlertChannels::cases()),
