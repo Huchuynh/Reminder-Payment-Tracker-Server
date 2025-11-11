@@ -80,7 +80,7 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        $this->command->info("Seeding completed: admin {$servicesForAdmin} services, " .
-            count($users) . " users x {$servicesPerUser} services each.");
+        $this->command->info("Seeding completed: admin {$servicesForAdmin} services, ".
+            count($users)." users x {$servicesPerUser} services each.");
     }
 }

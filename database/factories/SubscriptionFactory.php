@@ -28,7 +28,7 @@ class SubscriptionFactory extends Factory
 
         $now = \Carbon\Carbon::now();
 
-// Tính trạng thái dựa vào ngày
+        // Tính trạng thái dựa vào ngày
         if ($now->lt($start)) {
             $status = SubscriptionStatus::PAID->value; // chưa bắt đầu nhưng đã thanh toán
         } elseif ($now->between($start, $end)) {
@@ -42,10 +42,11 @@ class SubscriptionFactory extends Factory
             $status = SubscriptionStatus::EXPIRED->value; // đã hết hạn
         }
 
-// Random thêm khả năng bị hủy (CANCELED) với tỉ lệ nhỏ
+        // Random thêm khả năng bị hủy (CANCELED) với tỉ lệ nhỏ
         if (rand(1, 20) === 1) { // 5% khả năng
             $status = SubscriptionStatus::CANCELED->value;
         }
+
         return [
             'account_id' => $this->faker->optional()->randomElement(Account::pluck('id')),
             'service_id' => $this->faker->optional()->randomElement(Service::pluck('id')),
@@ -56,7 +57,7 @@ class SubscriptionFactory extends Factory
             'price' => $this->faker->randomFloat(0, 10000, 500000),
             'notes' => $this->faker->paragraph(),
             'reminder_channels' => $channels = fake()->randomElements(
-                array_map(fn($c) => $c->value, AlertChannels::cases()),
+                array_map(fn ($c) => $c->value, AlertChannels::cases()),
                 rand(0, 2)
             ),
             'alert_thresholds' => count($channels) ? fake()->randomElement([1, 3, 5, 7]) : null,

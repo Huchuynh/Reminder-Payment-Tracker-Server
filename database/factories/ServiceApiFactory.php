@@ -10,6 +10,7 @@ class ServiceApiFactory extends Factory
     public function definition(): array
     {
         $methods = ['GET', 'POST', 'PUT', 'DELETE'];
+
         return [
             'service_id' => Service::factory(),
             'base_url' => fake()->url(),
@@ -22,22 +23,21 @@ class ServiceApiFactory extends Factory
 
     public function get(): static
     {
-        return $this->state(fn() => ['method' => 'GET']);
+        return $this->state(fn () => ['method' => 'GET']);
     }
 
     public function post(): static
     {
-        return $this->state(fn() => ['method' => 'POST']);
+        return $this->state(fn () => ['method' => 'POST']);
     }
 
     public function put(): static
     {
-        return $this->state(fn() => ['method' => 'PUT']);
+        return $this->state(fn () => ['method' => 'PUT']);
     }
 
     public function delete(): static
     {
-        return $this->state(fn() => ['method' => 'DELETE']);
+        return $this->state(fn () => ['method' => 'DELETE']);
     }
 }
-

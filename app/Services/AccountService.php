@@ -19,7 +19,7 @@ class AccountService
                 'phone',
                 'avatar',
                 'created_at',
-                'updated_at'
+                'updated_at',
             ])
                 ->withCount('subscriptions')
                 ->with([
@@ -33,7 +33,7 @@ class AccountService
                             'status',
                             'plan',
                             'created_at',
-                            'updated_at'
+                            'updated_at',
                         ])
                             ->with([
                                 'service' => function ($s) {
@@ -44,11 +44,11 @@ class AccountService
                                         'icon',
                                         'created_at',
                                         'updated_at',
-                                        'deleted_at'
+                                        'deleted_at',
                                     ]);
-                                }
+                                },
                             ]);
-                    }
+                    },
                 ]);
 
             $query->where('role', 'user')
@@ -63,8 +63,8 @@ class AccountService
 
             return $query->paginate($params['limit']);
         } catch (\Throwable $e) {
-            \Log::error("Fail to get accounts: " . $e->getMessage());
-            throw new \Exception("Failed to get accounts: " . $e->getMessage());
+            \Log::error('Fail to get accounts: '.$e->getMessage());
+            throw new \Exception('Failed to get accounts: '.$e->getMessage());
         }
     }
 

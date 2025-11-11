@@ -22,9 +22,9 @@ class MomoPaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "subscription_id" => "required|integer|exists:subscriptions,id",
-            "amount" => "required|numeric",
-            "renewal_date" => "nullable|date",
+            'subscription_id' => 'required|integer|exists:subscriptions,id',
+            'amount' => 'required|numeric',
+            'renewal_date' => 'nullable|date',
         ];
     }
 }

@@ -12,7 +12,6 @@ use App\Http\Controllers\Api\SubscriptionHistoryController;
 use App\Http\Controllers\Api\YoutubeProviderController;
 use Illuminate\Support\Facades\Route;
 
-
 Route::controller(AuthController::class)->prefix('auth')->group(function () {
     Route::post('login', 'login');
     Route::post('register', 'register');
@@ -63,5 +62,5 @@ Route::middleware('auth:api')->group(function () {
 
 Route::post('momo/callback/{id}', [MomoController::class, 'notify']);
 
-Route::post("/provider/youtube/inquiry", [YoutubeProviderController::class, "inquiry"]);
-Route::post("/provider/netflix/inquiry", [NetflixProviderController::class, "inquiry"]);
+Route::post('/provider/youtube/inquiry', [YoutubeProviderController::class, 'inquiry']);
+Route::post('/provider/netflix/inquiry', [NetflixProviderController::class, 'inquiry']);

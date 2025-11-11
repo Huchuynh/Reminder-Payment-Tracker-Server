@@ -18,16 +18,16 @@ class NetflixProviderController extends Controller
 
         $record = collect($data)->firstWhere('account.email', $validated['email']);
 
-        if (!$record) {
+        if (! $record) {
             return response()->json([
                 'success' => false,
-                'message' => 'Customer not found'
+                'message' => 'Customer not found',
             ], 404);
         }
 
         return response()->json([
             'success' => true,
-            'data' => $record
+            'data' => $record,
         ]);
     }
 
@@ -37,7 +37,6 @@ class NetflixProviderController extends Controller
             'subscription_id' => 'required|string',
         ]);
 
-
     }
 
     public function handlePayment(Request $request)
@@ -45,9 +44,8 @@ class NetflixProviderController extends Controller
         $validated = $request->validate([
             'subscription_id' => 'required|string',
             'amount' => 'required|numeric',
-            
-        ]);
 
+        ]);
 
     }
 }

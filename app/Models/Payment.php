@@ -17,7 +17,7 @@ class Payment extends Model
         'method',
         'status',
         'transaction_ref',
-        'paid_at'
+        'paid_at',
     ];
 
     protected $casts = [

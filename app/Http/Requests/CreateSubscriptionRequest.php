@@ -20,10 +20,10 @@ class CreateSubscriptionRequest extends SubscriptionBaseRequest
                 'required',
                 'exists:services,id',
                 Rule::unique('subscriptions')
-                    ->where(fn($query) => $query->where('account_id', $this->account_id))
+                    ->where(fn ($query) => $query->where('account_id', $this->account_id))
                     ->ignore($this->route('subscription')),
             ],
-            "status" => ['required', Rule::in(SubscriptionStatus::remindableValues())]
+            'status' => ['required', Rule::in(SubscriptionStatus::remindableValues())],
         ]);
     }
 }

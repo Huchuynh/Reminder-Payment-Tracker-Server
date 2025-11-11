@@ -12,6 +12,7 @@ class SubscriptionHistory extends Model
     use HasFactory;
 
     protected $table = 'subscription_history';
+
     protected $fillable = ['subscription_id', 'action'];
 
     protected $casts = [

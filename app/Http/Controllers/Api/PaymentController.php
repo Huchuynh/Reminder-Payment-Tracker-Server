@@ -20,18 +20,18 @@ class PaymentController extends Controller
 
     public function handleCallbackFromYoutube(string $id, Request $request)
     {
-        \Log::info("callback: " . $id);
+        \Log::info('callback: '.$id);
         try {
             $validated = $request->validate([
-                "amount" => "required|numeric",
-                "payment_date" => "required|date",
-                "status" => "required|string",
+                'amount' => 'required|numeric',
+                'payment_date' => 'required|date',
+                'status' => 'required|string',
             ]);
             $payment = $this->paymentService->handleCallbackFromYoutube($validated, $id);
 
             return $this->responseSuccess(
                 $payment,
-                "Payment successful",
+                'Payment successful',
             );
         } catch (\Throwable $e) {
             return $this->handleExceptionResponse($e);

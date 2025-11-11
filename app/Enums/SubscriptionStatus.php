@@ -21,8 +21,8 @@ enum SubscriptionStatus: string
     public static function remindableValues(): array
     {
         return array_map(
-            fn(self $case) => $case->value,
-            array_filter(self::cases(), fn(self $case) => $case->isRemindable())
+            fn (self $case) => $case->value,
+            array_filter(self::cases(), fn (self $case) => $case->isRemindable())
         );
     }
 }

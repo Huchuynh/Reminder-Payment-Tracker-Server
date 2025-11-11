@@ -22,7 +22,7 @@ class PaymentFactory extends Factory
             'amount' => $this->faker->randomFloat(0, 10000, 500000),
             'method' => 'momo',
             'status' => $this->faker->randomElement($statuses),
-            'transaction_ref' => strtoupper('TXN-' . $this->faker->unique()->bothify('??######')),
+            'transaction_ref' => strtoupper('TXN-'.$this->faker->unique()->bothify('??######')),
             'paid_at' => $paidAt,
         ];
     }

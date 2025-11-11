@@ -105,7 +105,6 @@ class SubscriptionController extends Controller
     {
         try {
 
-
             $result = $this->subscriptionService->unsubscribe($id);
 
             return $this->responseSuccess(

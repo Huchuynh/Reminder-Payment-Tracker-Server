@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Jobs;
 
 use App\Enums\SubscriptionStatus;
@@ -12,7 +11,7 @@ use Illuminate\Foundation\Queue\Queueable;
 
 class HandleOverdueSubscriptionsJob implements ShouldQueue
 {
-    use Queueable, Dispatchable;
+    use Dispatchable, Queueable;
 
     /**
      * Execute the job.
@@ -21,7 +20,7 @@ class HandleOverdueSubscriptionsJob implements ShouldQueue
     {
         $subscriptions = Subscription::with('account')
             ->where('status', SubscriptionStatus::EXPIRED)
-            ->whereRaw("EXTRACT(EPOCH FROM (NOW() - last_reminded_at)) / 3600 >= reminder_frequency")
+            ->whereRaw('EXTRACT(EPOCH FROM (NOW() - last_reminded_at)) / 3600 >= reminder_frequency')
             ->get();
 
         $expiredSubscriptionIds = $subscriptions->pluck('id')->toArray();

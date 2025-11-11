@@ -4,7 +4,6 @@ namespace App\Http\Requests;
 
 class AccountQueryRequest extends QueryParamsRequest
 {
-
     /**
      * Get the validation rules that apply to the request.
      *

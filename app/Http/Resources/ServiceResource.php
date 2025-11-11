@@ -21,7 +21,7 @@ class ServiceResource extends JsonResource
             'icon' => $this->icon,
             'is_base' => $this->is_base,
             'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at
+            'updated_at' => $this->updated_at,
         ];
     }
 }

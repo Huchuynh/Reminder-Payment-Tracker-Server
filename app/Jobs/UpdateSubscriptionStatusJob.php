@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Jobs;
 
 use App\Enums\SubscriptionStatus;
@@ -12,8 +11,8 @@ use Illuminate\Foundation\Queue\Queueable;
 
 class UpdateSubscriptionStatusJob implements ShouldQueue
 {
-    use Queueable, Dispatchable;
-    
+    use Dispatchable, Queueable;
+
     public function handle(): void
     {
         $this->handleExpiringSubscription();
@@ -36,7 +35,7 @@ class UpdateSubscriptionStatusJob implements ShouldQueue
         Subscription::whereIn('id', $expiredSubscriptionIds)
             ->update(['status' => SubscriptionStatus::EXPIRED]);
 
-        $histories = $expiredSubscriptionIds->map(fn($id) => [
+        $histories = $expiredSubscriptionIds->map(fn ($id) => [
             'subscription_id' => $id,
             'action' => 'expired',
         ])->toArray();
