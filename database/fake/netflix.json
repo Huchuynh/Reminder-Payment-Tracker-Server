@@ -125,7 +125,7 @@
                 "billing_cycle": "monthly"
             },
             "start_time": "2025-03-10T00:00:00Z",
-            "next_billing_date": "2025-11-10T00:00:00Z",
+            "next_billing_date": "2025-12-10T00:00:00Z",
             "status": "ACTIVE"
         },
         "payment": {

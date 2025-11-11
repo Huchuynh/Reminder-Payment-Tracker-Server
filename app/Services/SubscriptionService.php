@@ -46,7 +46,12 @@ class SubscriptionService
     {
         try {
             return DB::transaction(function () use ($data) {
-                $newSubscription = Subscription::create($data);
+                $dayLeft = now()->diffInDays($data['end_date']);
+                $newData = array_merge($data, [
+                    'status' => SubscriptionStatusService::evaluateStatus($dayLeft, $data['alert_thresholds'])
+                ]);
+
+                $newSubscription = Subscription::create($newData);
                 return $newSubscription;
             });
         } catch (\Throwable $e) {
