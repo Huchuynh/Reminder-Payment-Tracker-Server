@@ -41,6 +41,7 @@ class SubscriptionReminderNotification extends Notification implements ShouldQue
         $selected = array_intersect_key($map, array_flip($this->subscription->reminder_channels ?? []));
 
         \Log::info(collect($selected)->flatten()->values()->all());
+
         return collect($selected)->flatten()->values()->all();
     }
 
@@ -53,18 +54,18 @@ class SubscriptionReminderNotification extends Notification implements ShouldQue
             ->subject("Reminder for {$this->subscription->service->name}")
             ->greeting("Hello {$notifiable->name},")
             ->line($this->messageText())
-            ->action("For more details, please visit: ", env("FRONT_END_URL") . "/my-services/" . $this->subscription->id)
+            ->action('For more details, please visit: ', env('FRONT_END_URL').'/my-services/'.$this->subscription->id)
             ->line("Expire date: {$this->subscription->end_date}");
     }
 
     public function toFcm(object $notifiable): FcmMessage
     {
         $notificationData = [
-            'subscription_id' => (string)$this->subscription->id,
+            'subscription_id' => (string) $this->subscription->id,
             'service_name' => $this->subscription->service->name,
             'service_icon' => $this->subscription->service->icon,
             'message' => $this->messageText(),
-            'end_date' => $this->subscription->end_date->toIso8601String()
+            'end_date' => $this->subscription->end_date->toIso8601String(),
         ];
 
         return (new FcmMessage(notification: new FcmNotification(
@@ -72,8 +73,8 @@ class SubscriptionReminderNotification extends Notification implements ShouldQue
             body: $this->messageText(),
         )))
             ->data([
-                'id' => (string)$this->id,
-                'notifiable_id' => (string)$notifiable->id,
+                'id' => (string) $this->id,
+                'notifiable_id' => (string) $notifiable->id,
                 'notification_data' => json_encode($notificationData),
                 'read_at' => '',
                 'created_at' => now()->toIso8601String(),
@@ -87,7 +88,7 @@ class SubscriptionReminderNotification extends Notification implements ShouldQue
             'service_name' => $this->subscription->service->name,
             'service_icon' => $this->subscription->service->icon,
             'message' => $this->messageText(),
-            'end_date' => $this->subscription->end_date
+            'end_date' => $this->subscription->end_date,
         ];
     }
 

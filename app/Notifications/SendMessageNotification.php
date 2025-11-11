@@ -36,7 +36,7 @@ class SendMessageNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject(env("APP_NAME") . " Notification")
+            ->subject(env('APP_NAME').' Notification')
             ->greeting("Hello {$notifiable->name},")
             ->line($this->message);
     }
@@ -44,18 +44,18 @@ class SendMessageNotification extends Notification
     public function toFcm(object $notifiable): FcmMessage
     {
         return (new FcmMessage(notification: new FcmNotification(
-            title: "New Notification from Admin",
+            title: 'New Notification from Admin',
             body: $this->message,
         )))
             ->data([
-                "message" => $this->message,
+                'message' => $this->message,
             ]);
     }
 
     public function toDatabase(object $notifiable): array
     {
         return [
-            "message" => $this->message,
+            'message' => $this->message,
         ];
     }
 }

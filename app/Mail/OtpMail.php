@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -14,7 +13,9 @@ class OtpMail extends Mailable
     use Queueable, SerializesModels;
 
     public string $otp;
+
     public string $appName;
+
     public int $expires;
 
     /**
@@ -23,7 +24,7 @@ class OtpMail extends Mailable
     public function __construct(string $otp, int $expires)
     {
         $this->otp = $otp;
-        $this->appName = config('app.name', "Reminder Payment Tracker");
+        $this->appName = config('app.name', 'Reminder Payment Tracker');
         $this->expires = $expires;
     }
 

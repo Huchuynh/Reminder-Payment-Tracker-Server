@@ -26,6 +26,7 @@ class MomoController extends Controller
             $result = $this->momoService->createPayment($request->validated());
 
             \Log::info($result);
+
             return $this->responseSuccess(
                 $result['payUrl'],
                 $result['message']
@@ -38,10 +39,12 @@ class MomoController extends Controller
     public function notify(Request $request, string $id)
     {
         try {
-            if (!$this->momoService->verifySignature($request->all()))
-                return $this->responseBadRequest("Invalid signature");
+            if (! $this->momoService->verifySignature($request->all())) {
+                return $this->responseBadRequest('Invalid signature');
+            }
 
             $response = $this->momoService->notify($request->all(), $id);
+
             return $this->responseSuccess(
                 $response,
                 'Received payment successfully'

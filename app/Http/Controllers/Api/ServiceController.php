@@ -41,7 +41,7 @@ class ServiceController extends Controller
 
             return $this->responseSuccess(
                 $services,
-                "Get base service successfully."
+                'Get base service successfully.'
             );
         } catch (\Throwable $e) {
             return $this->handleExceptionResponse($e);
@@ -109,7 +109,7 @@ class ServiceController extends Controller
 
             return $this->responseSuccess(
                 null,
-                $result["message"],
+                $result['message'],
             );
         } catch (\Throwable $e) {
             return $this->handleExceptionResponse($e);

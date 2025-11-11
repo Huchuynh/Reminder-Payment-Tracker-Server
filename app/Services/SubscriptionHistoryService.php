@@ -11,8 +11,8 @@ class SubscriptionHistoryService
         try {
             return SubscriptionHistory::where('subscription_id', $subscription_id)->get();
         } catch (\Throwable $e) {
-            \Log::error("Fail to get service: " . $e->getMessage());
-            throw new \Exception("Failed to get service: " . $e->getMessage());
+            \Log::error('Fail to get service: '.$e->getMessage());
+            throw new \Exception('Failed to get service: '.$e->getMessage());
         }
     }
 }

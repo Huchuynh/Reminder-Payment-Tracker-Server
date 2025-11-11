@@ -25,33 +25,38 @@ trait ApiResponseTrait
         ], Response::HTTP_CREATED);
     }
 
-    protected function responseBadRequest($message): JsonResponse {
+    protected function responseBadRequest($message): JsonResponse
+    {
         return response()->json([
             'success' => false,
             'message' => $message,
         ], Response::HTTP_BAD_REQUEST);
     }
 
-    protected function responseNotFound($message): JsonResponse {
+    protected function responseNotFound($message): JsonResponse
+    {
         return response()->json([
             'success' => false,
             'message' => $message,
         ], Response::HTTP_NOT_FOUND);
     }
 
-    protected function responseInternalError($message): JsonResponse {
+    protected function responseInternalError($message): JsonResponse
+    {
         return response()->json([
             'success' => false,
             'message' => $message,
         ], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    protected function handleExceptionResponse(\Throwable $e): JsonResponse {
-        if($e->getCode() === Response::HTTP_BAD_REQUEST)
+    protected function handleExceptionResponse(\Throwable $e): JsonResponse
+    {
+        if ($e->getCode() === Response::HTTP_BAD_REQUEST) {
             return $this->responseBadRequest($e->getMessage());
-        else if($e->getCode() === Response::HTTP_NOT_FOUND)
+        } elseif ($e->getCode() === Response::HTTP_NOT_FOUND) {
             return $this->responseNotFound($e->getMessage());
-        else
+        } else {
             return $this->responseInternalError($e->getMessage());
+        }
     }
 }

@@ -27,7 +27,7 @@ class SubscriptionHistoryController extends Controller
 
             return $this->responseSuccess(
                 $histories,
-                "Get subscription histories successfully."
+                'Get subscription histories successfully.'
             );
         } catch (\Throwable $e) {
             return $this->handleExceptionResponse($e);

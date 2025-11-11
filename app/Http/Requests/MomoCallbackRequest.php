@@ -22,19 +22,19 @@ class MomoCallbackRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "amount" => "required|integer",
-            "extraData" => "required|string",
-            "message" => "required|string",
-            "orderId" => "required|string",
-            "orderInfo" => "required|string",
-            'orderType' => "required|string",
-            "partnerCode" => "required|string",
-            "payType" => "required|string",
-            "requestId" => "required|string",
-            "responseTime" => "required|string",
-            "resultCode" => "required|string",
-            "transId" => "required|string",
-            "signature" => "required|string",
+            'amount' => 'required|integer',
+            'extraData' => 'required|string',
+            'message' => 'required|string',
+            'orderId' => 'required|string',
+            'orderInfo' => 'required|string',
+            'orderType' => 'required|string',
+            'partnerCode' => 'required|string',
+            'payType' => 'required|string',
+            'requestId' => 'required|string',
+            'responseTime' => 'required|string',
+            'resultCode' => 'required|string',
+            'transId' => 'required|string',
+            'signature' => 'required|string',
         ];
     }
 }

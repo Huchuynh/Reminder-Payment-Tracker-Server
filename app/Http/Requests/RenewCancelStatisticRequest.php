@@ -22,9 +22,9 @@ class RenewCancelStatisticRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "from" => "required|date|",
-            "to" => "required|date|after:from",
-            "service_id" => "required|integer",
+            'from' => 'required|date|',
+            'to' => 'required|date|after:from',
+            'service_id' => 'required|integer',
         ];
     }
 }

@@ -8,10 +8,12 @@ class SubscriptionStatusService
 {
     public static function evaluateStatus(int $daysLeft, int $threshold = 7): SubscriptionStatus
     {
-        if ($daysLeft <= $threshold)
+        if ($daysLeft <= $threshold) {
             return SubscriptionStatus::EXPIRING;
-        if ($daysLeft <= 0)
+        }
+        if ($daysLeft <= 0) {
             return SubscriptionStatus::EXPIRED;
+        }
 
         return SubscriptionStatus::ACTIVE;
     }

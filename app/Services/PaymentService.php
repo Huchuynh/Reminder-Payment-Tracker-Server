@@ -19,9 +19,8 @@ class PaymentService
                 ]);
             });
         } catch (\Throwable $e) {
-            \Log::error("Failed to create service: " . $e->getMessage());
-            throw new \Exception("Failed to create service. " . $e->getMessage());
+            \Log::error('Failed to create service: '.$e->getMessage());
+            throw new \Exception('Failed to create service. '.$e->getMessage());
         }
     }
 }
-

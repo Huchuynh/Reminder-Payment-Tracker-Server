@@ -22,7 +22,7 @@ class RenewSubscriptionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "end_date" => "required|date|date_format:Y-m-d H:i:s",
+            'end_date' => 'required|date|date_format:Y-m-d H:i:s',
         ];
     }
 }

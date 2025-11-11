@@ -4,8 +4,8 @@ namespace App\Enums;
 
 enum AlertChannels: string
 {
-    case EMAIL = "email";
-    case NOTIFICATION = "notification";
+    case EMAIL = 'email';
+    case NOTIFICATION = 'notification';
 
     public function isValidated(): bool
     {
@@ -18,8 +18,8 @@ enum AlertChannels: string
     public static function validateValues(): array
     {
         return array_map(
-            fn(self $case) => $case->value,
-            array_filter(self::cases(), fn(self $case) => $case->isValidated())
+            fn (self $case) => $case->value,
+            array_filter(self::cases(), fn (self $case) => $case->isValidated())
         );
     }
 }

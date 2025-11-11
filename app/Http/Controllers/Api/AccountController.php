@@ -38,7 +38,7 @@ class AccountController extends Controller
 
             return $this->responseSuccess(
                 $recipients,
-                "Get recipients successfully."
+                'Get recipients successfully.'
             );
         } catch (\Throwable $e) {
             return $this->handleExceptionResponse($e);
@@ -49,7 +49,7 @@ class AccountController extends Controller
     {
         return $this->responseSuccess(
             $request->user(),
-            "Successfully authenticated!"
+            'Successfully authenticated!'
         );
     }
 }

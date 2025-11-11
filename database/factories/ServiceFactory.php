@@ -27,7 +27,7 @@ class ServiceFactory extends Factory
             'Insurance', 'Savings', 'Loan', 'Investment', 'Gift',
             'Game', 'Streaming', 'Ticket', 'Food Delivery', 'Restaurant',
             'Supermarket', 'Utilities', 'Tax', 'Flight', 'Movie',
-            'Books', 'Music', 'App', 'Bank Card', 'Pet Care'
+            'Books', 'Music', 'App', 'Bank Card', 'Pet Care',
         ];
 
         $serviceModifiers = [
@@ -38,13 +38,13 @@ class ServiceFactory extends Factory
             'Intelligent', 'High-speed', 'Prebook', 'Discount', 'Protected',
             'Unlimited', 'Pro', 'Plus', 'Express', 'Standard',
             'Mini', 'Max', 'Eco', 'Flex', 'Classic',
-            'Prime', 'Super', 'Extra', 'Ultimate'
+            'Prime', 'Super', 'Extra', 'Ultimate',
         ];
 
         return [
-            'name' => $serviceTypes[array_rand($serviceTypes)] . ' ' . $serviceModifiers[array_rand($serviceModifiers)],
+            'name' => $serviceTypes[array_rand($serviceTypes)].' '.$serviceModifiers[array_rand($serviceModifiers)],
             'provider' => $this->faker->company(),
-            'icon' => "https://cdn-icons-png.freepik.com/512/5519/5519311.png",
+            'icon' => 'https://cdn-icons-png.freepik.com/512/5519/5519311.png',
             'account_id' => Account::factory(),
             'is_base' => $this->faker->boolean(30),
             'created_at' => now()->format('Y-m-d H:i:s'),

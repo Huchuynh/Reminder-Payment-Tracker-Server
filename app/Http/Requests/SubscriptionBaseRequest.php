@@ -24,16 +24,16 @@ class SubscriptionBaseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "start_date" => "required|date|date_format:Y-m-d H:i:s",
-            "end_date" => "required|date|date_format:Y-m-d H:i:s|after:start_date",
-            "plan" => "required|string",
-            "notes" => "nullable|string",
-            "price" => "required|numeric",
-            "alert_thresholds" => "nullable|integer",
-            "reminder_frequency" => "nullable|integer",
+            'start_date' => 'required|date|date_format:Y-m-d H:i:s',
+            'end_date' => 'required|date|date_format:Y-m-d H:i:s|after:start_date',
+            'plan' => 'required|string',
+            'notes' => 'nullable|string',
+            'price' => 'required|numeric',
+            'alert_thresholds' => 'nullable|integer',
+            'reminder_frequency' => 'nullable|integer',
             'reminder_channels' => 'nullable|array',
             'reminder_channels.*' => Rule::in(AlertChannels::validateValues()),
-            "last_reminded_at" => "nullable|date|date_format:Y-m-d H:i:s"
+            'last_reminded_at' => 'nullable|date|date_format:Y-m-d H:i:s',
         ];
     }
 }

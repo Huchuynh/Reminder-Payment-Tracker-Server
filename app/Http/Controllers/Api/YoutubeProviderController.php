@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 class YoutubeProviderController extends Controller
 {
     private $path;
+
     private $data;
 
     public function __construct()
@@ -25,22 +26,22 @@ class YoutubeProviderController extends Controller
 
         $record = collect($this->data)->firstWhere('account.email', $validated['email']);
 
-        if (!$record) {
+        if (! $record) {
             return response()->json([
                 'success' => false,
-                'message' => 'Customer not found'
+                'message' => 'Customer not found',
             ], 404);
         }
 
         return response()->json([
             'success' => true,
-            'data' => $record
+            'data' => $record,
         ]);
     }
 
     public function renew(Request $request, string $id)
     {
-        \Log::info("renew: " . $id);
+        \Log::info('renew: '.$id);
         $validated = $request->validate([
             'api_subscription_id' => 'required|string',
             'amount' => 'required|numeric',
@@ -48,7 +49,6 @@ class YoutubeProviderController extends Controller
             'callback_url' => 'required|url',
             'redirect_url' => 'required|url',
         ]);
-
 
         foreach ($this->data as &$item) {
             if ($item['subscription_id'] === $validated['api_subscription_id']) {
@@ -66,10 +66,10 @@ class YoutubeProviderController extends Controller
             'payment_date' => now(),
         ];
 
-        $client = new Client();
+        $client = new Client;
 
         try {
-            $response = $client->post($validated['callback_url'] . "/{$id}", [
+            $response = $client->post($validated['callback_url']."/{$id}", [
                 'json' => $paymentData,
             ]);
         } catch (\Exception $e) {

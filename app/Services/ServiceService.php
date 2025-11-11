@@ -21,8 +21,8 @@ class ServiceService
 
             return $query->paginate($params['limit']);
         } catch (\Throwable $e) {
-            \Log::error("Fail to get service: " . $e->getMessage());
-            throw new \Exception("Failed to get service: " . $e->getMessage());
+            \Log::error('Fail to get service: '.$e->getMessage());
+            throw new \Exception('Failed to get service: '.$e->getMessage());
         }
     }
 
@@ -41,11 +41,12 @@ class ServiceService
         try {
             return DB::transaction(function () use ($data) {
                 $newService = Service::create($data);
+
                 return $newService;
             });
         } catch (\Throwable $e) {
-            \Log::error("Failed to create service: " . $e->getMessage());
-            throw new \Exception("Failed to create service. " . $e->getMessage());
+            \Log::error('Failed to create service: '.$e->getMessage());
+            throw new \Exception('Failed to create service. '.$e->getMessage());
         }
 
     }
@@ -55,10 +56,11 @@ class ServiceService
         try {
             $service = $this->findById($id);
             $service->update($data);
+
             return $service;
         } catch (\Throwable $e) {
-            \Log::error("Failed to update service: " . $e->getMessage());
-            throw new \Exception("Failed to update service. " . $e->getMessage());
+            \Log::error('Failed to update service: '.$e->getMessage());
+            throw new \Exception('Failed to update service. '.$e->getMessage());
         }
     }
 
@@ -66,10 +68,11 @@ class ServiceService
     {
         try {
             $this->findById($id)->delete();
+
             return ['message' => 'Service successfully deleted'];
         } catch (\Throwable $e) {
-            \Log::error("Failed to delete service: " . $e->getMessage());
-            throw new \Exception("Failed to delete service. " . $e->getMessage());
+            \Log::error('Failed to delete service: '.$e->getMessage());
+            throw new \Exception('Failed to delete service. '.$e->getMessage());
         }
     }
 }
