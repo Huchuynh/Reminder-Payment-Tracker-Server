@@ -55,6 +55,7 @@ Route::middleware('auth:api')->group(function () {
 
     // Statistic Routes
     Route::get('admin/statistics/renew-cancel', [StatisticController::class, 'getRenewCancelStatisticByService']);
+    Route::get('admin/statistics/revenue', [StatisticController::class, 'getRevenueStatisticByPeriod']);
 
     // Momo Routes
     Route::post('momo/pay', [MomoController::class, 'pay']);
