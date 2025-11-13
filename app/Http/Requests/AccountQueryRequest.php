@@ -12,7 +12,8 @@ class AccountQueryRequest extends QueryParamsRequest
     public function rules(): array
     {
         return array_merge(parent::rules(), [
-            'status' => 'string|required',
+            'inactive_days' => 'nullable|integer',
+            'is_active' => 'required|boolean'
         ]);
     }
 }

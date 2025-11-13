@@ -50,9 +50,11 @@ Route::middleware('auth:api')->group(function () {
     });
 
     // Account Routes
-    Route::get('admin/accounts', [AccountController::class, 'getAccountWithSubscription']);
-    Route::get('admin/accounts/selectable', [AccountController::class, 'getSelectableAccounts']);
-
+    Route::controller(AccountController::class)->prefix('admin/accounts')->group(function () {
+        Route::get('', 'getAccountPaginated');
+        Route::get('/selectable', 'getSelectableAccounts');
+        Route::post('/status', 'updateAccountActiveState');
+    });
     // Statistic Routes
     Route::get('admin/statistics/renew-cancel', [StatisticController::class, 'getRenewCancelStatisticByService']);
     Route::get('admin/statistics/revenue', [StatisticController::class, 'getRevenueStatisticByPeriod']);

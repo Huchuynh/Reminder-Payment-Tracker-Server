@@ -9,11 +9,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
-class Account extends Authenticatable implements JWTSubject
+class   Account extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
 
-    protected $fillable = ['full_name', 'email', 'phone', 'avatar', 'role', 'password', 'fcm_token', 'last_active_at'];
+    protected $fillable = ['full_name', 'email', 'phone', 'avatar', 'role', 'password', 'fcm_token', 'last_active_at', 'is_active'];
 
     protected $casts = [
         'role' => AccountRole::class,
@@ -28,6 +28,13 @@ class Account extends Authenticatable implements JWTSubject
     protected $hidden = [
         'password',
     ];
+
+    public function scopeUpdateLastActiveAt($query)
+    {
+        return $query->where('id', auth()->id())
+            ->update(['last_active_at' => now()]);
+    }
+
 
     // Các hàm của JWTSubject mà bạn đã có
 

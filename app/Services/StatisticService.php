@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Enums\PaymentStatus;
-use App\Enums\StatisticPeriodFilter;
 use App\Enums\SubscriptionHistoryAction;
 use App\Models\Payment;
 use App\Models\Service;
@@ -14,6 +13,19 @@ use DatePeriod;
 
 class StatisticService
 {
+    private const PERIOD_CONFIG = [
+        'day' => [
+            'db_format' => 'YYYY-MM-DD',
+            'carbon_format' => 'Y-m-d',
+            'interval' => 'P1D',
+        ],
+        'month' => [
+            'db_format' => 'YYYY-MM',
+            'carbon_format' => 'Y-m',
+            'interval' => 'P1M',
+        ],
+    ];
+
     public function getRenewCancelStatisticByService(array $params)
     {
         try {
@@ -89,22 +101,15 @@ class StatisticService
     public function getRevenueStatisticByPeriod(array $data)
     {
         try {
-            [$from, $to] = $this->resolveDateRange($data);
+            $params = [
+                'start_date' => Carbon::parse($data['start_date'])->startOfDay(),
+                'end_date' => Carbon::parse($data['end_date'])->endOfDay(),
+                'type' => $data['type'],
+            ];
 
-            $payments = Payment::query()
-                ->selectRaw('CAST(paid_at AS DATE) AS date, SUM(amount) AS total')
-                ->join('subscriptions', 'subscriptions.id', '=', 'payments.subscription_id')
-                ->whereBetween('paid_at', [$from, $to])
-                ->where('subscriptions.service_id', $data['service_id'])
-                ->where('payments.status', PaymentStatus::SUCCESS)
-                ->groupByRaw('CAST(paid_at AS DATE)')
-                ->orderBy('date')
-                ->get()
-                ->keyBy('date');
+            $payments = $this->getPaymentsByPeriod($params, $data['service_id']);
 
-            \Log::info($payments->toArray());
-
-            return $this->filMissingDates($from, $to, $payments);
+            return $this->fillMissingPeriods($params, $payments);
         } catch (\Throwable $e) {
             \Log::error('Fail to get revenue statistic: ' . $e->getMessage());
             report($e);
@@ -112,39 +117,36 @@ class StatisticService
         }
     }
 
-    private function resolveDateRange(array $data): array
+    private function getPaymentsByPeriod(array $data, int $service_id)
     {
-        $filter = $data['filter'] ?? null;
-        $from = $data['from'] ?? null;
-        $to = $data['to'] ?? null;
+        $format = self::PERIOD_CONFIG[$data['type']]['db_format'];
 
-        if ($from && $to)
-            return [
-                Carbon::parse($from)->startOfDay(),
-                Carbon::parse($to)->endOfDay(),
-            ];
-
-        return match ($filter) {
-            StatisticPeriodFilter::THIS_MONTH->value => [
-                now()->startOfMonth(),
-                now()->endOfMonth(),
-            ],
-            StatisticPeriodFilter::LAST_MONTH->value => [
-                now()->subMonth()->startOfMonth(),
-                now()->subMonth()->endOfMonth(),
-            ],
-            default => [now()->startOfDay(), now()->endOfDay()],
-        };
+        return Payment::query()
+            ->selectRaw("TO_CHAR(paid_at, '{$format}') AS period, SUM(amount) AS total")
+            ->join('subscriptions', 'subscriptions.id', '=', 'payments.subscription_id')
+            ->whereBetween('paid_at', [$data['start_date'], $data['end_date']])
+            ->where('subscriptions.service_id', $service_id)
+            ->where('payments.status', PaymentStatus::SUCCESS)
+            ->groupByRaw("TO_CHAR(paid_at, '{$format}')")
+            ->orderBy('period')
+            ->get()
+            ->keyBy('period');
     }
 
-    private function filMissingDates(Carbon $from, Carbon $to, $payment)
+    private function fillMissingPeriods(array $filter, $payment)
     {
-        $period = new DatePeriod($from, new DateInterval('P1D'), $to);
+        $config = self::PERIOD_CONFIG[$filter['type']];
 
-        return collect($period)->map(function ($date) use ($from, $to, $payment) {
-            $key = $date->format('Y-m-d');
+        $period = new DatePeriod(
+            $filter['start_date'],
+            new DateInterval($config['interval']),
+            $filter['end_date']
+        );
+
+        return collect($period)->map(function ($date) use ($config, $payment) {
+            $key = $date->format($config['carbon_format']);
             return [
-                'date' => $key,
+                'period' => $key,
                 'total' => (float)($payment[$key]->total ?? 0),
             ];
         });

@@ -3,9 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class RevenueStatisticRequest extends FormRequest
+class UpdateAccountActiveStateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,10 +22,9 @@ class RevenueStatisticRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'type' => ['required', 'string', Rule::in(['day', 'month'])],
-            'start_date' => ['required', 'date', 'required_with:end_date'],
-            'end_date' => ['required', 'date', 'after:from', 'required_with:start_date'],
-            'service_id' => ['required', 'integer', 'exists:services,id'],
+            'account_ids' => 'required|array|min:1',
+            'account_ids.*' => 'integer|exists:accounts,id',
+            'is_active' => 'required|boolean'
         ];
     }
 }
