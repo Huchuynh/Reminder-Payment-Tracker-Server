@@ -40,6 +40,28 @@ class SubscriptionService
         }
     }
 
+    public function getSubscriptionByServiceId(array $params, int $service_id)
+    {
+        try {
+            $query = Subscription::query()->with('account');
+
+            $query->where('service_id', $service_id);
+
+            $query->whereHas('account', function ($query) use ($params) {
+                $query->where('is_active', true);
+                $query->where('full_name', 'ilike', "%{$params['search']}%")
+                    ->orWhere('email', 'ilike', "%{$params['search']}%");
+            });
+
+            $query->where('status', $params['status']);
+
+            return $query->paginate($params['limit']);
+        } catch (\Throwable $e) {
+            \Log::error('Fail to get service: ' . $e->getMessage());
+            throw new \Exception('Failed to get service: ' . $e->getMessage());
+        }
+    }
+
     public function findById(int $id)
     {
         return Subscription::findOrFail($id)->load('service');

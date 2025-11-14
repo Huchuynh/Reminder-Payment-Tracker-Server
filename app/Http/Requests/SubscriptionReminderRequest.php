@@ -24,7 +24,8 @@ class SubscriptionReminderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'subscription_id' => 'required|integer|exists:subscriptions,id',
+            'subscription_ids' => 'required|array',
+            'subscription_ids.*' => 'integer|exists:subscriptions,id',
             'status' => ['required', Rule::in(SubscriptionStatus::remindableValues())],
         ];
     }
