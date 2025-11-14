@@ -2,19 +2,10 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class RevenueStatisticRequest extends FormRequest
+class RevenueStatisticRequest extends StatisticBaseRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
-    {
-        return true;
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -22,11 +13,9 @@ class RevenueStatisticRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        return array_merge(parent::rules(), [
             'type' => ['required', 'string', Rule::in(['day', 'month'])],
-            'start_date' => ['required', 'date', 'required_with:end_date'],
-            'end_date' => ['required', 'date', 'after:from', 'required_with:start_date'],
             'service_id' => ['required', 'integer', 'exists:services,id'],
-        ];
+        ]);
     }
 }

@@ -26,6 +26,7 @@ class StatisticService
         ],
     ];
 
+    /*Renew Cancel Rate Statistic By Service*/
     public function getRenewCancelStatisticByService(array $params)
     {
         try {
@@ -98,6 +99,7 @@ class StatisticService
         ];
     }
 
+    /*Revenue Statistic By Period*/
     public function getRevenueStatisticByPeriod(array $data)
     {
         try {
@@ -150,5 +152,76 @@ class StatisticService
                 'total' => (float)($payment[$key]->total ?? 0),
             ];
         });
+    }
+
+    /*Revenue Statistic By Top Service*/
+    public function getRevenueStatisticByTopService(array $data)
+    {
+        try {
+            $params = [
+                'start_date' => Carbon::parse($data['start_date'])->startOfDay(),
+                'end_date' => Carbon::parse($data['end_date'])->endOfDay()
+            ];
+
+            $top_service_data = $this->getTopServiceRevenue($params, 2);
+
+            $total_revenue = $this->getTotalRevenue($params);
+
+            $result = $this->calculateOtherGroup($top_service_data, $total_revenue);
+
+            return $result->map(function ($item) {
+                return [
+                    'service_name' => $item->service_name,
+                    'total_revenue' => (float)$item->total_revenue,
+                ];
+            });
+        } catch (\Throwable $e) {
+            \Log::error('Fail to get revenue statistic: ' . $e->getMessage());
+            report($e);
+            throw new \Exception('Fail to get revenue statistic: ' . $e->getMessage());
+        }
+    }
+
+    private function getTopServiceRevenue(array $data, int $top)
+    {
+        $query = Payment::query()
+            ->selectRaw('
+                services.name as service_name,
+                SUM(payments.amount) as total_revenue
+            ')
+            ->join('subscriptions', 'subscriptions.id', '=', 'payments.subscription_id')
+            ->join('services', 'services.id', '=', 'subscriptions.service_id')
+            ->where('services.is_base', true)
+            ->whereBetween('payments.paid_at', [$data['start_date'], $data['end_date']])
+            ->groupBy('services.id', 'services.name')
+            ->orderByDesc('total_revenue')
+            ->limit($top)
+            ->get();
+
+        return [
+            $query,
+            $query->sum('total_revenue'),
+        ];
+    }
+
+    private function getTotalRevenue(array $data)
+    {
+        return Payment::join('subscriptions', 'subscriptions.id', '=', 'payments.subscription_id')
+            ->join('services', 'services.id', '=', 'subscriptions.service_id')
+            ->where('services.is_base', true)
+            ->whereBetween('payments.paid_at', [$data['start_date'], $data['end_date']])
+            ->sum('payments.amount');
+    }
+
+    private function calculateOtherGroup($top_service_data, $total_revenue)
+    {
+        [$top_service, $top_revenue] = $top_service_data;
+
+        $top_service->push((object)[
+            'service_name' => 'Others',
+            'total_revenue' => $total_revenue - $top_revenue,
+        ]);
+
+        return $top_service;
     }
 }

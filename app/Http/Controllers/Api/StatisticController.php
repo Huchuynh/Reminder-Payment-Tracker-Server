@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RenewCancelStatisticRequest;
 use App\Http\Requests\RevenueStatisticRequest;
+use App\Http\Requests\StatisticBaseRequest;
 use App\Services\StatisticService;
 use App\Traits\ApiResponseTrait;
 
@@ -41,6 +42,20 @@ class StatisticController extends Controller
             return $this->responseSuccess(
                 $result,
                 "Get Revenue Statistic by Period Successfully",
+            );
+        } catch (\Throwable $e) {
+            return $this->handleExceptionResponse($e);
+        }
+    }
+
+    public function getRevenueStatisticByTopService(StatisticBaseRequest $request)
+    {
+        try {
+            $result = $this->statisticService->getRevenueStatisticByTopService($request->validated());
+
+            return $this->responseSuccess(
+                $result,
+                "Get Revenue Statistic by Top Service Successfully",
             );
         } catch (\Throwable $e) {
             return $this->handleExceptionResponse($e);
