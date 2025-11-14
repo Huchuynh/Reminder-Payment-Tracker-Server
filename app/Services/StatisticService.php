@@ -3,9 +3,8 @@
 namespace App\Services;
 
 use App\Enums\PaymentStatus;
-use App\Enums\SubscriptionHistoryAction;
 use App\Models\Payment;
-use App\Models\Service;
+use App\Models\Subscription;
 use App\Models\SubscriptionHistory;
 use Carbon\Carbon;
 use DateInterval;
@@ -27,76 +26,79 @@ class StatisticService
     ];
 
     /*Renew Cancel Rate Statistic By Service*/
-    public function getRenewCancelStatisticByService(array $params)
+    public function getRenewCancelStatisticByPeriod(array $data)
     {
         try {
-            $subscriptionIds = (int)$params['service_id'] === 0
-                ? $this->getSubscriptionIdsByService($params, false)
-                : $this->getSubscriptionIdsByService($params, true);
+            $params = [
+                'start_date' => Carbon::parse($data['start_date'])->startOfDay(),
+                'end_date' => Carbon::parse($data['end_date'])->endOfDay(),
+                'type' => $data['type'],
+            ];
 
-            return $subscriptionIds->isEmpty() ?
-                $this->statisticResponse(
-                    'No data found for this service',
-                    null
-                )
-                : $this->calculateRates($subscriptionIds, $params['service_id']);
+            $histories = $this->getHistoriesRateByPeriod($params, $data['service_id']);
+
+            $total_subscription_due = $this->getTotalSubscriptionDue($params, $data['service_id']);
+
+            return $this->fillMissingPeriodsByRenewCancelRate(
+                $params,
+                $histories,
+                $total_subscription_due,
+            );
+
         } catch (\Throwable $e) {
             \Log::error('Fail to get renew and cancel statistic: ' . $e->getMessage());
             throw new \Exception('Fail to get renew and cancel statistic: ' . $e->getMessage());
         }
     }
 
-    private function getSubscriptionIdsByService(array $data, bool $is_base)
+    private function getHistoriesRateByPeriod(array $data, int $service_id)
     {
+        $format = self::PERIOD_CONFIG[$data['type']]['db_format'];
+
         return SubscriptionHistory::query()
-            ->whereBetween('created_at', [$data['from'], $data['to']])
-            ->whereHas('subscription.service', function ($query) use ($data, $is_base) {
-                $query->when($is_base, function ($q) use ($data) {
-                    $q->where('id', $data['service_id']);
-                }, function ($q) {
-                    $q->where('is_base', false);
-                });
-            })
-            ->distinct('subscription_id')
-            ->pluck('subscription_id');
+//            ->selectRaw("
+//                    TO_CHAR(subscription_history.created_at, '{$format}') AS period,
+//                    COUNT(DISTINCT subscription_history.subscription_id) FILTER (WHERE action = 'renewed') AS renewed_count,
+//                    COUNT(DISTINCT subscription_history.subscription_id) FILTER (WHERE action = 'canceled' OR action = 'expired') AS canceled_count
+//              ")
+            ->selectRaw("
+                    TO_CHAR(subscription_history.created_at, '{$format}') AS period,
+                    SUM(CASE WHEN action = 'renewed' THEN 1 ELSE 0 END) AS renewed_count,
+                    SUM(CASE WHEN action = 'canceled' OR action = 'expired' THEN 1 ELSE 0 END) AS canceled_count
+              ")
+            ->join('subscriptions', 'subscriptions.id', '=', 'subscription_history.subscription_id')
+            ->whereBetween('subscription_history.created_at', [$data['start_date'], $data['end_date']])
+            ->where('subscriptions.service_id', $service_id)
+            ->groupByRaw("TO_CHAR(subscription_history.created_at, '{$format}')")
+            ->orderBy('period')
+            ->get()
+            ->keyBy('period');
     }
 
-    private function calculateRates($subscriptionIds, int $service_id)
+    private function getTotalSubscriptionDue(array $data, int $service_id)
     {
-        $renewed = $this->countAction($subscriptionIds, SubscriptionHistoryAction::RENEWED);
-        $canceled = $this->countAction($subscriptionIds, SubscriptionHistoryAction::CANCELED);
-        $total = $renewed + $canceled;
-
-        return $this->statisticResponse(
-            'Get statistic data successfully.',
-            [
-                'service_group' => $this->getServiceGroupName($service_id),
-                'renewed' => $renewed,
-                'canceled' => $canceled,
-                'renewed_rate' => $total ? round(($renewed / $total) * 100, 2) : 0,
-                'canceled_rate' => $total ? round(($canceled / $total) * 100, 2) : 0,
-            ]
-        );
-    }
-
-    private function countAction($subscriptionIds, SubscriptionHistoryAction $action)
-    {
-        return SubscriptionHistory::whereIn('subscription_id', $subscriptionIds)
-            ->where('action', $action)
+        return Subscription::query()
+            ->where('service_id', $service_id)
+            ->whereBetween('end_date', [$data['start_date'], $data['end_date']])
             ->count();
     }
 
-    private function getServiceGroupName(int $service_id)
+    private function fillMissingPeriodsByRenewCancelRate(array $filter, $histories, $total)
     {
-        return $service_id === 0 ? 'Others' : Service::findOrFail($service_id)->name;
-    }
+        [$period, $config] = $this->getMissingPeriods($filter);
 
-    private function statisticResponse(string $message, $data)
-    {
-        return [
-            'message' => $message,
-            'data' => $data,
-        ];
+        return collect($period)->map(function ($date) use ($config, $histories, $total) {
+            $key = $date->format($config['carbon_format']);
+
+            $renewed = $histories[$key]->renewed_count ?? 0;
+            $canceled = $histories[$key]->canceled_count ?? 0;
+
+            return [
+                'period' => $key,
+                'renew_percent' => $total === 0 ? 100 : round(($renewed / $total) * 100, 2),
+                'cancel_percent' => $total === 0 ? 100 : round(($canceled / $total) * 100, 2),
+            ];
+        });
     }
 
     /*Revenue Statistic By Period*/
@@ -137,13 +139,7 @@ class StatisticService
 
     private function fillMissingPeriods(array $filter, $payment)
     {
-        $config = self::PERIOD_CONFIG[$filter['type']];
-
-        $period = new DatePeriod(
-            $filter['start_date'],
-            new DateInterval($config['interval']),
-            $filter['end_date']
-        );
+        [$period, $config] = $this->getMissingPeriods($filter);
 
         return collect($period)->map(function ($date) use ($config, $payment) {
             $key = $date->format($config['carbon_format']);
@@ -223,5 +219,21 @@ class StatisticService
         ]);
 
         return $top_service;
+    }
+
+    /*Helper Functions*/
+    private function getMissingPeriods(array $data)
+    {
+        $config = self::PERIOD_CONFIG[$data['type']];
+
+        $interval = new DateInterval($config['interval']);
+
+        $period = new DatePeriod(
+            $data['start_date'],
+            $interval,
+            $data['end_date']
+        );
+
+        return [$period, $config];
     }
 }

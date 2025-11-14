@@ -57,7 +57,7 @@ Route::middleware('auth:api')->group(function () {
     });
     // Statistic Routes
     Route::controller(AccountController::class)->prefix('admin/statistics')->group(function () {
-        Route::get('/renew-cancel', [StatisticController::class, 'getRenewCancelStatisticByService']);
+        Route::get('/renew-cancel', [StatisticController::class, 'getRenewCancelStatisticByPeriod']);
         Route::get('/revenue', [StatisticController::class, 'getRevenueStatisticByPeriod']);
         Route::get('/top-service/revenue', [StatisticController::class, 'getRevenueStatisticByTopService']);
     });

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\RenewCancelStatisticRequest;
 use App\Http\Requests\RevenueStatisticRequest;
 use App\Http\Requests\StatisticBaseRequest;
 use App\Services\StatisticService;
@@ -20,14 +19,14 @@ class StatisticController extends Controller
         $this->statisticService = $statisticService;
     }
 
-    public function getRenewCancelStatisticByService(RenewCancelStatisticRequest $request)
+    public function getRenewCancelStatisticByPeriod(RevenueStatisticRequest $request)
     {
         try {
-            $result = $this->statisticService->getRenewCancelStatisticByService($request->validated());
+            $result = $this->statisticService->getRenewCancelStatisticByPeriod($request->validated());
 
             return $this->responseSuccess(
-                $result['data'],
-                $result['message'],
+                $result,
+                "Get Renew Cancel Rate Statistic by Period Successfully",
             );
         } catch (\Throwable $e) {
             return $this->handleExceptionResponse($e);
