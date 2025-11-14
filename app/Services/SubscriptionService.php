@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\SubscriptionHistoryAction;
 use App\Enums\SubscriptionStatus;
+use App\Models\Account;
 use App\Models\Subscription;
 use App\Models\SubscriptionHistory;
 use Illuminate\Support\Facades\DB;
@@ -16,24 +17,26 @@ class SubscriptionService
             $query = Subscription::query()->with('service');
 
             $query->where('account_id', $params['account_id']);
-            //
+
             $query->whereHas('service', function ($query) use ($params) {
                 $query->where('name', 'ilike', "%{$params['search']}%");
             });
-            //
+
             $query->where('status', $params['status']);
-            //
+
             if (isset($params['start_date']) && isset($params['end_date'])) {
                 $query->where('start_date', '>=', $params['start_date'])
                     ->where('end_date', '<=', $params['end_date']);
             }
-            //
+
             $query->orderBy($params['sort_by'], $params['sort_order']);
+
+            Account::updateLastActiveAt();
 
             return $query->paginate($params['limit']);
         } catch (\Throwable $e) {
-            \Log::error('Fail to get service: '.$e->getMessage());
-            throw new \Exception('Failed to get service: '.$e->getMessage());
+            \Log::error('Fail to get service: ' . $e->getMessage());
+            throw new \Exception('Failed to get service: ' . $e->getMessage());
         }
     }
 
@@ -51,8 +54,8 @@ class SubscriptionService
                 return $newSubscription;
             });
         } catch (\Throwable $e) {
-            \Log::error('Failed to create subscription: '.$e->getMessage());
-            throw new \Exception('Failed to create subscription. '.$e->getMessage());
+            \Log::error('Failed to create subscription: ' . $e->getMessage());
+            throw new \Exception('Failed to create subscription. ' . $e->getMessage());
         }
 
     }
@@ -70,8 +73,8 @@ class SubscriptionService
 
             return $subscription;
         } catch (\Throwable $e) {
-            \Log::error('Failed to update subscription: '.$e->getMessage());
-            throw new \Exception('Failed to update subscription. '.$e->getMessage());
+            \Log::error('Failed to update subscription: ' . $e->getMessage());
+            throw new \Exception('Failed to update subscription. ' . $e->getMessage());
         }
     }
 
@@ -91,8 +94,8 @@ class SubscriptionService
 
             return $subscription;
         } catch (\Throwable $e) {
-            \Log::error('Failed to renew service: '.$e->getMessage());
-            throw new \Exception('Failed to renew service. '.$e->getMessage());
+            \Log::error('Failed to renew service: ' . $e->getMessage());
+            throw new \Exception('Failed to renew service. ' . $e->getMessage());
         }
     }
 
@@ -109,8 +112,8 @@ class SubscriptionService
 
             return $subscription;
         } catch (\Throwable $e) {
-            \Log::error('Failed to cancel service: '.$e->getMessage());
-            throw new \Exception('Failed to cancel service. '.$e->getMessage());
+            \Log::error('Failed to cancel service: ' . $e->getMessage());
+            throw new \Exception('Failed to cancel service. ' . $e->getMessage());
         }
     }
 
@@ -122,8 +125,8 @@ class SubscriptionService
 
             return $subscription;
         } catch (\Throwable $e) {
-            \Log::error('Failed to mark as paid service: '.$e->getMessage());
-            throw new \Exception('Failed to mark as paid service. '.$e->getMessage());
+            \Log::error('Failed to mark as paid service: ' . $e->getMessage());
+            throw new \Exception('Failed to mark as paid service. ' . $e->getMessage());
         }
     }
 }

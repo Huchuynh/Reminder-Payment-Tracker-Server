@@ -49,6 +49,14 @@ trait ApiResponseTrait
         ], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
+    protected function responseForbidden($message): JsonResponse
+    {
+        return response()->json([
+            'success' => false,
+            'message' => $message,
+        ], Response::HTTP_FORBIDDEN);
+    }
+
     protected function handleExceptionResponse(\Throwable $e): JsonResponse
     {
         if ($e->getCode() === Response::HTTP_BAD_REQUEST) {

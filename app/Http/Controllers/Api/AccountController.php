@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AccountQueryRequest;
+use App\Http\Requests\UpdateAccountActiveStateRequest;
 use App\Http\Resources\AccountResource;
 use App\Services\AccountService;
 use App\Traits\ApiResponseTrait;
@@ -20,11 +21,10 @@ class AccountController extends Controller
         $this->accountService = $accountService;
     }
 
-    public function getAccountWithSubscription(AccountQueryRequest $request)
+    public function getAccountPaginated(AccountQueryRequest $request)
     {
         try {
-            $accounts = $this->accountService->getAccountWithSubscription($request->validated());
-
+            $accounts = $this->accountService->getAccountPaginated($request->validated());
             return AccountResource::collection($accounts);
         } catch (\Throwable $e) {
             return $this->handleExceptionResponse($e);
@@ -40,6 +40,16 @@ class AccountController extends Controller
                 $recipients,
                 'Get recipients successfully.'
             );
+        } catch (\Throwable $e) {
+            return $this->handleExceptionResponse($e);
+        }
+    }
+
+    public function updateAccountActiveState(UpdateAccountActiveStateRequest $request)
+    {
+        try {
+            $this->accountService->updateAccountActiveState($request->validated());
+            return $this->responseSuccess(null, 'Account status successfully updated.');
         } catch (\Throwable $e) {
             return $this->handleExceptionResponse($e);
         }

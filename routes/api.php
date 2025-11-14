@@ -50,11 +50,17 @@ Route::middleware('auth:api')->group(function () {
     });
 
     // Account Routes
-    Route::get('admin/accounts', [AccountController::class, 'getAccountWithSubscription']);
-    Route::get('admin/accounts/selectable', [AccountController::class, 'getSelectableAccounts']);
-
+    Route::controller(AccountController::class)->prefix('admin/accounts')->group(function () {
+        Route::get('', 'getAccountPaginated');
+        Route::get('/selectable', 'getSelectableAccounts');
+        Route::post('/status', 'updateAccountActiveState');
+    });
     // Statistic Routes
-    Route::get('admin/statistics/renew-cancel', [StatisticController::class, 'getRenewCancelStatisticByService']);
+    Route::controller(AccountController::class)->prefix('admin/statistics')->group(function () {
+        Route::get('/renew-cancel', [StatisticController::class, 'getRenewCancelStatisticByPeriod']);
+        Route::get('/revenue', [StatisticController::class, 'getRevenueStatisticByPeriod']);
+        Route::get('/top-service/revenue', [StatisticController::class, 'getRevenueStatisticByTopService']);
+    });
 
     // Momo Routes
     Route::post('momo/pay', [MomoController::class, 'pay']);
