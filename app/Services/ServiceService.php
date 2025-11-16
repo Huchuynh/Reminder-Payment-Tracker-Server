@@ -48,7 +48,7 @@ class ServiceService
 
     public function findById(int $id)
     {
-        return Service::with('service_apis')->findOrFail($id);
+        return Service::findOrFail($id);
     }
 
     public function create(array $data)

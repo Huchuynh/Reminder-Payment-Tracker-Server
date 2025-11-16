@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Enums\PaymentStatus;
+use App\Enums\SubscriptionHistoryAction;
 use App\Models\Payment;
+use App\Models\Service;
 use App\Models\Subscription;
 use App\Models\SubscriptionHistory;
 use Carbon\Carbon;
@@ -35,14 +37,17 @@ class StatisticService
                 'type' => $data['type'],
             ];
 
-            $histories = $this->getHistoriesRateByPeriod($params, $data['service_id']);
+            $services = Service::whereIn('id', $data['service_ids'])->pluck('name', 'id');
 
-            $total_subscription_due = $this->getTotalSubscriptionDue($params, $data['service_id']);
+            $histories = $this->getHistoriesRateByPeriod($params, $data['service_ids']);
+
+            $totals = $this->getTotalSubscriptionDue($params, $data['service_ids']);
 
             return $this->fillMissingPeriodsByRenewCancelRate(
                 $params,
                 $histories,
-                $total_subscription_due,
+                $totals,
+                $services
             );
 
         } catch (\Throwable $e) {
@@ -51,53 +56,58 @@ class StatisticService
         }
     }
 
-    private function getHistoriesRateByPeriod(array $data, int $service_id)
+    private function getHistoriesRateByPeriod(array $data, array $service_ids)
     {
         $format = self::PERIOD_CONFIG[$data['type']]['db_format'];
 
+        $renewed = SubscriptionHistoryAction::RENEWED->value;
+        $canceled = SubscriptionHistoryAction::CANCELED->value;
+        $expired = SubscriptionHistoryAction::EXPIRED->value;
         return SubscriptionHistory::query()
-//            ->selectRaw("
-//                    TO_CHAR(subscription_history.created_at, '{$format}') AS period,
-//                    COUNT(DISTINCT subscription_history.subscription_id) FILTER (WHERE action = 'renewed') AS renewed_count,
-//                    COUNT(DISTINCT subscription_history.subscription_id) FILTER (WHERE action = 'canceled' OR action = 'expired') AS canceled_count
-//              ")
             ->selectRaw("
                     TO_CHAR(subscription_history.created_at, '{$format}') AS period,
-                    SUM(CASE WHEN action = 'renewed' THEN 1 ELSE 0 END) AS renewed_count,
-                    SUM(CASE WHEN action = 'canceled' OR action = 'expired' THEN 1 ELSE 0 END) AS canceled_count
-              ")
+                    subscriptions.service_id,
+                    COUNT(DISTINCT subscription_history.subscription_id) FILTER (WHERE action = '{$renewed}') AS renewed_count,
+                    COUNT(DISTINCT subscription_history.subscription_id) FILTER (WHERE action = '{$canceled}' OR action = '{$expired}') AS canceled_count
+            ")
             ->join('subscriptions', 'subscriptions.id', '=', 'subscription_history.subscription_id')
             ->whereBetween('subscription_history.created_at', [$data['start_date'], $data['end_date']])
-            ->where('subscriptions.service_id', $service_id)
-            ->groupByRaw("TO_CHAR(subscription_history.created_at, '{$format}')")
+            ->whereIn('subscriptions.service_id', $service_ids)
+            ->groupByRaw("TO_CHAR(subscription_history.created_at, '{$format}'), subscriptions.service_id")
             ->orderBy('period')
             ->get()
-            ->keyBy('period');
+            ->groupBy(['period', 'service_id']);
     }
 
-    private function getTotalSubscriptionDue(array $data, int $service_id)
+    private function getTotalSubscriptionDue(array $data, array $service_ids)
     {
         return Subscription::query()
-            ->where('service_id', $service_id)
+            ->whereIn('service_id', $service_ids)
             ->whereBetween('end_date', [$data['start_date'], $data['end_date']])
-            ->count();
+            ->get()
+            ->groupBy('service_id')
+            ->map(fn($subs) => count($subs));
     }
 
-    private function fillMissingPeriodsByRenewCancelRate(array $filter, $histories, $total)
+    private function fillMissingPeriodsByRenewCancelRate(array $filter, $histories, $totals, $services)
     {
         [$period, $config] = $this->getMissingPeriods($filter);
 
-        return collect($period)->map(function ($date) use ($config, $histories, $total) {
+        return collect($period)->map(function ($date) use ($config, $histories, $totals, $services) {
             $key = $date->format($config['carbon_format']);
+            $row = ['period' => $key];
 
-            $renewed = $histories[$key]->renewed_count ?? 0;
-            $canceled = $histories[$key]->canceled_count ?? 0;
+            foreach ($services as $id => $name) {
+                $history = $histories[$key][$id][0] ?? null;
+                $renewed = $history->renewed_count ?? 0;
+                $canceled = $history->canceled_count ?? 0;
+                $total = $totals[$id] ?? 0;
 
-            return [
-                'period' => $key,
-                'renew_percent' => $total === 0 ? 100 : round(($renewed / $total) * 100, 2),
-                'cancel_percent' => $total === 0 ? 100 : round(($canceled / $total) * 100, 2),
-            ];
+                $row["{$name}_renew"] = $total === 0 ? 0 : round(($renewed / $total) * 100, 2);
+                $row["{$name}_cancel"] = $total === 0 ? 0 : round(($canceled / $total) * 100, 2);
+            }
+
+            return $row;
         });
     }
 
@@ -111,9 +121,11 @@ class StatisticService
                 'type' => $data['type'],
             ];
 
-            $payments = $this->getPaymentsByPeriod($params, $data['service_id']);
+            $services = Service::whereIn('id', $data['service_ids'])->pluck('name', 'id');
 
-            return $this->fillMissingPeriods($params, $payments);
+            $payments = $this->getPaymentsByPeriod($params, $data['service_ids']);
+
+            return $this->fillMissingPeriods($params, $payments, $services);
         } catch (\Throwable $e) {
             \Log::error('Fail to get revenue statistic: ' . $e->getMessage());
             report($e);
@@ -121,104 +133,41 @@ class StatisticService
         }
     }
 
-    private function getPaymentsByPeriod(array $data, int $service_id)
+    private function getPaymentsByPeriod(array $data, array $service_ids)
     {
         $format = self::PERIOD_CONFIG[$data['type']]['db_format'];
 
         return Payment::query()
-            ->selectRaw("TO_CHAR(paid_at, '{$format}') AS period, SUM(amount) AS total")
+            ->selectRaw("
+                TO_CHAR(paid_at, '{$format}') AS period,
+                subscriptions.service_id,
+                SUM(amount) AS total")
             ->join('subscriptions', 'subscriptions.id', '=', 'payments.subscription_id')
             ->whereBetween('paid_at', [$data['start_date'], $data['end_date']])
-            ->where('subscriptions.service_id', $service_id)
+            ->whereIn('subscriptions.service_id', $service_ids)
             ->where('payments.status', PaymentStatus::SUCCESS)
-            ->groupByRaw("TO_CHAR(paid_at, '{$format}')")
+            ->groupByRaw("TO_CHAR(paid_at, '{$format}'), subscriptions.service_id")
             ->orderBy('period')
             ->get()
-            ->keyBy('period');
+            ->groupBy('period');
     }
 
-    private function fillMissingPeriods(array $filter, $payment)
+    private function fillMissingPeriods(array $filter, $payment, $services)
     {
         [$period, $config] = $this->getMissingPeriods($filter);
 
-        return collect($period)->map(function ($date) use ($config, $payment) {
-            $key = $date->format($config['carbon_format']);
-            return [
-                'period' => $key,
-                'total' => (float)($payment[$key]->total ?? 0),
-            ];
+        return collect($period)->map(function ($date) use ($config, $payment, $services) {
+            $period_key = $date->format($config['carbon_format']);
+            $period_data = collect($payment[$period_key] ?? []);
+            $row = ['period' => $period_key];
+
+            foreach ($services as $id => $name) {
+                $total = $period_data->firstWhere('service_id', $id)->total ?? 0;
+                $row[$name] = (float)$total;
+            }
+
+            return $row;
         });
-    }
-
-    /*Revenue Statistic By Top Service*/
-    public function getRevenueStatisticByTopService(array $data)
-    {
-        try {
-            $params = [
-                'start_date' => Carbon::parse($data['start_date'])->startOfDay(),
-                'end_date' => Carbon::parse($data['end_date'])->endOfDay()
-            ];
-
-            $top_service_data = $this->getTopServiceRevenue($params, 2);
-
-            $total_revenue = $this->getTotalRevenue($params);
-
-            $result = $this->calculateOtherGroup($top_service_data, $total_revenue);
-
-            return $result->map(function ($item) {
-                return [
-                    'service_name' => $item->service_name,
-                    'total_revenue' => (float)$item->total_revenue,
-                ];
-            });
-        } catch (\Throwable $e) {
-            \Log::error('Fail to get revenue statistic: ' . $e->getMessage());
-            report($e);
-            throw new \Exception('Fail to get revenue statistic: ' . $e->getMessage());
-        }
-    }
-
-    private function getTopServiceRevenue(array $data, int $top)
-    {
-        $query = Payment::query()
-            ->selectRaw('
-                services.name as service_name,
-                SUM(payments.amount) as total_revenue
-            ')
-            ->join('subscriptions', 'subscriptions.id', '=', 'payments.subscription_id')
-            ->join('services', 'services.id', '=', 'subscriptions.service_id')
-            ->where('services.is_base', true)
-            ->whereBetween('payments.paid_at', [$data['start_date'], $data['end_date']])
-            ->groupBy('services.id', 'services.name')
-            ->orderByDesc('total_revenue')
-            ->limit($top)
-            ->get();
-
-        return [
-            $query,
-            $query->sum('total_revenue'),
-        ];
-    }
-
-    private function getTotalRevenue(array $data)
-    {
-        return Payment::join('subscriptions', 'subscriptions.id', '=', 'payments.subscription_id')
-            ->join('services', 'services.id', '=', 'subscriptions.service_id')
-            ->where('services.is_base', true)
-            ->whereBetween('payments.paid_at', [$data['start_date'], $data['end_date']])
-            ->sum('payments.amount');
-    }
-
-    private function calculateOtherGroup($top_service_data, $total_revenue)
-    {
-        [$top_service, $top_revenue] = $top_service_data;
-
-        $top_service->push((object)[
-            'service_name' => 'Others',
-            'total_revenue' => $total_revenue - $top_revenue,
-        ]);
-
-        return $top_service;
     }
 
     /*Helper Functions*/

@@ -15,7 +15,8 @@ class RevenueStatisticRequest extends StatisticBaseRequest
     {
         return array_merge(parent::rules(), [
             'type' => ['required', 'string', Rule::in(['day', 'month'])],
-            'service_id' => ['required', 'integer', 'exists:services,id'],
+            'service_ids' => ['required', 'array'],
+            'service_ids.*' => ['required', 'integer', 'exists:services,id'],
         ]);
     }
 }
