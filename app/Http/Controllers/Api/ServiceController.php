@@ -8,6 +8,7 @@ use App\Http\Requests\ServiceRequest;
 use App\Http\Resources\ServiceResource;
 use App\Services\ServiceService;
 use App\Traits\ApiResponseTrait;
+use Illuminate\Http\Request;
 
 class ServiceController extends Controller
 {
@@ -102,10 +103,15 @@ class ServiceController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function bulkDestroy(Request $request)
     {
         try {
-            $result = $this->serviceService->delete($id);
+            $data = $request->validate([
+                'service_ids' => ['required', 'array'],
+                'service_ids.*' => 'exists:services,id'
+            ]);
+
+            $result = $this->serviceService->delete($data['service_ids']);
 
             return $this->responseSuccess(
                 null,

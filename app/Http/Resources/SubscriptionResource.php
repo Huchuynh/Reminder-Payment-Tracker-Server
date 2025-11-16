@@ -22,14 +22,23 @@ class SubscriptionResource extends JsonResource
             'end_date' => $this->end_date,
             'notes' => $this->notes,
             'price' => $this->price,
-            // load service relationship
-            'service' => [
-                'id' => $this->service->id ?? null,
-                'name' => $this->service->name ?? null,
-                'provider' => $this->service->provider ?? null,
-                'icon' => $this->service->icon ?? null,
-                'is_base' => $this->service->is_base ?? null,
-            ],
+            'service' => $this->whenLoaded('service', function () {
+                return [
+                    'id' => $this->service->id,
+                    'name' => $this->service->name,
+                    'provider' => $this->service->provider,
+                    'icon' => $this->service->icon,
+                    'is_base' => $this->service->is_base,
+                ];
+            }),
+            'account' => $this->whenLoaded('account', function () {
+                return [
+                    'id' => $this->account->id,
+                    'full_name' => $this->account->full_name,
+                    'email' => $this->account->email,
+                    'avatar' => $this->account->avatar,
+                ];
+            }),
         ];
     }
 }

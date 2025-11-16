@@ -2,9 +2,7 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Validation\Rule;
-
-class RevenueStatisticRequest extends StatisticBaseRequest
+class GetSubscriptionByServiceRequest extends QueryParamsRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -14,9 +12,7 @@ class RevenueStatisticRequest extends StatisticBaseRequest
     public function rules(): array
     {
         return array_merge(parent::rules(), [
-            'type' => ['required', 'string', Rule::in(['day', 'month'])],
-            'service_ids' => ['required', 'array'],
-            'service_ids.*' => ['required', 'integer', 'exists:services,id'],
+            'status' => 'string|required',
         ]);
     }
 }

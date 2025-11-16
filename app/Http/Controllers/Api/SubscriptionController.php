@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateSubscriptionRequest;
+use App\Http\Requests\GetSubscriptionByServiceRequest;
 use App\Http\Requests\RenewSubscriptionRequest;
 use App\Http\Requests\SubscriptionQueryRequest;
 use App\Http\Requests\UpdateSubscriptionRequest;
@@ -29,6 +30,17 @@ class SubscriptionController extends Controller
     {
         try {
             $subscriptions = $this->subscriptionService->get($request->validated());
+
+            return SubscriptionResource::collection($subscriptions);
+        } catch (\Throwable $e) {
+            return $this->handleExceptionResponse($e);
+        }
+    }
+
+    public function getSubscriptionByServiceId(GetSubscriptionByServiceRequest $request, string $id)
+    {
+        try {
+            $subscriptions = $this->subscriptionService->getSubscriptionByServiceId($request->validated(), (int)$id);
 
             return SubscriptionResource::collection($subscriptions);
         } catch (\Throwable $e) {

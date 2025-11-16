@@ -28,7 +28,11 @@ Route::controller(AuthController::class)->prefix('auth')->group(function () {
 Route::middleware('auth:api')->group(function () {
     // Service Routes
     Route::apiResource('services', ServiceController::class);
-    Route::get('services/filter/base', [ServiceController::class, 'getBase']);
+    Route::controller(ServiceController::class)->prefix('services')->group(function () {
+        Route::get('filter/base', 'getBase');
+        Route::delete('', 'bulkDestroy');
+    });
+    Route::get('admin/services/{id}/subscriptions', [SubscriptionController::class, 'getSubscriptionByServiceId']);
 
     // Subscription Routes
     Route::apiResource('subscriptions', SubscriptionController::class);
@@ -59,7 +63,6 @@ Route::middleware('auth:api')->group(function () {
     Route::controller(AccountController::class)->prefix('admin/statistics')->group(function () {
         Route::get('/renew-cancel', [StatisticController::class, 'getRenewCancelStatisticByPeriod']);
         Route::get('/revenue', [StatisticController::class, 'getRevenueStatisticByPeriod']);
-        Route::get('/top-service/revenue', [StatisticController::class, 'getRevenueStatisticByTopService']);
     });
 
     // Momo Routes
