@@ -20,7 +20,10 @@ class CheckSubscriptionRemindersJob implements ShouldQueue
     {
         $subscriptions = Subscription::with('account')
             ->where('status', SubscriptionStatus::EXPIRING)
-            ->whereRaw('EXTRACT(EPOCH FROM (NOW() - last_reminded_at)) / 3600 >= reminder_frequency')
+            ->where(function ($q) {
+                $q->whereNull('last_reminded_at')
+                    ->orWhereRaw('EXTRACT(EPOCH FROM (NOW() - last_reminded_at)) / 3600 >= reminder_frequency');
+            })
             ->get();
 
         $expiringSubscriptionIds = $subscriptions->pluck('id')->toArray();

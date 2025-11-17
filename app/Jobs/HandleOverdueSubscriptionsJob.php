@@ -20,7 +20,10 @@ class HandleOverdueSubscriptionsJob implements ShouldQueue
     {
         $subscriptions = Subscription::with('account')
             ->where('status', SubscriptionStatus::EXPIRED)
-            ->whereRaw('EXTRACT(EPOCH FROM (NOW() - last_reminded_at)) / 3600 >= reminder_frequency')
+            ->where(function ($q) {
+                $q->whereNull('last_reminded_at')
+                    ->orWhereRaw('EXTRACT(EPOCH FROM (NOW() - last_reminded_at)) / 3600 >= reminder_frequency');
+            })
             ->get();
 
         $expiredSubscriptionIds = $subscriptions->pluck('id')->toArray();
