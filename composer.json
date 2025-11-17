@@ -13,12 +13,15 @@
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",
-        "php-open-source-saver/jwt-auth": "*"
+        "php-open-source-saver/jwt-auth": "*",
+        "sentry/sentry-laravel": "^4.18"
     },
     "require-dev": {
+        "barryvdh/laravel-debugbar": "^3.16",
+        "beyondcode/laravel-query-detector": "^2.1",
         "fakerphp/faker": "^1.23",
         "laravel/pail": "^1.2.2",
-        "laravel/pint": "^1.24",
+        "laravel/pint": "^1.25",
         "laravel/sail": "^1.46",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",

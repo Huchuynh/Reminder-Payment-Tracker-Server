@@ -1,42 +1,45 @@
 <?php
 
-
 namespace App\Jobs;
 
 use App\Enums\SubscriptionStatus;
 use App\Models\Subscription;
 use App\Models\SubscriptionHistory;
-use App\Services\SubscriptionStatusService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
 
 class UpdateSubscriptionStatusJob implements ShouldQueue
 {
-    use Queueable, Dispatchable;
+    use Dispatchable, Queueable;
 
-    /**
-     * Execute the job.
-     */
     public function handle(): void
     {
-        $subscriptions = Subscription::all();
+        $this->handleExpiringSubscription();
+        $this->handleExpiredSubscription();
+    }
 
-        foreach ($subscriptions as $subscription) {
-            $daysLeft = now()->diffInDays($subscription->end_date, false);
+    public function handleExpiringSubscription(): void
+    {
+        Subscription::where('status', SubscriptionStatus::ACTIVE)
+            ->whereRaw("end_date <= (NOW() + (alert_thresholds * INTERVAL '1 day'))")
+            ->update(['status' => SubscriptionStatus::EXPIRING]);
+    }
 
-            $newStatus = SubscriptionStatusService::evaluateStatus($daysLeft, config("constants.default_threshold"));
+    public function handleExpiredSubscription(): void
+    {
+        $expiredSubscriptionIds = Subscription::where('status', SubscriptionStatus::EXPIRING)
+            ->where('end_date', '<', now())
+            ->pluck('id');
 
-            if ($newStatus === $subscription->status) continue;
+        Subscription::whereIn('id', $expiredSubscriptionIds)
+            ->update(['status' => SubscriptionStatus::EXPIRED]);
 
-            if ($newStatus === SubscriptionStatus::EXPIRED) {
-                SubscriptionHistory::create([
-                    'subscription_id' => $subscription->id,
-                    'action' => SubscriptionStatus::EXPIRED,
-                ]);
-            }
+        $histories = $expiredSubscriptionIds->map(fn ($id) => [
+            'subscription_id' => $id,
+            'action' => 'expired',
+        ])->toArray();
 
-            $subscription->update(['status' => $newStatus]);
-        }
+        SubscriptionHistory::insert($histories);
     }
 }

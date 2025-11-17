@@ -20,6 +20,7 @@ class ServiceFactory extends Factory
      */
     public function definition(): array
     {
+<<<<<<< HEAD
         return [
             'name' => $this->faker->unique()->word() . ' Service',
             'provider' => $this->faker->company(),
@@ -28,6 +29,37 @@ class ServiceFactory extends Factory
             'is_base' => $this->faker->boolean(30),
             'created_at' => now(),
             'updated_at' => now(),
+=======
+        $serviceTypes = [
+            'Payment', 'Top-up', 'Transfer', 'Withdraw', 'Shopping',
+            'Entertainment', 'Education', 'Health', 'Travel', 'Booking',
+            'Ride', 'Bill Payment', 'Internet', 'Mobile', 'TV',
+            'Insurance', 'Savings', 'Loan', 'Investment', 'Gift',
+            'Game', 'Streaming', 'Ticket', 'Food Delivery', 'Restaurant',
+            'Supermarket', 'Utilities', 'Tax', 'Flight', 'Movie',
+            'Books', 'Music', 'App', 'Bank Card', 'Pet Care',
+        ];
+
+        $serviceModifiers = [
+            'Fast', 'Easy', 'Online', 'Auto', 'Secure',
+            'Family', 'Student', 'Business', 'Personal', 'Monthly',
+            'Weekly', 'Simple', 'Smart', 'Hot', 'Special',
+            'Premium', 'New', 'VIP', 'Quick', 'Optimal',
+            'Intelligent', 'High-speed', 'Prebook', 'Discount', 'Protected',
+            'Unlimited', 'Pro', 'Plus', 'Express', 'Standard',
+            'Mini', 'Max', 'Eco', 'Flex', 'Classic',
+            'Prime', 'Super', 'Extra', 'Ultimate',
+        ];
+
+        return [
+            'name' => $serviceTypes[array_rand($serviceTypes)].' '.$serviceModifiers[array_rand($serviceModifiers)],
+            'provider' => $this->faker->company(),
+            'icon' => 'https://cdn-icons-png.freepik.com/512/5519/5519311.png',
+            'account_id' => Account::factory(),
+            'is_base' => $this->faker->boolean(30),
+            'created_at' => now()->format('Y-m-d H:i:s'),
+            'updated_at' => now()->format('Y-m-d H:i:s'),
+>>>>>>> main
         ];
     }
 }

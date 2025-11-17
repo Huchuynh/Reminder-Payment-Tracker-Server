@@ -16,13 +16,12 @@ class Subscription extends Model
     use HasFactory;
 
     protected $fillable = [
-        'account_id', 'service_id', 'start_date', 'end_date', 'status', 'plan', 'notes',
+        'account_id', 'service_id', 'start_date', 'end_date', 'status', 'plan', 'notes', 'price',
         'alert_thresholds', 'reminder_frequency', 'reminder_channels', 'last_reminded_at',
     ];
 
     protected $casts = [
         'status' => SubscriptionStatus::class,
-        'alert_thresholds' => 'array',
         'reminder_channels' => 'array',
         'start_date' => 'datetime',
         'end_date' => 'datetime',
@@ -47,12 +46,5 @@ class Subscription extends Model
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
-    }
-
-    public function isDueForReminder(): bool
-    {
-        if (!$this->last_reminded_at) return true;
-
-        return $this->last_reminded_at->diffInHours(now()) >= $this->reminder_frequency;
     }
 }

@@ -43,6 +43,7 @@ trait ApiResponseTrait
         ], Response::HTTP_NOT_FOUND);
     }
 
+<<<<<<< HEAD
     protected function responseForbidden($message): JsonResponse
     {
         return response()->json([
@@ -59,6 +60,8 @@ trait ApiResponseTrait
         ], Response::HTTP_UNAUTHORIZED);
     }
 
+=======
+>>>>>>> main
     protected function responseInternalError($message): JsonResponse
     {
         return response()->json([
@@ -67,6 +70,7 @@ trait ApiResponseTrait
         ], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
+<<<<<<< HEAD
     protected function handleExceptionResponse(\Throwable $e): JsonResponse
     {
         if ($e->getCode() === Response::HTTP_BAD_REQUEST)
@@ -78,6 +82,24 @@ trait ApiResponseTrait
         else if ($e->getCode() === Response::HTTP_UNAUTHORIZED)
             return $this->responseUnauthorized($e->getMessage());
         else
+=======
+    protected function responseForbidden($message): JsonResponse
+    {
+        return response()->json([
+            'success' => false,
+            'message' => $message,
+        ], Response::HTTP_FORBIDDEN);
+    }
+
+    protected function handleExceptionResponse(\Throwable $e): JsonResponse
+    {
+        if ($e->getCode() === Response::HTTP_BAD_REQUEST) {
+            return $this->responseBadRequest($e->getMessage());
+        } elseif ($e->getCode() === Response::HTTP_NOT_FOUND) {
+            return $this->responseNotFound($e->getMessage());
+        } else {
+>>>>>>> main
             return $this->responseInternalError($e->getMessage());
+        }
     }
 }

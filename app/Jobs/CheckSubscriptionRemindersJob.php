@@ -5,14 +5,13 @@ namespace App\Jobs;
 use App\Enums\SubscriptionStatus;
 use App\Models\Subscription;
 use App\Notifications\SubscriptionReminderNotification;
-use App\Services\SubscriptionStatusService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
 
 class CheckSubscriptionRemindersJob implements ShouldQueue
 {
-    use Queueable, Dispatchable;
+    use Dispatchable, Queueable;
 
     /**
      * Execute the job.
@@ -20,25 +19,27 @@ class CheckSubscriptionRemindersJob implements ShouldQueue
     public function handle(): void
     {
         $subscriptions = Subscription::with('account')
-            ->whereIn('status', [
-                SubscriptionStatus::ACTIVE,
-                SubscriptionStatus::EXPIRING
-            ])
+            ->where('status', SubscriptionStatus::EXPIRING)
+            ->where(function ($q) {
+                $q->whereNull('last_reminded_at')
+                    ->orWhereRaw('EXTRACT(EPOCH FROM (NOW() - last_reminded_at)) / 3600 >= reminder_frequency');
+            })
             ->get();
 
+        $expiringSubscriptionIds = $subscriptions->pluck('id')->toArray();
+
         foreach ($subscriptions as $subscription) {
-            $daysLeft = now()->diffInDays($subscription->end_date, false);
-            $threshold = $subscription->alert_thresholds ?? [];
+            $subscription->account->notify(new SubscriptionReminderNotification($subscription));
 
-            $reminderType = SubscriptionStatusService::evaluateStatus($daysLeft, $threshold);
-
-            if (!$subscription->isDueForReminder() || $reminderType === SubscriptionStatus::ACTIVE) continue;
-
-            $subscription->account->notify(new SubscriptionReminderNotification($subscription, $reminderType));
-
-            $subscription->update(["last_reminded_at" => now()]);
-
-            \Log::info("Reminder sent for subscription ID {$subscription->id} ({$reminderType->value})");
+            \Log::info("Sent reminder for subscription ID {$subscription->id}");
         }
+
+        $this->updateSubscriptionLastReminder($expiringSubscriptionIds);
+    }
+
+    public function updateSubscriptionLastReminder($subscriptionIds): void
+    {
+        Subscription::whereIn('id', $subscriptionIds)
+            ->update(['last_reminded_at' => now()]);
     }
 }

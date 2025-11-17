@@ -15,9 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('provider')->nullable();
-            $table->string('plan')->nullable();
-            $table->boolean('is_deleted')->default(false);
+            $table->string('icon')->nullable();
+            $table->boolean('is_base')->default(false);
+            $table->foreignId('account_id')->nullable()->constrained('accounts')->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

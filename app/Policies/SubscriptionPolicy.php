@@ -23,6 +23,11 @@ class SubscriptionPolicy
         return $this->manage($account, $subscription);
     }
 
+    public function mark_as_paid(Account $account, Subscription $subscription): bool
+    {
+        return $this->manage($account, $subscription);
+    }
+
     /**
      * Determine whether the user can view any models.
      */

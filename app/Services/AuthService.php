@@ -3,11 +3,13 @@
 namespace App\Services;
 
 use App\Enums\AccountRole;
+use App\Mail\OtpMail;
 use App\Models\Account;
 use Google_Client;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
@@ -23,13 +25,13 @@ class AuthService
         $otp = rand(100000, 999999);
         $expires = 15;
         try {
-            Cache::put('otp_' . $email, $otp, now()->addMinutes($expires));
-//            Mail::to($email)->send(new OtpMail($otp, $expires));
-            \Log::info("Sending OTP to " . $email . " with OTP: " . $otp);
+            Cache::put('otp_'.$email, $otp, now()->addMinutes($expires));
+            Mail::to($email)->send(new OtpMail($otp, $expires));
+            \Log::info('Sending OTP to '.$email.' with OTP: '.$otp);
 
-            return ["message" => "OTP sent to " . $email . " with OTP: " . $otp];
+            return ['message' => 'OTP sent to '.$email.' with OTP: '.$otp];
         } catch (\Exception $e) {
-            Cache::forget('otp_' . $email);
+            Cache::forget('otp_'.$email);
             \Log::error("Fail to send OTP: {$e->getMessage()}");
             throw new \Exception("Fail to send OTP: {$e->getMessage()}");
         }
@@ -40,6 +42,7 @@ class AuthService
         try {
             $account = $this->getAccountByEmail($email);
             $this->sendEmailOtp($email);
+
             return $account;
         } catch (\Throwable $e) {
             \Log::error("Login failed: {$e->getMessage()}");
@@ -47,14 +50,16 @@ class AuthService
         }
     }
 
-    public function loginGoogle(string $credentials)
+    public function loginGoogle(array $data)
     {
         try {
             $client = new Google_Client(['client_id' => env('GOOGLE_CLIENT_ID')]);
 
-            $payload = $client->verifyIdToken($credentials);
+            $payload = $client->verifyIdToken($data['credentials']);
 
-            if (!$payload) throw new \Exception("Invalid token");
+            if (! $payload) {
+                throw new \Exception('Invalid token');
+            }
 
             $account = Account::updateOrCreate(
                 ['email' => $payload['email']],
@@ -63,6 +68,7 @@ class AuthService
                     'avatar' => $payload['picture'],
                     'password' => bcrypt(Str::random(16)),
                     'role' => AccountRole::USER,
+                    'fcm_token' => $data['fcm_token'],
                 ]
             );
 
@@ -104,24 +110,25 @@ class AuthService
     public function verifyOtp(array $request)
     {
         try {
-            $cacheKey = 'otp_' . $request['email'];
+            $cacheKey = 'otp_'.$request['email'];
 
-            if (!Cache::has($cacheKey) || (int)Cache::get($cacheKey) !== (int)$request['otp']) {
-                throw new \Exception("Invalid OTP");
+            if (! Cache::has($cacheKey) || (int) Cache::get($cacheKey) !== (int) $request['otp']) {
+                throw new \Exception('Invalid OTP');
             }
 
             $account = $this->getAccountByEmail($request['email']);
 
             $token = JWTAuth::fromUser($account);
 
-            if ($request['fcm_token'])
+            if ($request['fcm_token']) {
                 $account->update(['fcm_token' => $request['fcm_token']]);
+            }
 
             Cache::forget($cacheKey);
 
             return compact('token', 'account');
         } catch (\Throwable $e) {
-            \Log::error("Failed to verify OTP: " . $e->getMessage());
+            \Log::error('Failed to verify OTP: '.$e->getMessage());
             throw new \Exception("Failed to verify OTP: {$e->getMessage()}");
         }
     }
@@ -131,7 +138,9 @@ class AuthService
         try {
             $token = JWTAuth::getToken();
 
-            if (!$token) throw new \Exception("Invalid token");
+            if (! $token) {
+                throw new \Exception('Invalid token');
+            }
 
             JWTAuth::invalidate($token);
 
@@ -141,7 +150,7 @@ class AuthService
 
             return ['message' => 'Logged out successfully'];
         } catch (\Throwable $e) {
-            \Log::error("Failed to sign out user: " . $e->getMessage());
+            \Log::error('Failed to sign out user: '.$e->getMessage());
             throw new \Exception("Failed to sign out user: {$e->getMessage()}");
         }
     }

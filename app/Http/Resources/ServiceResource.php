@@ -19,8 +19,14 @@ class ServiceResource extends JsonResource
             'name' => $this->name,
             'provider' => $this->provider,
             'icon' => $this->icon,
+            'is_base' => $this->is_base,
+            'subscription_count' => $this->subscriptions_count,
+            'active_count' => $this->active_count,
+            'expiring_count' => $this->expiring_count,
+            'expired_count' => $this->expired_count,
+            'canceled_count' => $this->canceled_count,
             'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at
+            'updated_at' => $this->updated_at,
         ];
     }
 }

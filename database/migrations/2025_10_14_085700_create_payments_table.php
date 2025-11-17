@@ -13,9 +13,8 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('account_id')->constrained('accounts')->cascadeOnDelete();
             $table->foreignId('subscription_id')->constrained('subscriptions')->cascadeOnDelete();
-            $table->decimal('amount', 12, 2)->default(0);
+            $table->decimal('amount', 15, 2)->default(0);
             $table->string('method')->nullable(); // credit_card, paypal, momo, vnpay
             $table->enum('status', ['pending', 'success', 'failed', 'refunded'])->default('pending');
             $table->string('transaction_ref')->nullable();

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->morphs('notifiable');
             $table->text('data');
             $table->timestamp('read_at')->nullable();
+            $table->foreignId('sender_id')->nullable()->constrained('accounts', 'id')->onDelete('set null');
             $table->timestamps();
         });
     }

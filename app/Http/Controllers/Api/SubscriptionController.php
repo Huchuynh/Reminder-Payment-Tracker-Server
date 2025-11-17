@@ -4,14 +4,13 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateSubscriptionRequest;
+use App\Http\Requests\GetSubscriptionByServiceRequest;
 use App\Http\Requests\RenewSubscriptionRequest;
 use App\Http\Requests\SubscriptionQueryRequest;
 use App\Http\Requests\UpdateSubscriptionRequest;
 use App\Http\Resources\SubscriptionResource;
-use App\Models\Subscription;
 use App\Services\SubscriptionService;
 use App\Traits\ApiResponseTrait;
-use Illuminate\Support\Facades\Gate;
 
 class SubscriptionController extends Controller
 {
@@ -31,6 +30,17 @@ class SubscriptionController extends Controller
     {
         try {
             $subscriptions = $this->subscriptionService->get($request->validated());
+
+            return SubscriptionResource::collection($subscriptions);
+        } catch (\Throwable $e) {
+            return $this->handleExceptionResponse($e);
+        }
+    }
+
+    public function getSubscriptionByServiceId(GetSubscriptionByServiceRequest $request, string $id)
+    {
+        try {
+            $subscriptions = $this->subscriptionService->getSubscriptionByServiceId($request->validated(), (int)$id);
 
             return SubscriptionResource::collection($subscriptions);
         } catch (\Throwable $e) {
@@ -78,11 +88,7 @@ class SubscriptionController extends Controller
     public function update(UpdateSubscriptionRequest $request, string $id)
     {
         try {
-            $subscription = Subscription::findOrFail($id);
-
-            Gate::authorize('update', $subscription);
-
-            $result = $this->subscriptionService->update($subscription, $request->validated());
+            $result = $this->subscriptionService->update($id, $request->validated());
 
             return $this->responseSuccess(
                 $result,
@@ -96,11 +102,7 @@ class SubscriptionController extends Controller
     public function renew(RenewSubscriptionRequest $request, string $id)
     {
         try {
-            $subscription = Subscription::findOrFail($id);
-
-            Gate::authorize('renew', $subscription);
-
-            $result = $this->subscriptionService->renew($subscription, $request->validated());
+            $result = $this->subscriptionService->renew($id, $request->validated());
 
             return $this->responseSuccess(
                 $result,
@@ -114,15 +116,26 @@ class SubscriptionController extends Controller
     public function unsubscribe(string $id)
     {
         try {
-            $subscription = Subscription::findOrFail($id);
 
-            Gate::authorize('unsubscribe', $subscription);
-
-            $result = $this->subscriptionService->unsubscribe($subscription);
+            $result = $this->subscriptionService->unsubscribe($id);
 
             return $this->responseSuccess(
                 $result,
                 'Service successfully canceled',
+            );
+        } catch (\Throwable $e) {
+            return $this->handleExceptionResponse($e);
+        }
+    }
+
+    public function mark_as_paid(string $id)
+    {
+        try {
+            $result = $this->subscriptionService->mark_as_paid($id);
+
+            return $this->responseSuccess(
+                $result,
+                'Service successfully paid',
             );
         } catch (\Throwable $e) {
             return $this->handleExceptionResponse($e);

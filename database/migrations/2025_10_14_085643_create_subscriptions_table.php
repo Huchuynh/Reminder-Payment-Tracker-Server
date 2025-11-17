@@ -18,10 +18,15 @@ return new class extends Migration
             $table->timestamp('start_date')->nullable();
             $table->timestamp('end_date')->nullable();
             $table->string('plan')->nullable();
-            $table->enum('status',['active','expiring', 'expired','canceled'])->default('active');
+            $table->decimal('price', 15, 2)->default(0);
+            $table->enum('status', ['active', 'expiring', 'expired', 'canceled', 'paid'])->default('active');
             $table->text('notes')->nullable();
-
+            $table->integer('alert_thresholds')->nullable();
+            $table->integer('reminder_frequency')->nullable();
+            $table->json('reminder_channels')->nullable();
+            $table->timestamp('last_reminded_at')->nullable();
             $table->timestamps();
+            $table->unique(['account_id', 'service_id'], 'unique_account_service');
         });
     }
 

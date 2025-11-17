@@ -2,36 +2,42 @@
 
 namespace App\Services;
 
-use App\Enums\SubscriptionStatus;
+use App\Models\Account;
 use App\Models\Notification;
 use App\Models\Subscription;
+use App\Notifications\SendMessageNotification;
 use App\Notifications\SubscriptionReminderNotification;
+use Illuminate\Support\Facades\Notification as FacadesNotification;
 
 class NotificationService
 {
     public function get($user, array $data)
     {
         try {
-            return $user->notifications()->paginate($data['limit'] ?? 10);
+            return $user->notifications()
+                ->orderBy('created_at', 'desc')
+                ->paginate($data['limit'] ?? 10);
         } catch (\Throwable $e) {
-            \Log::error("Failed to get notifications: " . $e->getMessage());
-            throw new \Exception("Failed to get notifications. " . $e->getMessage());
+            \Log::error('Failed to get notifications: ' . $e->getMessage());
+            throw new \Exception('Failed to get notifications. ' . $e->getMessage());
         }
     }
 
     public function getAdminLogNotifications($limit = 5)
     {
+
         try {
             return Notification::query()
                 ->with(['notifiable' => function ($query) {
                     $query->select('id', 'full_name', 'email', 'avatar');
                 }])
-                ->where('sender_id', auth()->id())
+                ->where('sender_id', 1)
                 ->orderByDesc('created_at')
+                ->orderByDesc('id')
                 ->paginate($limit);
         } catch (\Throwable $e) {
-            \Log::error("Failed to get notifications: " . $e->getMessage());
-            throw new \Exception("Failed to get notifications. " . $e->getMessage());
+            \Log::error('Failed to get notifications: ' . $e->getMessage());
+            throw new \Exception('Failed to get notifications. ' . $e->getMessage());
         }
     }
 
@@ -50,6 +56,7 @@ class NotificationService
         try {
             $notification = $this->getById($user, $id);
             $notification->markAsRead();
+
             return $notification;
         } catch (\Throwable $e) {
             \Log::error("Failed to mark notification {$id} as read: " . $e->getMessage());
@@ -62,10 +69,11 @@ class NotificationService
     {
         try {
             $user->unreadNotifications->markAsRead();
-            return ["message" => "All notifications have been marked as read"];
+
+            return ['message' => 'All notifications have been marked as read'];
         } catch (\Throwable $e) {
-            \Log::error("Failed to mark all notifications as read: " . $e->getMessage());
-            throw new \Exception("Failed to mark all notifications as read . " . $e->getMessage());
+            \Log::error('Failed to mark all notifications as read: ' . $e->getMessage());
+            throw new \Exception('Failed to mark all notifications as read . ' . $e->getMessage());
         }
     }
 
@@ -74,7 +82,8 @@ class NotificationService
         try {
             $notification = $this->getById($user, $id);
             $notification->delete();
-            return ["message" => "Notification has been deleted"];
+
+            return ['message' => 'Notification has been deleted'];
         } catch (\Throwable $e) {
             \Log::error("Failed to delete notification {$id}: " . $e->getMessage());
             throw new \Exception("Failed to delete notification {$id}. " . $e->getMessage());
@@ -84,12 +93,33 @@ class NotificationService
     public function reminderSubscription(array $data)
     {
         try {
-            $subscription = Subscription::with('account')->findOrFail($data['subscription_id']);
-            $subscription->account->notify(new SubscriptionReminderNotification($subscription, SubscriptionStatus::from($data['status'])));
-            return ["message" => "Notification has been sent"];
+            $subscriptions = Subscription::with('account')
+                ->whereIn('id', $data['subscription_ids'])
+                ->get();
+
+            foreach ($subscriptions as $subscription) {
+                $subscription->account->notify(new SubscriptionReminderNotification($subscription));
+            }
+
+            return ['message' => 'Notification has been sent'];
         } catch (\Throwable $e) {
-            \Log::error("Failed to send notification to {$subscription->account_id}: " . $e->getMessage());
-            throw new \Exception("Failed to send notification to {$subscription->account_id}. " . $e->getMessage());
+            \Log::error("Failed to send reminder notification: " . $e->getMessage());
+            throw new \Exception("Failed to send reminder notification. " . $e->getMessage());
+        }
+    }
+
+    public function sendMessage(array $data)
+    {
+        try {
+            $recipients = Account::whereIn('email', $data['recipients'])->get();
+            $message = $data['message'];
+
+            FacadesNotification::send($recipients, new SendMessageNotification($message));
+
+            return ['message' => 'Message has been sent'];
+        } catch (\Throwable $e) {
+            \Log::error('Failed to send message notification : ' . $e->getMessage());
+            throw new \Exception('Failed to send message notification. ' . $e->getMessage());
         }
     }
 }

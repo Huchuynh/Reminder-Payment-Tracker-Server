@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\AlertChannels;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class SubscriptionBaseRequest extends FormRequest
 {
@@ -22,13 +24,16 @@ class SubscriptionBaseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "plan" => "required|string",
-            "notes" => "nullable|string",
-            "alert_thresholds" => "nullable|array",
-            "reminder_frequency" => "nullable|integer",
+            'start_date' => 'required|date|date_format:Y-m-d H:i:s',
+            'end_date' => 'required|date|date_format:Y-m-d H:i:s|after:start_date',
+            'plan' => 'required|string',
+            'notes' => 'nullable|string',
+            'price' => 'required|numeric',
+            'alert_thresholds' => 'nullable|integer',
+            'reminder_frequency' => 'nullable|integer',
             'reminder_channels' => 'nullable|array',
-            'reminder_channels.*' => 'in:email,in_app,push',
-            "last_reminded_at" => "nullable|date|date_format:Y-m-d H:i:s"
+            'reminder_channels.*' => Rule::in(AlertChannels::validateValues()),
+            'last_reminded_at' => 'nullable|date|date_format:Y-m-d H:i:s',
         ];
     }
 }

@@ -26,6 +26,7 @@ class AuthController extends Controller
     {
         try {
             $result = $this->authService->login($request->email);
+
             return $this->responseSuccess(
                 $result,
                 'Login successful. Please check your email for the OTP to verify your account.',
@@ -38,7 +39,8 @@ class AuthController extends Controller
     public function loginGoogle(GoogleLoginRequest $request)
     {
         try {
-            $result = $this->authService->loginGoogle($request->credentials);
+            $result = $this->authService->loginGoogle($request->validated());
+
             return $this->responseSuccess(
                 $result,
                 'Login successful.',
@@ -115,4 +117,3 @@ class AuthController extends Controller
         }
     }
 }
-
