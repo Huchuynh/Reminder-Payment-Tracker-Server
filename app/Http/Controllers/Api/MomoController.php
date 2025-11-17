@@ -39,7 +39,7 @@ class MomoController extends Controller
     public function notify(Request $request, string $id)
     {
         try {
-            if (! $this->momoService->verifySignature($request->all())) {
+            if (!$this->momoService->verifySignature($request->all())) {
                 return $this->responseBadRequest('Invalid signature');
             }
 

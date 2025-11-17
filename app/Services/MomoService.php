@@ -3,9 +3,11 @@
 namespace App\Services;
 
 use App\Enums\PaymentStatus;
+use App\Enums\SubscriptionHistoryAction;
 use App\Enums\SubscriptionStatus;
 use App\Models\Payment;
 use App\Models\Subscription;
+use App\Models\SubscriptionHistory;
 use Illuminate\Support\Facades\Http;
 
 class MomoService
@@ -40,9 +42,9 @@ class MomoService
             'method' => 'momo',
         ]);
 
-        $requestId = time().'';
-        $orderIdUnique = $data['subscription_id'].'_'.time();
-        $amount = (int) $data['amount'];
+        $requestId = time() . '';
+        $orderIdUnique = $data['subscription_id'] . '_' . time();
+        $amount = (int)$data['amount'];
         $requestType = 'payWithATM';
         $orderInfo = "Payment#{$data['subscription_id']}";
 
@@ -68,7 +70,7 @@ class MomoService
             'orderId' => $orderIdUnique,
             'orderInfo' => $orderInfo,
             'redirectUrl' => $this->redirectUrl,
-            'ipnUrl' => $this->ipnUrl.'/'.$data['subscription_id'],
+            'ipnUrl' => $this->ipnUrl . '/' . $data['subscription_id'],
             'lang' => 'vi',
             'orderExpireTime' => 15,
             'extraData' => $data['renewal_date'],
@@ -86,7 +88,9 @@ class MomoService
     public function notify(array $data, $subscriptionId)
     {
         try {
-            $payment = Payment::where('subscription_id', $subscriptionId)->first();
+            $payment = Payment::where('subscription_id', $subscriptionId)
+                ->orderBy('created_at', 'desc')
+                ->first();
 
             $payment->update([
                 'status' => $data['resultCode'] == 0 ? PaymentStatus::SUCCESS : PaymentStatus::FAILED,
@@ -95,21 +99,22 @@ class MomoService
             ]);
 
             $subscription = Subscription::findOrFail($subscriptionId);
-            if ($data['extraData']) {
-                $subscription->update([
-                    'status' => SubscriptionStatus::ACTIVE,
-                    'end_date' => $data['extraData'],
-                ]);
-            } else {
-                $subscription->update([
-                    'status' => SubscriptionStatus::PAID,
-                ]);
-            }
+
+            SubscriptionHistory::create([
+                'subscription_id' => $subscription->id,
+                'action' => SubscriptionHistoryAction::RENEWED,
+            ]);
+
+
+            $subscription->update([
+                'status' => SubscriptionStatus::ACTIVE,
+                'end_date' => $data['extraData'],
+            ]);
 
             return $payment;
         } catch (\Throwable $e) {
-            \Log::error('Failed to handle callback from momo: '.$e->getMessage());
-            throw new \Exception('Failed to handle callback from momo. '.$e->getMessage());
+            \Log::error('Failed to handle callback from momo: ' . $e->getMessage());
+            throw new \Exception('Failed to handle callback from momo. ' . $e->getMessage());
         }
     }
 
