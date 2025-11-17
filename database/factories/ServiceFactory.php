@@ -42,7 +42,7 @@ class ServiceFactory extends Factory
         ];
 
         return [
-            'name' => $serviceTypes[array_rand($serviceTypes)].' '.$serviceModifiers[array_rand($serviceModifiers)],
+            'name' => $serviceTypes[array_rand($serviceTypes)] . ' ' . $serviceModifiers[array_rand($serviceModifiers)],
             'provider' => $this->faker->company(),
             'icon' => 'https://cdn-icons-png.freepik.com/512/5519/5519311.png',
             'account_id' => Account::factory(),

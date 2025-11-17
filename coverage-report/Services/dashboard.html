@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for /mnt/d/GO/Tracker/server/app/Services</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../_css/bootstrap.min.css?v=11.0.11" rel="stylesheet" type="text/css">
+  <link href="../_css/nv.d3.min.css?v=11.0.11" rel="stylesheet" type="text/css">
+  <link href="../_css/style.css?v=11.0.11" rel="stylesheet" type="text/css">
+  <link href="../_css/custom.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  <header>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a href="../index.html">/mnt/d/GO/Tracker/server/app</a></li>
+         <li class="breadcrumb-item"><a href="index.html">Services</a></li>
+         <li class="breadcrumb-item active">(Dashboard)</li>
+
+       </ol>
+      </nav>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container-fluid">
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Classes</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="classCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="classComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="AccountService.php.html#8">App\Services\AccountService</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="AuthService.php.html#16">App\Services\AuthService</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MomoService.php.html#13">App\Services\MomoService</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="NotificationService.php.html#12">App\Services\NotificationService</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PaymentService.php.html#8">App\Services\PaymentService</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ServiceService.php.html#9">App\Services\ServiceService</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="StatisticService.php.html#15">App\Services\StatisticService</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SubscriptionHistoryService.php.html#7">App\Services\SubscriptionHistoryService</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SubscriptionService.php.html#12">App\Services\SubscriptionService</a></td><td class="text-right">52%</td></tr>
+       <tr><td><a href="SubscriptionStatusService.php.html#7">App\Services\SubscriptionStatusService</a></td><td class="text-right">83%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="AuthService.php.html#16">App\Services\AuthService</a></td><td class="text-right">342</td></tr>
+       <tr><td><a href="NotificationService.php.html#12">App\Services\NotificationService</a></td><td class="text-right">306</td></tr>
+       <tr><td><a href="StatisticService.php.html#15">App\Services\StatisticService</a></td><td class="text-right">210</td></tr>
+       <tr><td><a href="ServiceService.php.html#9">App\Services\ServiceService</a></td><td class="text-right">110</td></tr>
+       <tr><td><a href="SubscriptionService.php.html#12">App\Services\SubscriptionService</a></td><td class="text-right">47</td></tr>
+       <tr><td><a href="AccountService.php.html#8">App\Services\AccountService</a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="MomoService.php.html#13">App\Services\MomoService</a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="PaymentService.php.html#8">App\Services\PaymentService</a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="SubscriptionHistoryService.php.html#7">App\Services\SubscriptionHistoryService</a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="SubscriptionStatusService.php.html#7">App\Services\SubscriptionStatusService</a></td><td class="text-right">3</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Methods</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="methodCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="methodComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="AccountService.php.html#10"><abbr title="App\Services\AccountService::getAccountPaginated">getAccountPaginated</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="AccountService.php.html#32"><abbr title="App\Services\AccountService::getSelectableAccounts">getSelectableAccounts</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="AccountService.php.html#40"><abbr title="App\Services\AccountService::updateAccountActiveState">updateAccountActiveState</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="AuthService.php.html#18"><abbr title="App\Services\AuthService::getAccountByEmail">getAccountByEmail</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="AuthService.php.html#23"><abbr title="App\Services\AuthService::sendEmailOtp">sendEmailOtp</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="AuthService.php.html#40"><abbr title="App\Services\AuthService::login">login</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="AuthService.php.html#53"><abbr title="App\Services\AuthService::loginGoogle">loginGoogle</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="AuthService.php.html#85"><abbr title="App\Services\AuthService::register">register</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="AuthService.php.html#110"><abbr title="App\Services\AuthService::verifyOtp">verifyOtp</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="AuthService.php.html#136"><abbr title="App\Services\AuthService::logout">logout</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MomoService.php.html#27"><abbr title="App\Services\MomoService::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MomoService.php.html#37"><abbr title="App\Services\MomoService::createPayment">createPayment</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MomoService.php.html#88"><abbr title="App\Services\MomoService::notify">notify</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MomoService.php.html#121"><abbr title="App\Services\MomoService::verifySignature">verifySignature</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="NotificationService.php.html#14"><abbr title="App\Services\NotificationService::get">get</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="NotificationService.php.html#26"><abbr title="App\Services\NotificationService::getAdminLogNotifications">getAdminLogNotifications</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="NotificationService.php.html#44"><abbr title="App\Services\NotificationService::getById">getById</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="NotificationService.php.html#54"><abbr title="App\Services\NotificationService::markAsRead">markAsRead</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="NotificationService.php.html#68"><abbr title="App\Services\NotificationService::markAllAsRead">markAllAsRead</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="NotificationService.php.html#80"><abbr title="App\Services\NotificationService::delete">delete</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="NotificationService.php.html#93"><abbr title="App\Services\NotificationService::reminderSubscription">reminderSubscription</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="NotificationService.php.html#111"><abbr title="App\Services\NotificationService::sendMessage">sendMessage</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PaymentService.php.html#10"><abbr title="App\Services\PaymentService::handleCallbackFromYoutube">handleCallbackFromYoutube</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ServiceService.php.html#11"><abbr title="App\Services\ServiceService::get">get</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ServiceService.php.html#44"><abbr title="App\Services\ServiceService::getBase">getBase</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ServiceService.php.html#49"><abbr title="App\Services\ServiceService::findById">findById</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ServiceService.php.html#54"><abbr title="App\Services\ServiceService::create">create</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ServiceService.php.html#69"><abbr title="App\Services\ServiceService::update">update</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ServiceService.php.html#82"><abbr title="App\Services\ServiceService::delete">delete</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="StatisticService.php.html#31"><abbr title="App\Services\StatisticService::getRenewCancelStatisticByPeriod">getRenewCancelStatisticByPeriod</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="StatisticService.php.html#59"><abbr title="App\Services\StatisticService::getHistoriesRateByPeriod">getHistoriesRateByPeriod</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="StatisticService.php.html#82"><abbr title="App\Services\StatisticService::getTotalSubscriptionDue">getTotalSubscriptionDue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="StatisticService.php.html#92"><abbr title="App\Services\StatisticService::fillMissingPeriodsByRenewCancelRate">fillMissingPeriodsByRenewCancelRate</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="StatisticService.php.html#115"><abbr title="App\Services\StatisticService::getRevenueStatisticByPeriod">getRevenueStatisticByPeriod</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="StatisticService.php.html#136"><abbr title="App\Services\StatisticService::getPaymentsByPeriod">getPaymentsByPeriod</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="StatisticService.php.html#155"><abbr title="App\Services\StatisticService::fillMissingPeriods">fillMissingPeriods</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="StatisticService.php.html#174"><abbr title="App\Services\StatisticService::getMissingPeriods">getMissingPeriods</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SubscriptionHistoryService.php.html#9"><abbr title="App\Services\SubscriptionHistoryService::getBySubscriptionId">getBySubscriptionId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SubscriptionService.php.html#107"><abbr title="App\Services\SubscriptionService::renew">renew</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SubscriptionService.php.html#128"><abbr title="App\Services\SubscriptionService::unsubscribe">unsubscribe</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SubscriptionService.php.html#146"><abbr title="App\Services\SubscriptionService::mark_as_paid">mark_as_paid</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SubscriptionService.php.html#14"><abbr title="App\Services\SubscriptionService::get">get</abbr></a></td><td class="text-right">66%</td></tr>
+       <tr><td><a href="SubscriptionService.php.html#43"><abbr title="App\Services\SubscriptionService::getSubscriptionByServiceId">getSubscriptionByServiceId</abbr></a></td><td class="text-right">75%</td></tr>
+       <tr><td><a href="SubscriptionStatusService.php.html#9"><abbr title="App\Services\SubscriptionStatusService::evaluateStatus">evaluateStatus</abbr></a></td><td class="text-right">83%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="AuthService.php.html#110"><abbr title="App\Services\AuthService::verifyOtp">verifyOtp</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="StatisticService.php.html#92"><abbr title="App\Services\StatisticService::fillMissingPeriodsByRenewCancelRate">fillMissingPeriodsByRenewCancelRate</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="AccountService.php.html#10"><abbr title="App\Services\AccountService::getAccountPaginated">getAccountPaginated</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="AuthService.php.html#53"><abbr title="App\Services\AuthService::loginGoogle">loginGoogle</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="AuthService.php.html#136"><abbr title="App\Services\AuthService::logout">logout</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="MomoService.php.html#88"><abbr title="App\Services\MomoService::notify">notify</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="NotificationService.php.html#93"><abbr title="App\Services\NotificationService::reminderSubscription">reminderSubscription</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="AccountService.php.html#40"><abbr title="App\Services\AccountService::updateAccountActiveState">updateAccountActiveState</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="AuthService.php.html#23"><abbr title="App\Services\AuthService::sendEmailOtp">sendEmailOtp</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="AuthService.php.html#40"><abbr title="App\Services\AuthService::login">login</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="AuthService.php.html#85"><abbr title="App\Services\AuthService::register">register</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="NotificationService.php.html#14"><abbr title="App\Services\NotificationService::get">get</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="NotificationService.php.html#26"><abbr title="App\Services\NotificationService::getAdminLogNotifications">getAdminLogNotifications</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="NotificationService.php.html#44"><abbr title="App\Services\NotificationService::getById">getById</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="NotificationService.php.html#54"><abbr title="App\Services\NotificationService::markAsRead">markAsRead</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="NotificationService.php.html#68"><abbr title="App\Services\NotificationService::markAllAsRead">markAllAsRead</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="NotificationService.php.html#80"><abbr title="App\Services\NotificationService::delete">delete</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="NotificationService.php.html#111"><abbr title="App\Services\NotificationService::sendMessage">sendMessage</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="PaymentService.php.html#10"><abbr title="App\Services\PaymentService::handleCallbackFromYoutube">handleCallbackFromYoutube</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="ServiceService.php.html#11"><abbr title="App\Services\ServiceService::get">get</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="ServiceService.php.html#54"><abbr title="App\Services\ServiceService::create">create</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="ServiceService.php.html#69"><abbr title="App\Services\ServiceService::update">update</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="ServiceService.php.html#82"><abbr title="App\Services\ServiceService::delete">delete</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="StatisticService.php.html#31"><abbr title="App\Services\StatisticService::getRenewCancelStatisticByPeriod">getRenewCancelStatisticByPeriod</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="StatisticService.php.html#115"><abbr title="App\Services\StatisticService::getRevenueStatisticByPeriod">getRevenueStatisticByPeriod</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="StatisticService.php.html#155"><abbr title="App\Services\StatisticService::fillMissingPeriods">fillMissingPeriods</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="SubscriptionHistoryService.php.html#9"><abbr title="App\Services\SubscriptionHistoryService::getBySubscriptionId">getBySubscriptionId</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="SubscriptionService.php.html#107"><abbr title="App\Services\SubscriptionService::renew">renew</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="SubscriptionService.php.html#128"><abbr title="App\Services\SubscriptionService::unsubscribe">unsubscribe</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="SubscriptionService.php.html#146"><abbr title="App\Services\SubscriptionService::mark_as_paid">mark_as_paid</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="SubscriptionService.php.html#14"><abbr title="App\Services\SubscriptionService::get">get</abbr></a></td><td class="text-right">4</td></tr>
+       <tr><td><a href="SubscriptionStatusService.php.html#9"><abbr title="App\Services\SubscriptionStatusService::evaluateStatus">evaluateStatus</abbr></a></td><td class="text-right">3</td></tr>
+       <tr><td><a href="SubscriptionService.php.html#43"><abbr title="App\Services\SubscriptionService::getSubscriptionByServiceId">getSubscriptionByServiceId</abbr></a></td><td class="text-right">2</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 11.0.11</a> using <a href="https://www.php.net/" target="_top">PHP 8.3.6</a> and <a href="https://phpunit.de/">PHPUnit 11.5.42</a> at Mon Nov 17 19:44:12 +07 2025.</small>
+    </p>
+   </footer>
+  </div>
+  <script src="../_js/jquery.min.js?v=11.0.11" type="text/javascript"></script>
+  <script src="../_js/d3.min.js?v=11.0.11" type="text/javascript"></script>
+  <script src="../_js/nv.d3.min.js?v=11.0.11" type="text/javascript"></script>
+  <script type="text/javascript">
+$(document).ready(function() {
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#classCoverageDistribution svg')
+      .datum(getCoverageDistributionData([8,0,0,0,0,0,1,0,0,1,0,0], "Class Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#methodCoverageDistribution svg')
+      .datum(getCoverageDistributionData([41,0,0,0,0,0,0,1,1,1,0,3], "Method Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getCoverageDistributionData(data, label) {
+    var labels = [
+      '0%',
+      '0-10%',
+      '10-20%',
+      '20-30%',
+      '30-40%',
+      '40-50%',
+      '50-60%',
+      '60-70%',
+      '70-80%',
+      '80-90%',
+      '90-100%',
+      '100%'
+    ];
+    var values = [];
+    $.each(labels, function(key) {
+      values.push({x: labels[key], y: data[key]});
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Cyclomatic Complexity');
+
+    d3.select('#classComplexity svg')
+      .datum(getComplexityData([[0,6,"<a href=\"AccountService.php.html#8\">App\\Services\\AccountService<\/a>"],[0,18,"<a href=\"AuthService.php.html#16\">App\\Services\\AuthService<\/a>"],[0,6,"<a href=\"MomoService.php.html#13\">App\\Services\\MomoService<\/a>"],[0,17,"<a href=\"NotificationService.php.html#12\">App\\Services\\NotificationService<\/a>"],[0,2,"<a href=\"PaymentService.php.html#8\">App\\Services\\PaymentService<\/a>"],[0,10,"<a href=\"ServiceService.php.html#9\">App\\Services\\ServiceService<\/a>"],[0,14,"<a href=\"StatisticService.php.html#15\">App\\Services\\StatisticService<\/a>"],[0,2,"<a href=\"SubscriptionHistoryService.php.html#7\">App\\Services\\SubscriptionHistoryService<\/a>"],[52.56410256410257,17,"<a href=\"SubscriptionService.php.html#12\">App\\Services\\SubscriptionService<\/a>"],[83.33333333333334,3,"<a href=\"SubscriptionStatusService.php.html#7\">App\\Services\\SubscriptionStatusService<\/a>"]], 'Class Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Method Complexity');
+
+    d3.select('#methodComplexity svg')
+      .datum(getComplexityData([[0,3,"<a href=\"AccountService.php.html#10\">App\\Services\\AccountService::getAccountPaginated<\/a>"],[0,1,"<a href=\"AccountService.php.html#32\">App\\Services\\AccountService::getSelectableAccounts<\/a>"],[0,2,"<a href=\"AccountService.php.html#40\">App\\Services\\AccountService::updateAccountActiveState<\/a>"],[0,1,"<a href=\"AuthService.php.html#18\">App\\Services\\AuthService::getAccountByEmail<\/a>"],[0,2,"<a href=\"AuthService.php.html#23\">App\\Services\\AuthService::sendEmailOtp<\/a>"],[0,2,"<a href=\"AuthService.php.html#40\">App\\Services\\AuthService::login<\/a>"],[0,3,"<a href=\"AuthService.php.html#53\">App\\Services\\AuthService::loginGoogle<\/a>"],[0,2,"<a href=\"AuthService.php.html#85\">App\\Services\\AuthService::register<\/a>"],[0,5,"<a href=\"AuthService.php.html#110\">App\\Services\\AuthService::verifyOtp<\/a>"],[0,3,"<a href=\"AuthService.php.html#136\">App\\Services\\AuthService::logout<\/a>"],[0,1,"<a href=\"MomoService.php.html#27\">App\\Services\\MomoService::__construct<\/a>"],[0,1,"<a href=\"MomoService.php.html#37\">App\\Services\\MomoService::createPayment<\/a>"],[0,3,"<a href=\"MomoService.php.html#88\">App\\Services\\MomoService::notify<\/a>"],[0,1,"<a href=\"MomoService.php.html#121\">App\\Services\\MomoService::verifySignature<\/a>"],[0,2,"<a href=\"NotificationService.php.html#14\">App\\Services\\NotificationService::get<\/a>"],[0,2,"<a href=\"NotificationService.php.html#26\">App\\Services\\NotificationService::getAdminLogNotifications<\/a>"],[0,2,"<a href=\"NotificationService.php.html#44\">App\\Services\\NotificationService::getById<\/a>"],[0,2,"<a href=\"NotificationService.php.html#54\">App\\Services\\NotificationService::markAsRead<\/a>"],[0,2,"<a href=\"NotificationService.php.html#68\">App\\Services\\NotificationService::markAllAsRead<\/a>"],[0,2,"<a href=\"NotificationService.php.html#80\">App\\Services\\NotificationService::delete<\/a>"],[0,3,"<a href=\"NotificationService.php.html#93\">App\\Services\\NotificationService::reminderSubscription<\/a>"],[0,2,"<a href=\"NotificationService.php.html#111\">App\\Services\\NotificationService::sendMessage<\/a>"],[0,2,"<a href=\"PaymentService.php.html#10\">App\\Services\\PaymentService::handleCallbackFromYoutube<\/a>"],[0,2,"<a href=\"ServiceService.php.html#11\">App\\Services\\ServiceService::get<\/a>"],[0,1,"<a href=\"ServiceService.php.html#44\">App\\Services\\ServiceService::getBase<\/a>"],[0,1,"<a href=\"ServiceService.php.html#49\">App\\Services\\ServiceService::findById<\/a>"],[0,2,"<a href=\"ServiceService.php.html#54\">App\\Services\\ServiceService::create<\/a>"],[0,2,"<a href=\"ServiceService.php.html#69\">App\\Services\\ServiceService::update<\/a>"],[0,2,"<a href=\"ServiceService.php.html#82\">App\\Services\\ServiceService::delete<\/a>"],[0,2,"<a href=\"StatisticService.php.html#31\">App\\Services\\StatisticService::getRenewCancelStatisticByPeriod<\/a>"],[0,1,"<a href=\"StatisticService.php.html#59\">App\\Services\\StatisticService::getHistoriesRateByPeriod<\/a>"],[0,1,"<a href=\"StatisticService.php.html#82\">App\\Services\\StatisticService::getTotalSubscriptionDue<\/a>"],[0,4,"<a href=\"StatisticService.php.html#92\">App\\Services\\StatisticService::fillMissingPeriodsByRenewCancelRate<\/a>"],[0,2,"<a href=\"StatisticService.php.html#115\">App\\Services\\StatisticService::getRevenueStatisticByPeriod<\/a>"],[0,1,"<a href=\"StatisticService.php.html#136\">App\\Services\\StatisticService::getPaymentsByPeriod<\/a>"],[0,2,"<a href=\"StatisticService.php.html#155\">App\\Services\\StatisticService::fillMissingPeriods<\/a>"],[0,1,"<a href=\"StatisticService.php.html#174\">App\\Services\\StatisticService::getMissingPeriods<\/a>"],[0,2,"<a href=\"SubscriptionHistoryService.php.html#9\">App\\Services\\SubscriptionHistoryService::getBySubscriptionId<\/a>"],[66.66666666666666,4,"<a href=\"SubscriptionService.php.html#14\">App\\Services\\SubscriptionService::get<\/a>"],[75,2,"<a href=\"SubscriptionService.php.html#43\">App\\Services\\SubscriptionService::getSubscriptionByServiceId<\/a>"],[100,1,"<a href=\"SubscriptionService.php.html#65\">App\\Services\\SubscriptionService::findById<\/a>"],[100,2,"<a href=\"SubscriptionService.php.html#70\">App\\Services\\SubscriptionService::create<\/a>"],[100,2,"<a href=\"SubscriptionService.php.html#89\">App\\Services\\SubscriptionService::update<\/a>"],[0,2,"<a href=\"SubscriptionService.php.html#107\">App\\Services\\SubscriptionService::renew<\/a>"],[0,2,"<a href=\"SubscriptionService.php.html#128\">App\\Services\\SubscriptionService::unsubscribe<\/a>"],[0,2,"<a href=\"SubscriptionService.php.html#146\">App\\Services\\SubscriptionService::mark_as_paid<\/a>"],[83.33333333333334,3,"<a href=\"SubscriptionStatusService.php.html#9\">App\\Services\\SubscriptionStatusService::evaluateStatus<\/a>"]], 'Method Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getComplexityData(data, label) {
+    var values = [];
+    $.each(data, function(key) {
+      var value = Math.round(data[key][0]*100) / 100;
+      values.push({
+        x: value,
+        y: data[key][1],
+        class: data[key][2],
+        size: 0.05,
+        shape: 'diamond'
+      });
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+});
+  </script>
+ </body>
+</html>
