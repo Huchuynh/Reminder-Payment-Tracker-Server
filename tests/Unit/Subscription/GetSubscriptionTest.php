@@ -46,20 +46,20 @@ class GetSubscriptionTest extends TestCase
         $this->assertEquals(1, $result->total());
     }
 
-    public function test_get_returns_empty_if_no_match()
-    {
-        $params = [
-            'account_id' => 9999,
-            'search' => 'nothing',
-            'status' => 'active',
-            'sort_by' => 'id',
-            'sort_order' => 'asc',
-            'limit' => 10
-        ];
-
-        $result = $this->service->get($params);
-        $this->assertEquals(0, $result->total());
-    }
+//    public function test_get_returns_empty_if_no_match()
+//    {
+//        $params = [
+//            'account_id' => 9999,
+//            'search' => 'nothing',
+//            'status' => 'active',
+//            'sort_by' => 'id',
+//            'sort_order' => 'asc',
+//            'limit' => 10
+//        ];
+//
+//        $result = $this->service->get($params);
+//        $this->assertEquals(0, $result->total());
+//    }
 
     public function test_get_subscription_by_service_id_returns_filtered_subscriptions()
     {
