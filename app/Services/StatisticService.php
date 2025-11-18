@@ -41,12 +41,9 @@ class StatisticService
 
             $histories = $this->getHistoriesRateByPeriod($params, $data['service_ids']);
 
-            $totals = $this->getTotalSubscriptionDue($params, $data['service_ids']);
-
             return $this->fillMissingPeriodsByRenewCancelRate(
                 $params,
                 $histories,
-                $totals,
                 $services
             );
 
@@ -79,29 +76,31 @@ class StatisticService
             ->groupBy(['period', 'service_id']);
     }
 
-    private function getTotalSubscriptionDue(array $data, array $service_ids)
+    private function getTotalSubscriptionDue(array $data, int $service_id)
     {
         return Subscription::query()
-            ->whereIn('service_id', $service_ids)
+            ->where('service_id', $service_id)
             ->whereBetween('end_date', [$data['start_date'], $data['end_date']])
-            ->get()
-            ->groupBy('service_id')
-            ->map(fn($subs) => count($subs));
+            ->count();
     }
 
-    private function fillMissingPeriodsByRenewCancelRate(array $filter, $histories, $totals, $services)
+    private function fillMissingPeriodsByRenewCancelRate(array $filter, $histories, $services)
     {
         [$period, $config] = $this->getMissingPeriods($filter);
 
-        return collect($period)->map(function ($date) use ($config, $histories, $totals, $services) {
+        return collect($period)->map(function ($date) use ($config, $filter, $histories, $services) {
             $key = $date->format($config['carbon_format']);
             $row = ['period' => $key];
+            [$start, $end] = $this->getStartEndDate($key, $filter['type']);
 
             foreach ($services as $id => $name) {
                 $history = $histories[$key][$id][0] ?? null;
                 $renewed = $history->renewed_count ?? 0;
                 $canceled = $history->canceled_count ?? 0;
-                $total = $totals[$id] ?? 0;
+                $total = $this->getTotalSubscriptionDue([
+                    'start_date' => $start,
+                    'end_date' => $end,
+                ], $id);
 
                 $row["{$name}_renew"] = $total === 0 ? 0 : round(($renewed / $total) * 100, 2);
                 $row["{$name}_cancel"] = $total === 0 ? 0 : round(($canceled / $total) * 100, 2);
@@ -184,5 +183,19 @@ class StatisticService
         );
 
         return [$period, $config];
+    }
+
+    private function getStartEndDate(string $time, string $type)
+    {
+        $config = self::PERIOD_CONFIG[$type];
+        $date = Carbon::createFromFormat($config['carbon_format'], $time);
+        if ($type === 'day') {
+            $start = $date->startOfDay()->toDateTimeString();
+            $end = $date->endOfDay()->toDateTimeString();
+        } else {
+            $start = $date->startOfMonth()->toDateTimeString();
+            $end = $date->endOfMonth()->toDateTimeString();
+        }
+        return [$start, $end];
     }
 }
