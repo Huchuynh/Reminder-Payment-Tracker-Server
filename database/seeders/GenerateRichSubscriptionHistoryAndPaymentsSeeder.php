@@ -14,8 +14,8 @@ class GenerateRichSubscriptionHistoryAndPaymentsSeeder extends Seeder
     public function run(Faker $faker): void
     {
         // Xóa toàn bộ dữ liệu cũ
-        SubscriptionHistory::truncate();
-        Payment::truncate();
+//        SubscriptionHistory::truncate();
+//        Payment::truncate();
 
         $subscriptions = Subscription::whereHas('service', function ($q) {
             $q->where('is_base', true);
@@ -28,14 +28,14 @@ class GenerateRichSubscriptionHistoryAndPaymentsSeeder extends Seeder
             $randomTimestamp = mt_rand($start, $end);
             $paidAt = Carbon::createFromTimestamp($randomTimestamp);
 
-            Payment::factory(100)->create([
+            Payment::factory(500)->create([
                 'subscription_id' => $sub->id,
                 'paid_at' => $paidAt,
                 'created_at' => $paidAt,
                 'updated_at' => $paidAt,
             ]);
 
-            SubscriptionHistory::factory(100)->create([
+            SubscriptionHistory::factory(500)->create([
                 'subscription_id' => $sub->id,
                 'created_at' => $paidAt,
                 'updated_at' => $paidAt,

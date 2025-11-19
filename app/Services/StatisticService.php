@@ -37,9 +37,11 @@ class StatisticService
                 'type' => $data['type'],
             ];
 
-            $services = Service::whereIn('id', $data['service_ids'])->pluck('name', 'id');
+            $services = isset($data['service_ids']) ?
+                Service::whereIn('id', $data['service_ids'])->pluck('name', 'id')->toArray() :
+                ['all' => 'All Services'];
 
-            $histories = $this->getHistoriesRateByPeriod($params, $data['service_ids']);
+            $histories = $this->getHistoriesRateByPeriod($params, $data['service_ids'] ?? []);
 
             return $this->fillMissingPeriodsByRenewCancelRate(
                 $params,
@@ -58,19 +60,26 @@ class StatisticService
         $format = self::PERIOD_CONFIG[$data['type']]['db_format'];
 
         $renewed = SubscriptionHistoryAction::RENEWED->value;
-        $canceled = SubscriptionHistoryAction::CANCELED->value;
-        $expired = SubscriptionHistoryAction::EXPIRED->value;
-        return SubscriptionHistory::query()
+
+        $query = SubscriptionHistory::query()
             ->selectRaw("
-                    TO_CHAR(subscription_history.created_at, '{$format}') AS period,
-                    subscriptions.service_id,
-                    COUNT(DISTINCT subscription_history.subscription_id) FILTER (WHERE action = '{$renewed}') AS renewed_count,
-                    COUNT(DISTINCT subscription_history.subscription_id) FILTER (WHERE action = '{$canceled}' OR action = '{$expired}') AS canceled_count
-            ")
-            ->join('subscriptions', 'subscriptions.id', '=', 'subscription_history.subscription_id')
-            ->whereBetween('subscription_history.created_at', [$data['start_date'], $data['end_date']])
-            ->whereIn('subscriptions.service_id', $service_ids)
-            ->groupByRaw("TO_CHAR(subscription_history.created_at, '{$format}'), subscriptions.service_id")
+                TO_CHAR(sh.created_at, '{$format}') AS period,
+                s.service_id,
+                COUNT(DISTINCT sh.subscription_id) FILTER (WHERE sh.action = '{$renewed}') AS renewed_count
+        ")
+            ->fromRaw("
+            (SELECT DISTINCT ON (subscription_id) *
+            FROM subscription_history
+            ORDER BY subscription_id, created_at DESC) AS sh
+        ")
+            ->join('subscriptions as s', 's.id', '=', 'sh.subscription_id')
+            ->whereBetween('sh.created_at', [$data['start_date'], $data['end_date']]);
+
+        if (!empty($service_ids)) {
+            $query->whereIn('s.service_id', $service_ids);
+        }
+
+        return $query->groupByRaw("TO_CHAR(sh.created_at, '{$format}'), s.service_id")
             ->orderBy('period')
             ->get()
             ->groupBy(['period', 'service_id']);
@@ -93,21 +102,72 @@ class StatisticService
             $row = ['period' => $key];
             [$start, $end] = $this->getStartEndDate($key, $filter['type']);
 
-            foreach ($services as $id => $name) {
-                $history = $histories[$key][$id][0] ?? null;
-                $renewed = $history->renewed_count ?? 0;
-                $canceled = $history->canceled_count ?? 0;
-                $total = $this->getTotalSubscriptionDue([
-                    'start_date' => $start,
-                    'end_date' => $end,
-                ], $id);
-
-                $row["{$name}_renew"] = $total === 0 ? 0 : round(($renewed / $total) * 100, 2);
-                $row["{$name}_cancel"] = $total === 0 ? 0 : round(($canceled / $total) * 100, 2);
+            if (isset($histories[$key])) {
+                if (array_key_exists('all', $services)) {
+                    $this->calculateAllServiceRenewCancel($key, $histories, $start, $end, $row);
+                } else {
+                    $this->calculateIndividualServiceRenewCancel($key, $histories, $start, $end, $services, $row);
+                }
+            } else {
+                $this->setZeroForMissingHistory($services, $row);
             }
 
             return $row;
         });
+    }
+
+    private function calculateAllServiceRenewCancel($key, $histories, $start, $end, &$row)
+    {
+        $totalRenewed = 0;
+        $total = 0;
+
+        foreach ($histories[$key] as $serviceId => $history) {
+            $renewed = $history[0]->renewed_count ?? 0;
+            $totalForService = $this->getTotalSubscriptionDue([
+                'start_date' => $start,
+                'end_date' => $end,
+            ], $serviceId);
+
+            $renewedRate = $totalForService === 0 ? 0 : round(($renewed / $totalForService) * 100, 2);
+
+            $total += $totalForService;
+            $totalRenewed += $renewedRate * $totalForService;
+        }
+
+        $row["all_renew"] = $total === 0 ? 0 : round(($totalRenewed / $total), 2);
+        $row["all_cancel"] = 100 - $row["all_renew"];
+    }
+
+    private function calculateIndividualServiceRenewCancel($key, $histories, $start, $end, $services, &$row)
+    {
+        foreach ($services as $id => $name) {
+            $history = $histories[$key][$id][0] ?? null;
+
+            $renewed = $history ? $history->renewed_count : 0;
+            $total = $this->getTotalSubscriptionDue([
+                'start_date' => $start,
+                'end_date' => $end,
+            ], (int)$id);
+
+            $cleanName = str_replace(' ', '_', $name);
+
+            $row["{$cleanName}_renew"] = $total === 0 ? 0 : round(($renewed / $total) * 100, 2);
+            $row["{$cleanName}_cancel"] = 100 - $row["{$cleanName}_renew"];
+        }
+    }
+
+    private function setZeroForMissingHistory($services, &$row)
+    {
+        if (array_key_exists('all', $services)) {
+            $row["all_renew"] = 0;
+            $row["all_cancel"] = 0;
+        } else {
+            foreach ($services as $id => $name) {
+                $cleanName = str_replace(' ', '_', $name);
+                $row["{$cleanName}_renew"] = 0;
+                $row["{$cleanName}_cancel"] = 0;
+            }
+        }
     }
 
     /*Revenue Statistic By Period*/
@@ -120,9 +180,11 @@ class StatisticService
                 'type' => $data['type'],
             ];
 
-            $services = Service::whereIn('id', $data['service_ids'])->pluck('name', 'id');
+            $services = isset($data['service_ids']) ?
+                Service::whereIn('id', $data['service_ids'])->pluck('name', 'id')->toArray() :
+                ['all' => 'All Services'];
 
-            $payments = $this->getPaymentsByPeriod($params, $data['service_ids']);
+            $payments = $this->getPaymentsByPeriod($params, $data['service_ids'] ?? []);
 
             return $this->fillMissingPeriods($params, $payments, $services);
         } catch (\Throwable $e) {
@@ -136,19 +198,22 @@ class StatisticService
     {
         $format = self::PERIOD_CONFIG[$data['type']]['db_format'];
 
-        return Payment::query()
+        $query = Payment::query()
             ->selectRaw("
-                TO_CHAR(paid_at, '{$format}') AS period,
-                subscriptions.service_id,
-                SUM(amount) AS total")
+            TO_CHAR(paid_at, '{$format}') AS period,
+            subscriptions.service_id,
+            SUM(amount) AS total")
             ->join('subscriptions', 'subscriptions.id', '=', 'payments.subscription_id')
             ->whereBetween('paid_at', [$data['start_date'], $data['end_date']])
-            ->whereIn('subscriptions.service_id', $service_ids)
             ->where('payments.status', PaymentStatus::SUCCESS)
             ->groupByRaw("TO_CHAR(paid_at, '{$format}'), subscriptions.service_id")
-            ->orderBy('period')
-            ->get()
-            ->groupBy('period');
+            ->orderBy('period');
+
+        if (!empty($service_ids)) {
+            $query->whereIn('subscriptions.service_id', $service_ids);
+        }
+
+        return $query->get()->groupBy('period');
     }
 
     private function fillMissingPeriods(array $filter, $payment, $services)
@@ -160,9 +225,19 @@ class StatisticService
             $period_data = collect($payment[$period_key] ?? []);
             $row = ['period' => $period_key];
 
-            foreach ($services as $id => $name) {
-                $total = $period_data->firstWhere('service_id', $id)->total ?? 0;
-                $row[$name] = (float)$total;
+            if (array_key_exists('all', $services)) {
+                $totalRevenue = 0;
+
+                foreach ($period_data as $data) {
+                    $totalRevenue += $data->total;
+                }
+
+                $row['all'] = (float)$totalRevenue;
+            } else {
+                foreach ($services as $id => $name) {
+                    $total = $period_data->firstWhere('service_id', $id)->total ?? 0;
+                    $row[$name] = (float)$total;
+                }
             }
 
             return $row;
