@@ -37,7 +37,6 @@ Route::middleware('auth:api')->group(function () {
     // Subscription Routes
     Route::apiResource('subscriptions', SubscriptionController::class);
     Route::get('subscriptions/{id}/history', [SubscriptionHistoryController::class, 'getBySubscriptionId']);
-    Route::post('subscriptions/{id}/renew', [SubscriptionController::class, 'renew']);
     Route::post('subscriptions/{id}/unsubscribe', [SubscriptionController::class, 'unsubscribe']);
     Route::post('subscriptions/{id}/mark-as-paid', [SubscriptionController::class, 'mark_as_paid']);
 

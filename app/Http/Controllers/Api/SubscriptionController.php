@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateSubscriptionRequest;
 use App\Http\Requests\GetSubscriptionByServiceRequest;
-use App\Http\Requests\RenewSubscriptionRequest;
 use App\Http\Requests\SubscriptionQueryRequest;
 use App\Http\Requests\UpdateSubscriptionRequest;
 use App\Http\Resources\SubscriptionResource;
@@ -93,20 +92,6 @@ class SubscriptionController extends Controller
             return $this->responseSuccess(
                 $result,
                 'Subscription successfully updated',
-            );
-        } catch (\Throwable $e) {
-            return $this->handleExceptionResponse($e);
-        }
-    }
-
-    public function renew(RenewSubscriptionRequest $request, string $id)
-    {
-        try {
-            $result = $this->subscriptionService->renew($id, $request->validated());
-
-            return $this->responseSuccess(
-                $result,
-                'Service successfully renewed',
             );
         } catch (\Throwable $e) {
             return $this->handleExceptionResponse($e);

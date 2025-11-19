@@ -8,7 +8,6 @@ use App\Models\Account;
 use Google_Client;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
@@ -25,13 +24,13 @@ class AuthService
         $otp = rand(100000, 999999);
         $expires = 15;
         try {
-            Cache::put('otp_'.$email, $otp, now()->addMinutes($expires));
+            Cache::put('otp_' . $email, $otp, now()->addMinutes($expires));
             Mail::to($email)->send(new OtpMail($otp, $expires));
-            \Log::info('Sending OTP to '.$email.' with OTP: '.$otp);
+            \Log::info('Sending OTP to ' . $email . ' with OTP: ' . $otp);
 
-            return ['message' => 'OTP sent to '.$email.' with OTP: '.$otp];
+            return ['message' => 'OTP sent to ' . $email . ' with OTP: ' . $otp];
         } catch (\Exception $e) {
-            Cache::forget('otp_'.$email);
+            Cache::forget('otp_' . $email);
             \Log::error("Fail to send OTP: {$e->getMessage()}");
             throw new \Exception("Fail to send OTP: {$e->getMessage()}");
         }
@@ -57,7 +56,7 @@ class AuthService
 
             $payload = $client->verifyIdToken($data['credentials']);
 
-            if (! $payload) {
+            if (!$payload) {
                 throw new \Exception('Invalid token');
             }
 
@@ -85,22 +84,16 @@ class AuthService
     public function register(array $request)
     {
         try {
-            $account = DB::transaction(function () use ($request) {
+            $newAccount = Account::create([
+                'full_name' => $request['full_name'],
+                'email' => $request['email'],
+                'password' => bcrypt(Str::random(16)),
+                'avatar' => env('APP_DEFAULT_AVATAR'),
+            ]);
 
-                $newAccount = Account::create([
-                    'full_name' => $request['full_name'],
-                    'email' => $request['email'],
-                    'password' => bcrypt(Str::random(16)),
-                    'avatar' => env('APP_DEFAULT_AVATAR'),
-                ]);
+            $this->sendEmailOtp($newAccount->email);
 
-                $this->sendEmailOtp($newAccount->email);
-
-                return $newAccount;
-            });
-
-            return $account;
-
+            return $newAccount;
         } catch (\Throwable $e) {
             \Log::error("Registration failed: {$e->getMessage()}");
             throw new \Exception("Registration failed: {$e->getMessage()}");
@@ -110,9 +103,9 @@ class AuthService
     public function verifyOtp(array $request)
     {
         try {
-            $cacheKey = 'otp_'.$request['email'];
+            $cacheKey = 'otp_' . $request['email'];
 
-            if (! Cache::has($cacheKey) || (int) Cache::get($cacheKey) !== (int) $request['otp']) {
+            if (!Cache::has($cacheKey) || (int)Cache::get($cacheKey) !== (int)$request['otp']) {
                 throw new \Exception('Invalid OTP');
             }
 
@@ -128,7 +121,7 @@ class AuthService
 
             return compact('token', 'account');
         } catch (\Throwable $e) {
-            \Log::error('Failed to verify OTP: '.$e->getMessage());
+            \Log::error('Failed to verify OTP: ' . $e->getMessage());
             throw new \Exception("Failed to verify OTP: {$e->getMessage()}");
         }
     }
@@ -138,7 +131,7 @@ class AuthService
         try {
             $token = JWTAuth::getToken();
 
-            if (! $token) {
+            if (!$token) {
                 throw new \Exception('Invalid token');
             }
 
@@ -150,7 +143,7 @@ class AuthService
 
             return ['message' => 'Logged out successfully'];
         } catch (\Throwable $e) {
-            \Log::error('Failed to sign out user: '.$e->getMessage());
+            \Log::error('Failed to sign out user: ' . $e->getMessage());
             throw new \Exception("Failed to sign out user: {$e->getMessage()}");
         }
     }

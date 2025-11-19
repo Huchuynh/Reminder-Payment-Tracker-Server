@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Enums\SubscriptionStatus;
 use App\Models\Service;
-use Illuminate\Support\Facades\DB;
 
 class ServiceService
 {
@@ -54,16 +53,11 @@ class ServiceService
     public function create(array $data)
     {
         try {
-            return DB::transaction(function () use ($data) {
-                $newService = Service::create($data);
-
-                return $newService;
-            });
+            return Service::create($data);
         } catch (\Throwable $e) {
             \Log::error('Failed to create service: ' . $e->getMessage());
             throw new \Exception('Failed to create service. ' . $e->getMessage());
         }
-
     }
 
     public function update(int $id, array $data)

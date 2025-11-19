@@ -19,7 +19,7 @@ class NotificationFactory extends Factory
 
         return [
             'id' => $this->faker->uuid(),
-            'type' => 'App\\Notifications\\SubscriptionReminderNotification', // tên notification class
+            'type' => 'App\\Notifications\\SubscriptionReminderNotification',
             'notifiable_type' => Account::class,
             'notifiable_id' => $subscription->account_id,
             'data' => [

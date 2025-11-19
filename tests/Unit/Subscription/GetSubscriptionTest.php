@@ -46,20 +46,16 @@ class GetSubscriptionTest extends TestCase
         $this->assertEquals(1, $result->total());
     }
 
-//    public function test_get_returns_empty_if_no_match()
-//    {
-//        $params = [
-//            'account_id' => 9999,
-//            'search' => 'nothing',
-//            'status' => 'active',
-//            'sort_by' => 'id',
-//            'sort_order' => 'asc',
-//            'limit' => 10
-//        ];
-//
-//        $result = $this->service->get($params);
-//        $this->assertEquals(0, $result->total());
-//    }
+    public function test_it_throws_exception_when_query_fails()
+    {
+        $this->expectException(\Exception::class);
+
+        $this->service->get([
+            'is_active' => 56,
+            'search' => '',
+            'limit' => 10
+        ]);
+    }
 
     public function test_get_subscription_by_service_id_returns_filtered_subscriptions()
     {
@@ -89,19 +85,11 @@ class GetSubscriptionTest extends TestCase
         $this->assertEquals($subscription->id, $result->first()->id);
     }
 
-    public function test_get_subscription_by_service_id_returns_empty_if_no_match()
+    public function test_get_subscription_by_service_id_throws_exception_when_query_fails()
     {
-        $serviceModel = Service::factory()->create();
+        $this->expectException(\Exception::class);
 
-        $params = [
-            'search' => 'Bob',
-            'status' => 'active',
-            'limit' => 10
-        ];
-
-        $result = $this->service->getSubscriptionByServiceId($params, $serviceModel->id);
-
-        $this->assertEquals(0, $result->total());
+        $this->service->getSubscriptionByServiceId([], '123');
     }
 
     public function test_find_by_id_success()

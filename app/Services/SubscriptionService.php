@@ -104,27 +104,6 @@ class SubscriptionService
         }
     }
 
-    public function renew(string $id, array $data)
-    {
-        try {
-            $subscription = Subscription::findOrFail($id);
-            $subscription->update([
-                'end_date' => $data['end_date'],
-                'status' => SubscriptionStatus::ACTIVE,
-            ]);
-
-            SubscriptionHistory::create([
-                'subscription_id' => $subscription->id,
-                'action' => SubscriptionHistoryAction::RENEWED,
-            ]);
-
-            return $subscription;
-        } catch (\Throwable $e) {
-            \Log::error('Failed to renew service: ' . $e->getMessage());
-            throw new \Exception('Failed to renew service. ' . $e->getMessage());
-        }
-    }
-
     public function unsubscribe(string $id)
     {
         try {
