@@ -1,61 +1,222 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 📌 Reminder & Payment Tracker  
+Ứng dụng nhắc nhở quá hạn đăng ký / thanh toán dịch vụ
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+---
 
-## About Laravel
+## 📖 Overview
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+**Reminder & Payment Tracker** là ứng dụng giúp người dùng quản lý các dịch vụ đăng ký (subscription services) và theo dõi thời hạn thanh toán nhằm tránh quên gia hạn, bị gián đoạn dịch vụ hoặc mất dữ liệu.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Ứng dụng hỗ trợ:
+- Quản lý danh sách dịch vụ đang sử dụng
+- Theo dõi và cảnh báo trước khi hết hạn
+- Lưu trữ lịch sử thanh toán
+- Hỗ trợ thanh toán (tuỳ chọn)
+- Dashboard quản trị dành cho admin
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 🚀 Key Features
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+---
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## 1️⃣ User Account & Subscription Management
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 🔐 Authentication
+- Đăng ký / Đăng nhập bằng:
+  - Email & Password
+  - Social Login (Google, Facebook, ...)
+  - OTP Authentication
 
-## Laravel Sponsors
+### 📦 Subscription Management
+- Thêm dịch vụ thủ công
+- Đồng bộ dịch vụ tự động qua API (nếu provider hỗ trợ)
+- Quản lý các loại dịch vụ:
+  - Cloud
+  - Điện / Nước
+  - Internet
+  - SaaS
+  - Phần mềm thuê bao
+  - Các dịch vụ đăng ký khác
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 📋 Thông tin lưu trữ cho mỗi dịch vụ
+- Tên dịch vụ
+- Nhà cung cấp
+- Gói dịch vụ (Free / Premium / Enterprise / ...)
+- Ngày bắt đầu
+- Ngày hết hạn
+- Trạng thái:
+  - `Active`
+  - `Expiring Soon`
+  - `Expired`
+  - `Cancelled`
+- Ghi chú
+- Hóa đơn đính kèm (optional)
 
-### Premium Partners
+### 🔄 Service Actions
+- Gia hạn thủ công
+- Hủy dịch vụ
+- Redirect đến trang chính thức của nhà cung cấp
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+---
 
-## Contributing
+## 2️⃣ Expiration Tracking & Notifications
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 📅 Automatic Expiration Calculation
+- Tự động tính ngày hết hạn
+- Cập nhật trạng thái theo thời gian thực
 
-## Code of Conduct
+### ⚠️ Custom Alert Threshold
+Người dùng có thể cấu hình:
+- Nhắc trước 7 ngày
+- Nhắc trước 3 ngày
+- Nhắc trước 1 ngày
+- Nhắc sau X ngày khi đã quá hạn
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 🔔 Notification Channels
+- 📧 Email Notification
+- 📱 SMS Notification (tùy chọn)
+- 🔔 In-app Notification (Dashboard banner / popup)
+- 📲 Push Notification (Mobile App – optional)
 
-## Security Vulnerabilities
+### ⚙️ Customization
+- Tùy chỉnh tần suất nhắc nhở
+- Chọn kênh thông báo mong muốn
+- Bật/tắt cảnh báo khẩn
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+## 3️⃣ Payment & Service Linking (Optional Module)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 💳 Payment Methods
+- Credit/Debit Card
+- PayPal
+- VNPay
+- Momo
+- Các phương thức khác
+
+### 🔁 Payment Features
+- Thanh toán thủ công
+- Auto-renew (nếu provider hỗ trợ API)
+- Auto-charge (nếu được cho phép)
+- Redirect đến trang thanh toán chính thức
+
+### 🧾 Payment History
+- Lưu lịch sử thanh toán
+- Hóa đơn điện tử
+- Chính sách hoàn tiền (nếu có)
+
+---
+
+## 4️⃣ Expired Service Handling
+
+Khi dịch vụ quá hạn:
+
+- Tự động cập nhật trạng thái `Expired` / `Inactive`
+- Hiển thị cảnh báo nổi bật trên dashboard
+- Tiếp tục gửi nhắc nhở sau X ngày (theo cấu hình người dùng)
+
+### ✔️ User Actions
+- Đánh dấu "Đã gia hạn"
+- Đánh dấu "Đã hủy dịch vụ"
+- Tự động cập nhật trạng thái khi xác nhận thanh toán
+
+### 📊 History Tracking
+- Lưu lịch sử:
+  - Các lần hết hạn
+  - Các lần gia hạn
+  - Thay đổi trạng thái
+
+---
+
+## 5️⃣ Admin Dashboard
+
+Dành cho quản trị hệ thống.
+
+### 👥 User Management
+- Quản lý toàn bộ người dùng
+- Quản lý dịch vụ đã liên kết
+
+### 📈 Monitoring & Analytics
+- Danh sách:
+  - Sắp hết hạn
+  - Đã hết hạn
+  - Không hoạt động lâu ngày
+- Tỷ lệ:
+  - Gia hạn
+  - Hủy dịch vụ
+- Thống kê theo loại dịch vụ
+- Log gửi thông báo (Email / SMS / Push)
+
+### 🛠 Admin Actions
+- Gửi nhắc nhở thủ công
+- Xuất báo cáo:
+  - Doanh thu
+  - Trạng thái dịch vụ
+  - Tỷ lệ duy trì khách hàng
+
+---
+
+## 6️⃣ Advanced Features (Optional)
+
+### 📅 Calendar Sync
+- Google Calendar
+- Outlook
+- iCal
+
+### 🤖 AI Smart Reminder
+- Gợi ý dịch vụ quan trọng
+- Ưu tiên cảnh báo theo mức độ rủi ro
+- Phân tích hành vi thanh toán
+
+### 🏢 Organization Management
+- Quản lý nhiều người dùng trong cùng tổ chức
+- Phân quyền theo vai trò
+
+### 🔌 Public API
+- Cung cấp API cho bên thứ ba tích hợp
+- Webhook khi thay đổi trạng thái dịch vụ  
+  (Active → Expired → Cancelled)
+
+---
+
+## 🏗️ Suggested System Architecture
+
+- Frontend: Web Dashboard + Mobile App
+- Backend: REST API / GraphQL
+- Database: PostgreSQL / MySQL
+- Notification Service:
+  - Email Service
+  - SMS Gateway
+  - Push Service
+- Payment Integration Module
+- Scheduler / Cron Service để xử lý:
+  - Kiểm tra hạn
+  - Gửi nhắc tự động
+  - Cập nhật trạng thái
+
+---
+
+## 🔐 Security Considerations
+
+- Mã hóa thông tin thanh toán
+- Token-based Authentication (JWT / OAuth2)
+- Role-based Access Control (RBAC)
+- Rate limiting API
+- Logging & Monitoring
+
+---
+
+## 📊 Future Roadmap
+
+- Ứng dụng mobile native
+- Tích hợp thêm nhiều provider API
+- Dashboard phân tích tài chính cá nhân
+- Multi-currency support
+- Smart budgeting assistant
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
