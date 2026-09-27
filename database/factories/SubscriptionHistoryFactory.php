@@ -10,11 +10,13 @@ class SubscriptionHistoryFactory extends Factory
 {
     public function definition(): array
     {
+        $createAt = $this->faker->optional()->dateTimeBetween('-6 months', 'now');
+
         return [
             'subscription_id' => Subscription::factory(),
             'action' => fake()->randomElement(SubscriptionHistoryAction::cases())->value,
-            'created_at' => now()->format('Y-m-d H:i:s'),
-            'updated_at' => now()->format('Y-m-d H:i:s'),
+            'created_at' => $createAt,
+            'updated_at' => $createAt,
         ];
     }
 }

@@ -42,7 +42,7 @@ class StatisticService
                 ['all' => 'All Services'];
 
             $histories = $this->getHistoriesRateByPeriod($params, $data['service_ids'] ?? []);
-
+            
             return $this->fillMissingPeriodsByRenewCancelRate(
                 $params,
                 $histories,
@@ -59,38 +59,42 @@ class StatisticService
     {
         $format = self::PERIOD_CONFIG[$data['type']]['db_format'];
 
-        $renewed = SubscriptionHistoryAction::RENEWED->value;
-
         $query = SubscriptionHistory::query()
             ->selectRaw("
                 TO_CHAR(sh.created_at, '{$format}') AS period,
                 s.service_id,
-                COUNT(DISTINCT sh.subscription_id) FILTER (WHERE sh.action = '{$renewed}') AS renewed_count
+                sh.action,
+                COUNT(*) AS action_count
         ")
             ->fromRaw("
-            (SELECT DISTINCT ON (subscription_id) *
+            (SELECT DISTINCT ON (subscription_id)
+                subscription_id,
+                created_at,
+                action
             FROM subscription_history
+            WHERE created_at BETWEEN '{$data['start_date']}' AND '{$data['end_date']}'
             ORDER BY subscription_id, created_at DESC) AS sh
         ")
-            ->join('subscriptions as s', 's.id', '=', 'sh.subscription_id')
-            ->whereBetween('sh.created_at', [$data['start_date'], $data['end_date']]);
+            ->join('subscriptions as s', 's.id', '=', 'sh.subscription_id');
 
         if (!empty($service_ids)) {
             $query->whereIn('s.service_id', $service_ids);
         }
 
-        return $query->groupByRaw("TO_CHAR(sh.created_at, '{$format}'), s.service_id")
+        return $query->groupByRaw("TO_CHAR(sh.created_at, '{$format}'), s.service_id, sh.action")
             ->orderBy('period')
             ->get()
             ->groupBy(['period', 'service_id']);
     }
 
-    private function getTotalSubscriptionDue(array $data, int $service_id)
+    private function getTotalSubscriptionDue(array $data, ?int $service_id)
     {
-        return Subscription::query()
-            ->where('service_id', $service_id)
-            ->whereBetween('end_date', [$data['start_date'], $data['end_date']])
-            ->count();
+        $query = Subscription::query()->whereBetween('end_date', [$data['start_date'], $data['end_date']]);
+
+        if ($service_id !== null)
+            $query->where('service_id', $service_id);
+
+        return $query->count();
     }
 
     private function fillMissingPeriodsByRenewCancelRate(array $filter, $histories, $services)
@@ -118,30 +122,31 @@ class StatisticService
 
     private function calculateAllServiceRenewCancel($key, $histories, $start, $end, &$row)
     {
-        $totalRenewed = 0;
-        $total = 0;
+        $totalRenew = 0;
+        $totalNonRenew = 0;
 
-        foreach ($histories[$key] as $serviceId => $history) {
-            $renewed = $history[0]->renewed_count ?? 0;
-            $totalForService = $this->getTotalSubscriptionDue([
-                'start_date' => $start,
-                'end_date' => $end,
-            ], $serviceId);
-
-            $renewedRate = $totalForService === 0 ? 0 : round(($renewed / $totalForService) * 100, 2);
-
-            $total += $totalForService;
-            $totalRenewed += $renewedRate * $totalForService;
+        foreach ($histories[$key] as $serviceId => $items) {
+            foreach ($items as $history) {
+                if ($history->action === SubscriptionHistoryAction::RENEWED)
+                    $totalRenew += $history->action_count;
+                else
+                    $totalNonRenew += $history->action_count;
+            }
         }
 
-        $row["all_renew"] = $total === 0 ? 0 : round(($totalRenewed / $total), 2);
+        $totalSubscription = $this->getTotalSubscriptionDue([
+            'start_date' => $start,
+            'end_date' => $end,
+        ], null);
+
+        $row["all_renew"] = $totalSubscription === 0 ? 0 : round(($totalRenew / $totalSubscription) * 100, 2);
         $row["all_cancel"] = 100 - $row["all_renew"];
     }
 
     private function calculateIndividualServiceRenewCancel($key, $histories, $start, $end, $services, &$row)
     {
         foreach ($services as $id => $name) {
-            $history = $histories[$key][$id][0] ?? null;
+            $history = $histories[$key][$id] ?? null;
 
             $renewed = $history ? $history->renewed_count : 0;
             $total = $this->getTotalSubscriptionDue([
