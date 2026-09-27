@@ -14,7 +14,6 @@ class PaymentFactory extends Factory
     {
         $statuses = ['pending', 'success', 'failed'];
 
-        // random thời gian đã thanh toán trong 6 tháng gần đây
         $paidAt = $this->faker->optional()->dateTimeBetween('-6 months', 'now');
 
         return [
@@ -22,8 +21,10 @@ class PaymentFactory extends Factory
             'amount' => $this->faker->randomFloat(0, 10000, 500000),
             'method' => 'momo',
             'status' => $this->faker->randomElement($statuses),
-            'transaction_ref' => strtoupper('TXN-'.$this->faker->unique()->bothify('??######')),
+            'transaction_ref' => strtoupper('TXN-' . $this->faker->unique()->bothify('??######')),
             'paid_at' => $paidAt,
+            'created_at' => $paidAt,
+            'updated_at' => $paidAt,
         ];
     }
 }
